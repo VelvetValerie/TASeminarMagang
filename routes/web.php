@@ -21,3 +21,7 @@ Route::get('/titik-lokasi', function () {
 Route::get('/instansi', function () {
     return view('instansi');
 });
+
+Route::get('/jenis-kegiatan', function () {
+    return view('jenis-kegiatan');
+});

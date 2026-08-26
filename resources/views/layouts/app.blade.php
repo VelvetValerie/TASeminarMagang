@@ -57,7 +57,8 @@
                         
                         <!-- Submenu Manajemen Data Kegiatan Sesuai Gambar -->
                         <div class="border-t-2 border-black bg-white">
-                            <a href="#" class="block py-2 px-4 text-center text-sm font-medium text-gray-800 border-b-2 border-black hover:bg-gray-100 transition">
+                            <a href="{{ url('/jenis-kegiatan') }}" 
+                            class="block py-2 px-4 text-center text-sm font-medium border-b-2 border-black transition {{ request()->is('jenis-kegiatan*') ? 'bg-gray-400 text-gray-900 font-semibold' : 'text-gray-800 hover:bg-gray-100' }}">
                                 Jenis Kegiatan
                             </a>
                             <a href="{{ url('/titik-lokasi') }}" class="block py-2 px-4 text-center text-sm font-medium border-b-2 border-black transition {{ request()->is('titik-lokasi*') ? 'bg-gray-400 text-gray-900 font-semibold' : 'text-gray-800 hover:bg-gray-100' }}">
