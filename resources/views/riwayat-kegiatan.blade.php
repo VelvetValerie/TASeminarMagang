@@ -80,7 +80,6 @@
             <h2 class="text-base md:text-lg font-bold text-gray-900">
                 Daftar Kegiatan
             </h2>
-            <!-- Icon Filter Corong -->
             <button class="p-1 hover:bg-gray-100 rounded text-gray-900 transition" title="Filter Data">
                 <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
@@ -88,7 +87,7 @@
             </button>
         </div>
 
-        <!-- Kontainer List Item Riwayat Kegiatan (Dengan Scroll Otomatis jika melebihi 5) -->
+        <!-- Kontainer List Riwayat Kegiatan -->
         <div class="mt-4 border-2 border-black p-3 md:p-4 max-h-[480px] overflow-y-auto space-y-4">
             
             <!-- Item Riwayat 1 -->
@@ -96,7 +95,8 @@
                 <p class="font-medium text-gray-900 text-sm md:text-base">
                     Rekaman Riwayat 03 ... 20xx ~ 05 ... 20xx
                 </p>
-                <button class="self-end sm:self-center border-2 border-black bg-gray-400 hover:bg-gray-500 text-gray-900 font-semibold px-6 py-1.5 text-sm transition">
+                <button onclick="openModal('Daftar Kegiatan 03 ... 20xx ~ 05 ... 20xx')" 
+                        class="selengkapnya-btn self-end sm:self-center border-2 border-black bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-1.5 text-sm transition">
                     Selengkapnya
                 </button>
             </div>
@@ -106,7 +106,8 @@
                 <p class="font-medium text-gray-900 text-sm md:text-base">
                     Rekaman Riwayat 09 ... 20xx ~ 11 ... 20xx
                 </p>
-                <button class="self-end sm:self-center border-2 border-black bg-gray-400 hover:bg-gray-500 text-gray-900 font-semibold px-6 py-1.5 text-sm transition">
+                <button onclick="openModal('Daftar Kegiatan 09 ... 20xx ~ 11 ... 20xx')" 
+                        class="selengkapnya-btn self-end sm:self-center border-2 border-black bg-gray-400 hover:bg-gray-500 text-gray-900 font-semibold px-6 py-1.5 text-sm transition">
                     Selengkapnya
                 </button>
             </div>
@@ -116,11 +117,99 @@
                 <p class="font-medium text-gray-900 text-sm md:text-base">
                     Rekaman Riwayat 15 ... 20xx ~ 17 ... 20xx
                 </p>
-                <button class="self-end sm:self-center border-2 border-black bg-gray-400 hover:bg-gray-500 text-gray-900 font-semibold px-6 py-1.5 text-sm transition">
+                <button onclick="openModal('Daftar Kegiatan 15 ... 20xx ~ 17 ... 20xx')" 
+                        class="selengkapnya-btn self-end sm:self-center border-2 border-black bg-gray-400 hover:bg-gray-500 text-gray-900 font-semibold px-6 py-1.5 text-sm transition">
                     Selengkapnya
                 </button>
             </div>
 
         </div>
     </div>
+
+    <!-- POPUP MODAL STATUS KEGIATAN -->
+    <div id="detailModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
+        <div class="relative w-full max-w-2xl bg-white border-2 border-black p-5 shadow-2xl">
+            
+            <!-- Tombol Close Silang Merah -->
+            <button onclick="closeModal()" class="absolute top-2 right-2 p-1 text-red-600 hover:text-red-800 transition" title="Tutup">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                </svg>
+            </button>
+
+            <!-- Judul Popup -->
+            <h3 id="modalTitle" class="text-base sm:text-lg font-bold text-gray-900 pr-8 pb-3">
+                Daftar Kegiatan 03 ... 20xx ~ 05 ... 20xx
+            </h3>
+
+            <!-- Kontainer Box Abu-abu Dalam Popup -->
+            <div class="border-2 border-black bg-[#d1d5db] p-4 max-h-[380px] overflow-y-auto space-y-3">
+                
+                <!-- Item Detail 1 -->
+                <div class="border-2 border-black bg-white p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                    <div>
+                        <h4 class="font-bold text-gray-900 text-base">Kegiatan A</h4>
+                        <div class="flex flex-wrap items-center gap-x-6 gap-y-1 text-xs sm:text-sm text-gray-700 mt-1">
+                            <span>Gedung A</span>
+                            <span>Selasa, 03 ... 20xx</span>
+                        </div>
+                    </div>
+                    <button class="self-end sm:self-center border-2 border-black bg-gray-500 hover:bg-gray-600 text-white font-semibold px-4 py-1 text-sm transition">
+                        Detail
+                    </button>
+                </div>
+
+                <!-- Item Detail 2 -->
+                <div class="border-2 border-black bg-white p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                    <div>
+                        <h4 class="font-bold text-gray-900 text-base">Kegiatan B</h4>
+                        <div class="flex flex-wrap items-center gap-x-6 gap-y-1 text-xs sm:text-sm text-gray-700 mt-1">
+                            <span>Gedung B</span>
+                            <span>Rabu, 04 ... 20xx</span>
+                        </div>
+                    </div>
+                    <button class="self-end sm:self-center border-2 border-black bg-gray-500 hover:bg-gray-600 text-white font-semibold px-4 py-1 text-sm transition">
+                        Detail
+                    </button>
+                </div>
+
+                <!-- Item Detail 3 -->
+                <div class="border-2 border-black bg-white p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                    <div>
+                        <h4 class="font-bold text-gray-900 text-base">Kegiatan C</h4>
+                        <div class="flex flex-wrap items-center gap-x-6 gap-y-1 text-xs sm:text-sm text-gray-700 mt-1">
+                            <span>Gedung C</span>
+                            <span>Kamis, 05 ... 20xx</span>
+                        </div>
+                    </div>
+                    <button class="self-end sm:self-center border-2 border-black bg-gray-500 hover:bg-gray-600 text-white font-semibold px-4 py-1 text-sm transition">
+                        Detail
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Buka/Tutup Modal -->
+    <script>
+        const modal = document.getElementById('detailModal');
+        const modalTitle = document.getElementById('modalTitle');
+
+        function openModal(title) {
+            modalTitle.innerText = title;
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+        }
+
+        // Tutup modal jika klik di luar area popup
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+    </script>
 @endsection
