@@ -25,3 +25,7 @@ Route::get('/instansi', function () {
 Route::get('/jenis-kegiatan', function () {
     return view('jenis-kegiatan');
 });
+
+Route::get('/riwayat-kerja', function () {
+    return view('riwayat-kerja');
+});
