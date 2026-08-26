@@ -150,7 +150,7 @@
                         <h4 class="font-bold text-gray-900 text-base">Kegiatan A</h4>
                         <div class="flex flex-wrap items-center gap-x-6 gap-y-1 text-xs sm:text-sm text-gray-700 mt-1">
                             <span>Gedung A</span>
-                            <span>Selasa, 03 ... 20xx</span>
+                            <span>Selasa, 03 April 2026</span>
                         </div>
                     </div>
                     <button class="self-end sm:self-center border-2 border-black bg-gray-500 hover:bg-gray-600 text-white font-semibold px-4 py-1 text-sm transition">
@@ -163,7 +163,7 @@
                         <h4 class="font-bold text-gray-900 text-base">Kegiatan B</h4>
                         <div class="flex flex-wrap items-center gap-x-6 gap-y-1 text-xs sm:text-sm text-gray-700 mt-1">
                             <span>Gedung B</span>
-                            <span>Rabu, 04 ... 20xx</span>
+                            <span>Rabu, 04 Mei 2026</span>
                         </div>
                     </div>
                     <button class="self-end sm:self-center border-2 border-black bg-gray-500 hover:bg-gray-600 text-white font-semibold px-4 py-1 text-sm transition">
@@ -176,7 +176,7 @@
                         <h4 class="font-bold text-gray-900 text-base">Kegiatan C</h4>
                         <div class="flex flex-wrap items-center gap-x-6 gap-y-1 text-xs sm:text-sm text-gray-700 mt-1">
                             <span>Gedung C</span>
-                            <span>Kamis, 05 ... 20xx</span>
+                            <span>Kamis, 05 Juni 2026</span>
                         </div>
                     </div>
                     <button class="self-end sm:self-center border-2 border-black bg-gray-500 hover:bg-gray-600 text-white font-semibold px-4 py-1 text-sm transition">

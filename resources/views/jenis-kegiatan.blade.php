@@ -51,7 +51,7 @@
             <div class="jenis-item border-2 border-black bg-[#d1d5db] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4" 
                  data-order="1" 
                  data-name="Pengembangan Karir"
-                 data-time="01 bulan 20xx"
+                 data-time="20 April 2026"
                  data-extra="0">
                 <p class="item-title font-medium text-gray-900 text-sm md:text-base">
                     Pengembangan Karir
@@ -66,7 +66,7 @@
             <div class="jenis-item border-2 border-black bg-[#d1d5db] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4" 
                  data-order="2" 
                  data-name="Sekolah Kedinasan"
-                 data-time="02 bulan 20xx"
+                 data-time="02 Mei 2026"
                  data-extra="0">
                 <p class="item-title font-medium text-gray-900 text-sm md:text-base">
                     Sekolah Kedinasan
@@ -81,7 +81,7 @@
             <div class="jenis-item border-2 border-black bg-[#d1d5db] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4" 
                  data-order="3" 
                  data-name="Tes CASN"
-                 data-time="03 bulan 20xx"
+                 data-time="03 Juni 2026"
                  data-extra="0">
                 <p class="item-title font-medium text-gray-900 text-sm md:text-base">
                     Tes CASN
@@ -96,7 +96,7 @@
             <div class="jenis-item border-2 border-black bg-[#d1d5db] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4" 
                  data-order="4" 
                  data-name="Tes Non-ASN"
-                 data-time="04 bulan 20xx"
+                 data-time="04 Juli 2026"
                  data-extra="0">
                 <p class="item-title font-medium text-gray-900 text-sm md:text-base">
                     Tes Non-ASN
@@ -132,10 +132,10 @@
                     Nama : <span id="modalNama" class="font-normal">Pengembangan Karir</span>
                 </p>
                 <p class="text-sm font-semibold text-gray-900">
-                    Waktu Ditambahkan : <span id="modalWaktu" class="font-normal">hh bulan 20xx</span>
+                    Waktu Ditambahkan : <span id="modalWaktu" class="font-normal">20 April 2026</span>
                 </p>
                 <p class="text-sm font-semibold text-gray-900">
-                    ... : <span id="modalExtra" class="font-normal">0</span>
+                    Total Peserta : <span id="modalExtra" class="font-normal">10</span>
                 </p>
             </div>
         </div>
