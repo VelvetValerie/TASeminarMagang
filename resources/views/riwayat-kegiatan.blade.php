@@ -95,8 +95,8 @@
                 <p class="font-medium text-gray-900 text-sm md:text-base">
                     Rekaman Riwayat 03 ... 20xx ~ 05 ... 20xx
                 </p>
-                <button onclick="openModal('Daftar Kegiatan 03 ... 20xx ~ 05 ... 20xx')" 
-                        class="selengkapnya-btn self-end sm:self-center border-2 border-black bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-1.5 text-sm transition">
+                <button onclick="openModal(this, 'Daftar Kegiatan 03 ... 20xx ~ 05 ... 20xx')" 
+                        class="selengkapnya-btn self-end sm:self-center border-2 border-black bg-gray-400 hover:bg-blue-600 hover:text-white text-gray-900 font-semibold px-6 py-1.5 text-sm transition">
                     Selengkapnya
                 </button>
             </div>
@@ -106,8 +106,8 @@
                 <p class="font-medium text-gray-900 text-sm md:text-base">
                     Rekaman Riwayat 09 ... 20xx ~ 11 ... 20xx
                 </p>
-                <button onclick="openModal('Daftar Kegiatan 09 ... 20xx ~ 11 ... 20xx')" 
-                        class="selengkapnya-btn self-end sm:self-center border-2 border-black bg-gray-400 hover:bg-gray-500 text-gray-900 font-semibold px-6 py-1.5 text-sm transition">
+                <button onclick="openModal(this, 'Daftar Kegiatan 09 ... 20xx ~ 11 ... 20xx')" 
+                        class="selengkapnya-btn self-end sm:self-center border-2 border-black bg-gray-400 hover:bg-blue-600 hover:text-white text-gray-900 font-semibold px-6 py-1.5 text-sm transition">
                     Selengkapnya
                 </button>
             </div>
@@ -117,8 +117,8 @@
                 <p class="font-medium text-gray-900 text-sm md:text-base">
                     Rekaman Riwayat 15 ... 20xx ~ 17 ... 20xx
                 </p>
-                <button onclick="openModal('Daftar Kegiatan 15 ... 20xx ~ 17 ... 20xx')" 
-                        class="selengkapnya-btn self-end sm:self-center border-2 border-black bg-gray-400 hover:bg-gray-500 text-gray-900 font-semibold px-6 py-1.5 text-sm transition">
+                <button onclick="openModal(this, 'Daftar Kegiatan 15 ... 20xx ~ 17 ... 20xx')" 
+                        class="selengkapnya-btn self-end sm:self-center border-2 border-black bg-gray-400 hover:bg-blue-600 hover:text-white text-gray-900 font-semibold px-6 py-1.5 text-sm transition">
                     Selengkapnya
                 </button>
             </div>
@@ -139,14 +139,13 @@
 
             <!-- Judul Popup -->
             <h3 id="modalTitle" class="text-base sm:text-lg font-bold text-gray-900 pr-8 pb-3">
-                Daftar Kegiatan 03 ... 20xx ~ 05 ... 20xx
+                Daftar Kegiatan
             </h3>
 
             <!-- Kontainer Box Abu-abu Dalam Popup -->
             <div class="border-2 border-black bg-[#d1d5db] p-4 max-h-[380px] overflow-y-auto space-y-3">
                 
-                <!-- Item Detail 1 -->
-                <div class="border-2 border-black bg-white p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                <div class="border-2 border-black bg-white p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
                         <h4 class="font-bold text-gray-900 text-base">Kegiatan A</h4>
                         <div class="flex flex-wrap items-center gap-x-6 gap-y-1 text-xs sm:text-sm text-gray-700 mt-1">
@@ -159,8 +158,7 @@
                     </button>
                 </div>
 
-                <!-- Item Detail 2 -->
-                <div class="border-2 border-black bg-white p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                <div class="border-2 border-black bg-white p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
                         <h4 class="font-bold text-gray-900 text-base">Kegiatan B</h4>
                         <div class="flex flex-wrap items-center gap-x-6 gap-y-1 text-xs sm:text-sm text-gray-700 mt-1">
@@ -173,8 +171,7 @@
                     </button>
                 </div>
 
-                <!-- Item Detail 3 -->
-                <div class="border-2 border-black bg-white p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                <div class="border-2 border-black bg-white p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
                         <h4 class="font-bold text-gray-900 text-base">Kegiatan C</h4>
                         <div class="flex flex-wrap items-center gap-x-6 gap-y-1 text-xs sm:text-sm text-gray-700 mt-1">
@@ -191,21 +188,39 @@
         </div>
     </div>
 
-    <!-- Script Buka/Tutup Modal -->
+    <!-- Script Buka/Tutup Modal & Status Warna Tombol -->
     <script>
         const modal = document.getElementById('detailModal');
         const modalTitle = document.getElementById('modalTitle');
+        let activeTriggerButton = null;
 
-        function openModal(title) {
+        function openModal(buttonElement, title) {
             modalTitle.innerText = title;
             modal.classList.remove('hidden');
+
+            // Reset tombol lain ke abu-abu
+            document.querySelectorAll('.selengkapnya-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white');
+                btn.classList.add('bg-gray-400', 'text-gray-900');
+            });
+
+            // Ubah tombol yang diklik menjadi biru
+            activeTriggerButton = buttonElement;
+            buttonElement.classList.remove('bg-gray-400', 'text-gray-900');
+            buttonElement.classList.add('bg-blue-600', 'text-white');
         }
 
         function closeModal() {
             modal.classList.add('hidden');
+
+            // Kembalikan tombol aktif ke warna abu-abu default
+            if (activeTriggerButton) {
+                activeTriggerButton.classList.remove('bg-blue-600', 'text-white');
+                activeTriggerButton.classList.add('bg-gray-400', 'text-gray-900');
+                activeTriggerButton = null;
+            }
         }
 
-        // Tutup modal jika klik di luar area popup
         modal.addEventListener('click', function(e) {
             if (e.target === modal) {
                 closeModal();
