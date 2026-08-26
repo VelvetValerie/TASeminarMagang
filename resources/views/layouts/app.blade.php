@@ -37,7 +37,8 @@
 
                 <!-- Grup 2: Operasional -->
                 <div class="space-y-2 pt-1">
-                    <a href="#" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center hover:bg-gray-100 transition">
+                    <a href="{{ url('/kegiatan') }}" 
+                       class="block border-2 border-black py-2 px-4 text-center font-semibold transition {{ request()->is('kegiatan*') ? 'bg-gray-500 text-white' : 'bg-white text-gray-900 hover:bg-gray-100' }}">
                         Kegiatan
                     </a>
                     <a href="{{ url('/riwayat-kerja') }}" 

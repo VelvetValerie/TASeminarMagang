@@ -29,3 +29,7 @@ Route::get('/jenis-kegiatan', function () {
 Route::get('/riwayat-kerja', function () {
     return view('riwayat-kerja');
 });
+
+Route::get('/kegiatan', function () {
+    return view('kegiatan');
+});
