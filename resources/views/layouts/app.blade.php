@@ -16,9 +16,11 @@
     <!-- SIDEBAR GLOBAL -->
     <aside class="w-64 bg-[#e5e7eb] border-r-2 border-black flex flex-col p-4 shrink-0 min-h-screen">
         <div class="space-y-4">
-            <!-- Header Sidebar -->
-            <div class="border-2 border-black bg-white p-2.5 text-center font-bold text-gray-900">
-                Kantor Regional BKN
+            <!-- Header Sidebar Logo BKN yang Mengarah ke Landing Page -->
+            <div class="p-2 flex items-center justify-center">
+                <a href="{{ url('/') }}" title="Menuju Landing Page" class="hover:opacity-80 transition">
+                    <img src="{{ asset('images/Logo_BKN.png') }}" alt="Logo BKN" class="h-20 w-auto object-contain">
+                </a>
             </div>
 
             <!-- Navigasi Menu Global -->

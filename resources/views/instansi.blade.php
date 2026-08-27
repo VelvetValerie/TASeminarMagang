@@ -41,12 +41,5 @@
             </div>
 
         </div>
-
-        <!-- Panah Penunjuk Bawah (Sesuai Wireframe) -->
-        <div class="flex justify-center pt-5">
-            <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-            </svg>
-        </div>
     </section>
 @endsection
