@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+<title>Kantor Regional BKN - Dashboard</title>
+
 @section('sidebar-header')
     <div class="border-2 border-black bg-white p-2.5 text-center font-bold text-gray-900">
         Kantor Regional BKN

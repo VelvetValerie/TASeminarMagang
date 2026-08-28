@@ -109,47 +109,6 @@
              2. SEKSI 2: KALENDER PUBLIK (Sesuai Desain Internal)
              ========================================== -->
         <section id="kalender" class="min-h-[calc(100vh-65px)] w-full max-w-7xl mx-auto p-4 md:p-8 flex flex-col justify-center space-y-6">
-            
-            <!-- 1. DUA KOTAK ATAS: LEGENDA & KEGIATAN BERLANGSUNG -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-                
-                <!-- KOTAK KIRI: LEGENDA INDIKATOR -->
-                <div class="border-2 border-black bg-white shadow-sm flex flex-col">
-                    <h3 class="text-sm font-bold text-gray-900 text-center py-1.5 border-b-2 border-black bg-gray-50">
-                        Legenda Indikator
-                    </h3>
-                    <div class="p-4 grid grid-cols-2 gap-x-4 gap-y-3 text-xs sm:text-sm font-medium text-gray-800">
-                        <div class="flex items-center space-x-2">
-                            <span class="w-3.5 h-3.5 rounded-full bg-gray-300 border border-black inline-block shrink-0"></span>
-                            <span>Pengembangan Karir</span>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <span class="w-3.5 h-3.5 rounded-full bg-gray-600 border border-black inline-block shrink-0"></span>
-                            <span>Sekolah Kedinasan</span>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <span class="w-3.5 h-3.5 rounded-full bg-gray-400 border border-black inline-block shrink-0"></span>
-                            <span>Tes CASN</span>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <span class="w-3.5 h-3.5 rounded-full bg-gray-800 border border-black inline-block shrink-0"></span>
-                            <span>Tes Non-ASN</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- KOTAK KANAN: KEGIATAN BERLANGSUNG -->
-                <div class="border-2 border-black bg-white shadow-sm flex flex-col min-h-[110px]">
-                    <h3 class="text-xs sm:text-sm font-bold text-gray-900 px-3 py-1.5 border-b-2 border-black bg-gray-50">
-                        [Rabu, 03 ... 20xx] Kegiatan yang sedang berlangsung
-                    </h3>
-                    <div class="p-3 text-xs sm:text-sm space-y-1 font-medium text-gray-800">
-                        <p>1. Kegiatan B</p>
-                        <p>2. Kegiatan C</p>
-                    </div>
-                </div>
-
-            </div>
 
             <!-- 2. KOTAK KALENDER UTAMA -->
             <div class="border-2 border-black bg-white p-4 md:p-6 relative shadow-sm">
