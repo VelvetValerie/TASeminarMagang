@@ -84,19 +84,82 @@
 
 @section('content')
     <!-- STATISTIC CARDS -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="border-2 border-black bg-white p-5 flex items-center justify-center font-semibold text-gray-900 text-center min-h-[80px]">
-            Jumlah Instansi
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+        
+        <div class="relative overflow-hidden bg-white border-2 border-black rounded-xl p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 transition duration-200">
+            <div class="flex items-center justify-between">
+                <div class="space-y-1">
+                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Jumlah Instansi</span>
+                    <div class="flex items-baseline space-x-2">
+                        <span id="statInstansi" class="text-3xl font-extrabold text-gray-900 tracking-tight">
+                            {{ $stats['instansi'] ?? 14 }}
+                        </span>
+                        <span class="text-xs font-semibold text-gray-500">Mitra Terdaftar</span>
+                    </div>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-blue-50 border-2 border-black flex items-center justify-center text-blue-600 shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-gray-200 flex items-center justify-between text-xs text-gray-600">
+                <span class="flex items-center text-emerald-700 font-semibold">
+                    <svg class="w-4 h-4 mr-1 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                    </svg>
+                    Instansi Aktif
+                </span>
+                <span class="font-medium text-gray-500">Regional BKN</span>
+            </div>
         </div>
-        <div class="border-2 border-black bg-white p-5 flex items-center justify-center font-semibold text-gray-900 text-center min-h-[80px]">
-            Titik Lokasi
+
+        <div class="relative overflow-hidden bg-white border-2 border-black rounded-xl p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 transition duration-200">
+            <div class="flex items-center justify-between">
+                <div class="space-y-1">
+                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Jumlah Peserta</span>
+                    <div class="flex items-baseline space-x-2">
+                        <span id="statPeserta" class="text-3xl font-extrabold text-gray-900 tracking-tight">
+                            {{ number_format($stats['peserta'] ?? 1250) }}
+                        </span>
+                        <span class="text-xs font-semibold text-gray-500">Orang</span>
+                    </div>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-emerald-50 border-2 border-black flex items-center justify-center text-emerald-600 shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-gray-200 flex items-center justify-between text-xs text-gray-600">
+                <span class="text-gray-700 font-semibold">Peserta aktif</span>
+                <span class="font-medium text-gray-500">Periode 2026</span>
+            </div>
         </div>
-        <div class="border-2 border-black bg-white p-5 flex items-center justify-center font-semibold text-gray-900 text-center min-h-[80px]">
-            Jumlah Peserta
+
+        <div class="relative overflow-hidden bg-white border-2 border-black rounded-xl p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 transition duration-200">
+            <div class="flex items-center justify-between">
+                <div class="space-y-1">
+                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Jumlah Kegiatan</span>
+                    <div class="flex items-baseline space-x-2">
+                        <span id="statKegiatan" class="text-3xl font-extrabold text-gray-900 tracking-tight">
+                            {{ $stats['kegiatan'] ?? 8 }}
+                        </span>
+                        <span class="text-xs font-semibold text-gray-500">Agenda</span>
+                    </div>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-rose-50 border-2 border-black flex items-center justify-center text-rose-600 shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-gray-200 flex items-center justify-between text-xs text-gray-600">
+                <span class="text-gray-700 font-semibold">CASN & Kedinasan</span>
+                <span class="font-medium text-gray-500">Terjadwal</span>
+            </div>
         </div>
-        <div class="border-2 border-black bg-white p-5 flex items-center justify-center font-semibold text-gray-900 text-center min-h-[80px]">
-            Jumlah Kegiatan
-        </div>
+
     </div>
 
     <!-- AREA KONTEN UTAMA -->
