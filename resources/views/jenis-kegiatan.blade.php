@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <!-- KONTEN UTAMA: DAFTAR JENIS KEGIATAN -->
+    <!-- KONTEN UTAMA: DAFTAR JENIS KEGIATAN (DATABASE CONNECTED) -->
     <div class="border-2 border-black bg-white p-4 md:p-6 flex flex-col min-h-[520px] shadow-sm">
         
         <!-- Header Kotak: Judul + Search & Sort Dropdown -->
@@ -22,7 +22,7 @@
 
                 <!-- Tombol Menu Sort List -->
                 <div class="relative">
-                    <button id="sortDropdownBtn" class="border-2 border-black p-1.5 hover:bg-gray-100 block transition">
+                    <button id="sortDropdownBtn" class="border-2 border-black p-1.5 hover:bg-gray-100 block transition" title="Urutkan Kategori">
                         <svg class="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
@@ -44,68 +44,45 @@
             </div>
         </div>
 
-        <!-- Kontainer Daftar Jenis Kegiatan -->
+        <!-- Kontainer Daftar Jenis Kegiatan (Dinamis dari Database SQL) -->
         <div id="jenisKegiatanList" class="mt-4 border-2 border-black p-3 md:p-4 max-h-[460px] overflow-y-auto space-y-4">
             
-            <!-- Item 1: Pengembangan Karir -->
-            <div class="jenis-item border-2 border-black bg-[#d1d5db] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4" 
-                 data-order="1" 
-                 data-name="Pengembangan Karir"
-                 data-time="20 April 2026"
-                 data-extra="0">
-                <p class="item-title font-medium text-gray-900 text-sm md:text-base">
-                    Pengembangan Karir
-                </p>
-                <button onclick="openModal(this)" 
-                        class="detail-btn self-end sm:self-center border-2 border-black bg-gray-400 hover:bg-blue-600 hover:text-white text-gray-900 font-semibold px-6 py-1 text-sm transition">
-                    Detail
-                </button>
-            </div>
+            @forelse($jenis as $item)
+                @php
+                    // Ambil waktu pembuatan atau tanggal kegiatan terkait pertama
+                    $waktuDibuat = isset($item->created_at) 
+                        ? \Carbon\Carbon::parse($item->created_at)->translatedFormat('d F Y') 
+                        : '2026-06-01';
 
-            <!-- Item 2: Sekolah Kedinasan -->
-            <div class="jenis-item border-2 border-black bg-[#d1d5db] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4" 
-                 data-order="2" 
-                 data-name="Sekolah Kedinasan"
-                 data-time="02 Mei 2026"
-                 data-extra="0">
-                <p class="item-title font-medium text-gray-900 text-sm md:text-base">
-                    Sekolah Kedinasan
-                </p>
-                <button onclick="openModal(this)" 
-                        class="detail-btn self-end sm:self-center border-2 border-black bg-gray-400 hover:bg-blue-600 hover:text-white text-gray-900 font-semibold px-6 py-1 text-sm transition">
-                    Detail
-                </button>
-            </div>
+                    // Hitung total peserta yang berpartisipasi pada jenis kegiatan ini
+                    $totalPeserta = \App\Models\Kegiatan::where('id_jeniskeg', $item->id_jeniskeg)->sum('jmlh_peserta');
+                @endphp
 
-            <!-- Item 3: Tes CASN -->
-            <div class="jenis-item border-2 border-black bg-[#d1d5db] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4" 
-                 data-order="3" 
-                 data-name="Tes CASN"
-                 data-time="03 Juni 2026"
-                 data-extra="0">
-                <p class="item-title font-medium text-gray-900 text-sm md:text-base">
-                    Tes CASN
-                </p>
-                <button onclick="openModal(this)" 
-                        class="detail-btn self-end sm:self-center border-2 border-black bg-gray-400 hover:bg-blue-600 hover:text-white text-gray-900 font-semibold px-6 py-1 text-sm transition">
-                    Detail
-                </button>
-            </div>
+                <div class="jenis-item border-2 border-black bg-[#d1d5db] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4" 
+                     data-order="{{ $item->id_jeniskeg }}" 
+                     data-name="{{ $item->nama_jeniskeg }}"
+                     data-time="{{ $waktuDibuat }}"
+                     data-extra="{{ number_format($totalPeserta) }} Orang">
+                    
+                    <div class="flex items-center space-x-3">
+                        <span class="w-7 h-7 rounded-full border-2 border-black bg-white flex items-center justify-center text-xs font-bold text-gray-900 shrink-0">
+                            {{ $loop->iteration }}
+                        </span>
+                        <p class="item-title font-medium text-gray-900 text-sm md:text-base">
+                            {{ $item->nama_jeniskeg }}
+                        </p>
+                    </div>
 
-            <!-- Item 4: Tes Non-ASN -->
-            <div class="jenis-item border-2 border-black bg-[#d1d5db] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4" 
-                 data-order="4" 
-                 data-name="Tes Non-ASN"
-                 data-time="04 Juli 2026"
-                 data-extra="0">
-                <p class="item-title font-medium text-gray-900 text-sm md:text-base">
-                    Tes Non-ASN
-                </p>
-                <button onclick="openModal(this)" 
-                        class="detail-btn self-end sm:self-center border-2 border-black bg-gray-400 hover:bg-blue-600 hover:text-white text-gray-900 font-semibold px-6 py-1 text-sm transition">
-                    Detail
-                </button>
-            </div>
+                    <button onclick="openModal(this)" 
+                            class="detail-btn self-end sm:self-center border-2 border-black bg-gray-400 hover:bg-blue-600 hover:text-white text-gray-900 font-semibold px-6 py-1 text-sm transition">
+                        Detail
+                    </button>
+                </div>
+            @empty
+                <div class="text-center py-8 text-gray-500 font-semibold text-sm">
+                    Belum ada jenis kegiatan yang terdaftar di database.
+                </div>
+            @endforelse
 
         </div>
     </div>
@@ -122,12 +99,12 @@
             </button>
 
             <!-- Judul Popup -->
-            <h3 class="text-base font-bold text-gray-900 pr-8 pb-3">
+            <h3 class="text-base font-bold text-gray-900 pr-8 pb-3 border-b-2 border-black">
                 Informasi Jenis Kegiatan
             </h3>
 
             <!-- Kontainer Box Abu-abu Isi Informasi -->
-            <div class="border-2 border-black bg-[#d1d5db] p-5 space-y-3">
+            <div class="mt-4 border-2 border-black bg-[#d1d5db] p-5 space-y-3">
                 <p class="text-sm font-semibold text-gray-900">
                     Nama : <span id="modalNama" class="font-normal">Pengembangan Karir</span>
                 </p>
@@ -135,7 +112,7 @@
                     Waktu Ditambahkan : <span id="modalWaktu" class="font-normal">20 April 2026</span>
                 </p>
                 <p class="text-sm font-semibold text-gray-900">
-                    Total Peserta : <span id="modalExtra" class="font-normal">10</span>
+                    Total Peserta : <span id="modalExtra" class="font-normal">0 Orang</span>
                 </p>
             </div>
         </div>

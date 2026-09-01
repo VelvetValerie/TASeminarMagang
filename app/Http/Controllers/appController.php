@@ -3,128 +3,122 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use App\Models\Kegiatan;
+use App\Models\JenisKeg;
+use App\Models\Instansi;
+use App\Models\TitikLokasi;
+use App\Models\Karyawan;
 
 class AppController extends Controller
 {
-    private $jsonPath = 'kegiatan.json';
-
-    // Helper: Baca data JSON
-    private function getData()
-    {
-        if (!Storage::exists($this->jsonPath)) {
-            Storage::put($this->jsonPath, json_encode([]));
-        }
-        return json_decode(Storage::get($this->jsonPath), true) ?? [];
-    }
-
-    // Helper: Simpan data JSON
-    private function saveData($data)
-    {
-        Storage::put($this->jsonPath, json_encode(array_values($data), JSON_PRETTY_PRINT));
-    }
-
     // 1. Dashboard
     public function dashboard()
     {
-        $kegiatan = $this->getData();
-
-        // Hitung metrik dinamis
-        $instansiList = array_unique(array_column($kegiatan, 'instansi'));
-        $lokasiList = array_unique(array_column($kegiatan, 'lokasi'));
-        $totalPeserta = array_sum(array_column($kegiatan, 'peserta'));
+        $kegiatan = Kegiatan::with(['jenis', 'lokasi', 'instansi', 'koordinator'])
+            ->orderBy('id_keg', 'desc')
+            ->get();
 
         $stats = [
-            'instansi' => count($instansiList),
-            'lokasi' => count($lokasiList),
-            'peserta' => $totalPeserta,
-            'kegiatan' => count($kegiatan)
+            'instansi' => Instansi::count(),
+            'peserta'  => Kegiatan::sum('jmlh_peserta'),
+            'kegiatan' => Kegiatan::count()
         ];
 
         return view('dashboard', compact('kegiatan', 'stats'));
     }
 
-    // 2. Kegiatan (CRUD)
+    // 2. Kegiatan (Daftar & Form Tambah)
     public function kegiatan()
     {
-        $kegiatan = $this->getData();
-        return view('kegiatan', compact('kegiatan'));
+        $kegiatan = Kegiatan::with(['jenis', 'lokasi', 'instansi', 'koordinator'])
+            ->orderBy('id_keg', 'desc')
+            ->get();
+
+        // Data dropdown untuk modal Tambah Kegiatan
+        $jenisList     = JenisKeg::all();
+        $instansiList  = Instansi::all();
+        $lokasiList    = TitikLokasi::all();
+        $karyawanList  = Karyawan::all();
+
+        return view('kegiatan', compact('kegiatan', 'jenisList', 'instansiList', 'lokasiList', 'karyawanList'));
     }
 
+    // Simpan Kegiatan Baru ke Database
     public function storeKegiatan(Request $request)
     {
-        $data = $this->getData();
+        $request->validate([
+            'nama_keg'          => 'required|string|max:150',
+            'id_jeniskeg'       => 'required|integer',
+            'id_karyawan_koor'  => 'required|integer',
+            'tanggal_mulai'     => 'required|date',
+            'id_tklokasi'       => 'required|integer',
+            'id_instansi'       => 'required|integer',
+            'jmlh_peserta'      => 'required|numeric',
+        ]);
 
-        $newItem = [
-            'id' => time(),
-            'nama' => $request->nama,
-            'jenis' => $request->jenis,
-            'koordinator' => $request->koordinator,
-            'tanggal' => $request->tanggal,
-            'tanggal_selesai' => $request->tanggal,
-            'lokasi' => $request->lokasi,
-            'alamat' => 'JL. Bhayangkara ' . rand(1, 10),
-            'instansi' => $request->instansi,
-            'peserta' => (int) $request->peserta,
-            'status' => 'Belum Konfirmasi',
-            'lampiran' => $request->lampiran ?? 'https://drive.google.com/sample'
-        ];
-
-        $data[] = $newItem;
-        $this->saveData($data);
+        Kegiatan::create([
+            'nama_keg'         => $request->nama_keg,
+            'id_jeniskeg'      => $request->id_jeniskeg,
+            'id_karyawan_koor' => $request->id_karyawan_koor,
+            'tanggal_mulai'    => $request->tanggal_mulai,
+            'tanggal_selesai'  => $request->tanggal_selesai ?? $request->tanggal_mulai,
+            'id_tklokasi'      => $request->id_tklokasi,
+            'id_instansi'      => $request->id_instansi,
+            'jmlh_peserta'     => $request->jmlh_peserta,
+            'status'           => 'Belum Konfirmasi',
+            'lampiran'         => $request->lampiran ?? 'https://drive.google.com/...'
+        ]);
 
         return redirect()->route('kegiatan.index')->with('success', 'Kegiatan berhasil ditambahkan');
     }
 
+    // Hapus Kegiatan dari Database
     public function destroyKegiatan($id)
     {
-        $data = $this->getData();
-        $filtered = array_filter($data, fn($item) => $item['id'] != $id);
-        $this->saveData($filtered);
-
+        Kegiatan::where('id_keg', $id)->delete();
         return redirect()->route('kegiatan.index')->with('success', 'Kegiatan berhasil dihapus');
     }
 
     // 3. Kalender
     public function kalender()
     {
-        $kegiatan = $this->getData();
+        $kegiatan = Kegiatan::with('jenis')->get();
         return view('kalender', compact('kegiatan'));
     }
 
     // 4. Titik Lokasi
     public function titikLokasi()
     {
-        $kegiatan = $this->getData();
-        return view('titik-lokasi', compact('kegiatan'));
+        $lokasi = TitikLokasi::all();
+        $kegiatanBerjalan = Kegiatan::with('lokasi')->first();
+        return view('titik-lokasi', compact('lokasi', 'kegiatanBerjalan'));
     }
 
     // 5. Instansi
     public function instansi()
     {
-        $kegiatan = $this->getData();
-        $instansiList = array_unique(array_column($kegiatan, 'instansi'));
-        return view('instansi', compact('instansiList'));
+        $instansi = Instansi::all();
+        return view('instansi', compact('instansi'));
     }
 
     // 6. Jenis Kegiatan
     public function jenisKegiatan()
     {
-        $kegiatan = $this->getData();
-        return view('jenis-kegiatan', compact('kegiatan'));
+        $jenis = JenisKeg::all();
+        return view('jenis-kegiatan', compact('jenis'));
     }
 
-    // 7. Riwayat Kerja
+    // 7. Riwayat Kerja Karyawan
     public function riwayatKerja()
     {
-        $kegiatan = $this->getData();
-        return view('riwayat-kerja', compact('kegiatan'));
+        $karyawan = Karyawan::with(['rekamKerja.kegiatan.lokasi'])->get();
+        return view('riwayat-kerja', compact('karyawan'));
     }
 
     // 8. Riwayat Kegiatan
     public function riwayatKegiatan()
     {
-        $kegiatan = $this->getData();
+        $kegiatan = Kegiatan::with(['jenis', 'lokasi'])->get();
         return view('riwayat-kegiatan', compact('kegiatan'));
     }
 }

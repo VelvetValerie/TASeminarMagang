@@ -20,10 +20,10 @@
 
         <!-- Grup 2: Kegiatan & Riwayat Kerja -->
         <div class="space-y-2 pt-2">
-            <a href="#" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center hover:bg-gray-100 transition">
+            <a href="{{ url('/kegiatan') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center hover:bg-gray-100 transition">
                 Kegiatan
             </a>
-            <a href="#" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center hover:bg-gray-100 transition">
+            <a href="{{ url('/riwayat-kerja') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center hover:bg-gray-100 transition">
                 Riwayat Kerja
             </a>
         </div>
@@ -40,14 +40,14 @@
                 
                 <!-- Submenu Dropdown -->
                 <div class="border-t-2 border-black bg-white">
-                    <a href="#" class="block py-2 px-4 text-center text-sm font-medium text-gray-800 border-b-2 border-black hover:bg-gray-100 transition">
+                    <a href="{{ url('/jenis-kegiatan') }}" class="block py-2 px-4 text-center text-sm font-medium text-gray-800 border-b-2 border-black hover:bg-gray-100 transition">
                         Jenis Kegiatan
                     </a>
                     <a href="{{ url('/titik-lokasi') }}" 
                     class="block py-2 px-4 text-center text-sm font-semibold transition {{ request()->is('titik-lokasi') ? 'bg-gray-400 text-gray-900' : 'text-gray-800 hover:bg-gray-100' }}">
                         Titik Lokasi
                     </a>
-                    <a href="#" class="block py-2 px-4 text-center text-sm font-medium text-gray-800 border-b-2 border-black hover:bg-gray-100 transition">
+                    <a href="{{ url('/instansi') }}" class="block py-2 px-4 text-center text-sm font-medium text-gray-800 border-b-2 border-black hover:bg-gray-100 transition">
                         Instansi
                     </a>
                     <a href="{{ url('/riwayat-kegiatan') }}" class="block py-2 px-4 text-center text-sm font-semibold bg-gray-400 text-gray-900 transition">
@@ -87,41 +87,33 @@
             </button>
         </div>
 
-        <!-- Kontainer List Riwayat Kegiatan -->
+        <!-- Kontainer List Riwayat Kegiatan (Dinamis dari Database) -->
         <div class="mt-4 border-2 border-black p-3 md:p-4 max-h-[480px] overflow-y-auto space-y-4">
             
-            <!-- Item Riwayat 1 -->
-            <div class="border-2 border-black bg-[#d1d5db] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <p class="font-medium text-gray-900 text-sm md:text-base">
-                    Rekaman Riwayat 03 ... 20xx ~ 05 ... 20xx
-                </p>
-                <button onclick="openModal(this, 'Daftar Kegiatan 03 ... 20xx ~ 05 ... 20xx')" 
-                        class="selengkapnya-btn self-end sm:self-center border-2 border-black bg-gray-400 hover:bg-blue-600 hover:text-white text-gray-900 font-semibold px-6 py-1.5 text-sm transition">
-                    Selengkapnya
-                </button>
-            </div>
+            @forelse($kegiatan as $item)
+                @php
+                    $tglMulai = \Carbon\Carbon::parse($item->tanggal_mulai)->translatedFormat('d F Y');
+                    $tglSelesai = $item->tanggal_selesai 
+                        ? \Carbon\Carbon::parse($item->tanggal_selesai)->translatedFormat('d F Y') 
+                        : $tglMulai;
+                    $rentangLabel = "Rekaman Riwayat {$tglMulai}" . ($tglMulai !== $tglSelesai ? " ~ {$tglSelesai}" : "");
+                    $modalTitleText = "Daftar Kegiatan {$tglMulai}" . ($tglMulai !== $tglSelesai ? " ~ {$tglSelesai}" : "");
+                @endphp
 
-            <!-- Item Riwayat 2 -->
-            <div class="border-2 border-black bg-[#d1d5db] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <p class="font-medium text-gray-900 text-sm md:text-base">
-                    Rekaman Riwayat 09 ... 20xx ~ 11 ... 20xx
-                </p>
-                <button onclick="openModal(this, 'Daftar Kegiatan 09 ... 20xx ~ 11 ... 20xx')" 
-                        class="selengkapnya-btn self-end sm:self-center border-2 border-black bg-gray-400 hover:bg-blue-600 hover:text-white text-gray-900 font-semibold px-6 py-1.5 text-sm transition">
-                    Selengkapnya
-                </button>
-            </div>
-
-            <!-- Item Riwayat 3 -->
-            <div class="border-2 border-black bg-[#d1d5db] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <p class="font-medium text-gray-900 text-sm md:text-base">
-                    Rekaman Riwayat 15 ... 20xx ~ 17 ... 20xx
-                </p>
-                <button onclick="openModal(this, 'Daftar Kegiatan 15 ... 20xx ~ 17 ... 20xx')" 
-                        class="selengkapnya-btn self-end sm:self-center border-2 border-black bg-gray-400 hover:bg-blue-600 hover:text-white text-gray-900 font-semibold px-6 py-1.5 text-sm transition">
-                    Selengkapnya
-                </button>
-            </div>
+                <div class="border-2 border-black bg-[#d1d5db] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <p class="font-medium text-gray-900 text-sm md:text-base">
+                        {{ $rentangLabel }} : <span class="font-bold">{{ $item->nama_keg }}</span>
+                    </p>
+                    <button onclick="openModal(this, '{{ $modalTitleText }}', '{{ $item->nama_keg }}', '{{ $item->lokasi->nm_lokasi ?? '-' }}', '{{ \Carbon\Carbon::parse($item->tanggal_mulai)->translatedFormat('l, d F Y') }}', '{{ route('kegiatan.index') }}')" 
+                            class="selengkapnya-btn self-end sm:self-center border-2 border-black bg-gray-400 hover:bg-blue-600 hover:text-white text-gray-900 font-semibold px-6 py-1.5 text-sm transition">
+                        Selengkapnya
+                    </button>
+                </div>
+            @empty
+                <div class="text-center py-8 text-gray-500 font-semibold text-sm">
+                    Belum ada rekaman riwayat kegiatan di database.
+                </div>
+            @endforelse
 
         </div>
     </div>
@@ -147,41 +139,15 @@
                 
                 <div class="border-2 border-black bg-white p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
-                        <h4 class="font-bold text-gray-900 text-base">Kegiatan A</h4>
+                        <h4 id="modalNamaKeg" class="font-bold text-gray-900 text-base">Kegiatan</h4>
                         <div class="flex flex-wrap items-center gap-x-6 gap-y-1 text-xs sm:text-sm text-gray-700 mt-1">
-                            <span>Gedung A</span>
-                            <span>Selasa, 03 April 2026</span>
+                            <span id="modalLokasi">Gedung</span>
+                            <span id="modalTanggal">Tanggal Pelaksanaan</span>
                         </div>
                     </div>
-                    <button class="self-end sm:self-center border-2 border-black bg-gray-500 hover:bg-gray-600 text-white font-semibold px-4 py-1 text-sm transition">
+                    <a id="modalDetailLink" href="{{ route('kegiatan.index') }}" class="self-end sm:self-center border-2 border-black bg-gray-500 hover:bg-gray-600 text-white font-semibold px-4 py-1 text-sm transition">
                         Detail
-                    </button>
-                </div>
-
-                <div class="border-2 border-black bg-white p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div>
-                        <h4 class="font-bold text-gray-900 text-base">Kegiatan B</h4>
-                        <div class="flex flex-wrap items-center gap-x-6 gap-y-1 text-xs sm:text-sm text-gray-700 mt-1">
-                            <span>Gedung B</span>
-                            <span>Rabu, 04 Mei 2026</span>
-                        </div>
-                    </div>
-                    <button class="self-end sm:self-center border-2 border-black bg-gray-500 hover:bg-gray-600 text-white font-semibold px-4 py-1 text-sm transition">
-                        Detail
-                    </button>
-                </div>
-
-                <div class="border-2 border-black bg-white p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div>
-                        <h4 class="font-bold text-gray-900 text-base">Kegiatan C</h4>
-                        <div class="flex flex-wrap items-center gap-x-6 gap-y-1 text-xs sm:text-sm text-gray-700 mt-1">
-                            <span>Gedung C</span>
-                            <span>Kamis, 05 Juni 2026</span>
-                        </div>
-                    </div>
-                    <button class="self-end sm:self-center border-2 border-black bg-gray-500 hover:bg-gray-600 text-white font-semibold px-4 py-1 text-sm transition">
-                        Detail
-                    </button>
+                    </a>
                 </div>
 
             </div>
@@ -192,10 +158,19 @@
     <script>
         const modal = document.getElementById('detailModal');
         const modalTitle = document.getElementById('modalTitle');
+        const modalNamaKeg = document.getElementById('modalNamaKeg');
+        const modalLokasi = document.getElementById('modalLokasi');
+        const modalTanggal = document.getElementById('modalTanggal');
+        const modalDetailLink = document.getElementById('modalDetailLink');
         let activeTriggerButton = null;
 
-        function openModal(buttonElement, title) {
+        function openModal(buttonElement, title, namaKeg, lokasi, tanggal, urlDetail) {
             modalTitle.innerText = title;
+            modalNamaKeg.innerText = namaKeg;
+            modalLokasi.innerText = lokasi;
+            modalTanggal.innerText = tanggal;
+            modalDetailLink.href = urlDetail;
+
             modal.classList.remove('hidden');
 
             // Reset tombol lain ke abu-abu

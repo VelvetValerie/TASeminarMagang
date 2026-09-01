@@ -111,8 +111,8 @@ INSERT INTO `instansi` (`id_instansi`, `nm_instansi`) VALUES
 INSERT INTO `titik_lokasi` (`id_tklokasi`, `nm_lokasi`, `alamat`) VALUES
 (1, 'Gedung A', 'JL. Bhayangkara 1'),
 (2, 'Gedung B', 'JL. Bhayangkara 2'),
-(3, 'Gedung C', 'JL. Bhayangkara 3'),
-(4, 'Gedung D', 'JL. Bhayangkara 4');
+(3, 'Gedung C', 'JL. Flamboyan 3'),
+(4, 'Gedung D', 'JL. Kertanegara 4');
 
 -- Data Karyawan
 INSERT INTO `karyawan` (`id_karyawan`, `nama_karyawan`, `catatan_kj`) VALUES
