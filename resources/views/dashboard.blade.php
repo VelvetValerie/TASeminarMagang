@@ -134,8 +134,8 @@
                 </div>
             </div>
             <div class="mt-4 pt-3 border-t border-gray-200 flex items-center justify-between text-xs text-gray-600">
-                <span class="text-gray-700 font-semibold">Total Terfasilitasi</span>
-                <span class="font-medium text-gray-500">Tahun Berjalan</span>
+                <span class="text-gray-700 font-semibold">Periode Tahun</span>
+                <span class="font-medium text-gray-500">2026</span>
             </div>
         </div>
 
