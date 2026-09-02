@@ -4,19 +4,21 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AppController;
 
-// Rute Tamu (Guest) - Formulir Login Berada di Landing Page URL ( / )
+// 1. Root URL ( / ) mengarah ke Landing Page (Publik)
+Route::get('/', function () {
+    return view('landing');
+})->name('landing');
+
+// 2. Rute Autentikasi untuk Tamu (Guest) berada di /login
 Route::middleware('guest')->group(function () {
-    Route::get('/', [AuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/', [AuthController::class, 'login'])->name('login.perform');
-    
-    // Opsional: jika ada yang mengakses /login, langsung arahkan ke /
-    Route::get('/login', fn() => redirect()->route('login'));
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.perform');
 });
 
-// Logout
+// 3. Logout (Kembali ke Landing Page /)
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
-// Rute Internal (Wajib Login)
+// 4. Halaman Internal Sistem (Wajib Login)
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [AppController::class, 'dashboard'])->name('dashboard');
     Route::get('/kegiatan', [AppController::class, 'kegiatan'])->name('kegiatan.index');

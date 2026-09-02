@@ -51,11 +51,38 @@
                 </details>
             </nav>
 
-            <!-- Tombol Login Dashboard -->
-            <div>
-                <a href="{{ url('/dashboard') }}" class="border-2 border-black bg-white hover:bg-gray-200 font-bold px-6 py-1.5 text-xs sm:text-sm transition">
-                    Login
-                </a>
+            <!-- Navigasi Kanan: Deteksi Status Login & Logout -->
+            <div class="flex items-center gap-2">
+                @auth
+                    <!-- KONDISI SUDAH LOGIN: TAMPILKAN USERNAME SEBAGAI TAUTAN DASHBOARD -->
+                    <a href="{{ url('/dashboard') }}" 
+                       title="Buka Dashboard Admin"
+                       class="border-2 border-black bg-white hover:bg-gray-200 font-bold px-4 py-1 text-xs sm:text-sm transition inline-flex items-center gap-1.5 shadow-2xs">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
+                        <span class="max-w-[120px] sm:max-w-none truncate">{{ Auth::user()->username }}</span>
+                        <svg class="w-3.5 h-3.5 text-gray-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+
+                    <!-- TOMBOL LOGOUT SEJAJAR DI SAMPINGNYA -->
+                    <form method="POST" action="{{ route('logout') }}" class="inline m-0">
+                        @csrf
+                        <button type="submit" 
+                                title="Keluar dari Akun" 
+                                class="border-2 border-black bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold px-3 py-1 text-xs sm:text-sm transition inline-flex items-center gap-1 cursor-pointer shadow-2xs">
+                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            </svg>
+                            <span>Keluar</span>
+                        </button>
+                    </form>
+                @else
+                    <!-- KONDISI BELUM LOGIN: TOMBOL LOGIN BIASA -->
+                    <a href="{{ route('login') }}" class="border-2 border-black bg-white hover:bg-gray-200 font-bold px-6 py-1 text-xs sm:text-sm transition">
+                        Login
+                    </a>
+                @endauth
             </div>
 
         </div>
@@ -105,7 +132,7 @@
         </section>
 
 
-<!-- ==========================================
+        <!-- ==========================================
              2. SEKSI 2: KALENDER PUBLIK (Sesuai Desain Internal)
              ========================================== -->
         <section id="kalender" class="min-h-[calc(100vh-65px)] w-full max-w-7xl mx-auto p-4 md:p-8 flex flex-col justify-center space-y-6">
@@ -199,7 +226,6 @@
                                 <!-- Tanggal 3 -->
                                 <td class="border-r-2 border-black p-2 align-top relative">
                                     <span>3</span>
-                                    <!-- Rentang Horizontal Tes CASN -->
                                     <div class="lp-calendar-event absolute top-8 left-3 w-[190%] h-6 bg-gray-300 border-2 border-black rounded-full flex items-center justify-center z-20 shadow-xs pointer-events-none" data-category="tes-casn">
                                         <span class="text-xs font-bold text-gray-900 tracking-wide">Tes CASN</span>
                                     </div>
@@ -208,7 +234,6 @@
                                 <!-- Tanggal 4 -->
                                 <td class="border-r-2 border-black p-2 align-top relative">
                                     <span>4</span>
-                                    <!-- Rentang Horizontal Tes CAT -->
                                     <div class="lp-calendar-event absolute top-16 left-3 w-[190%] h-6 bg-gray-300 border-2 border-black rounded-full flex items-center justify-center z-10 shadow-xs pointer-events-none" data-category="sekolah-kedinasan">
                                         <span class="text-xs font-bold text-gray-900 tracking-wide">Tes CAT</span>
                                     </div>
@@ -217,7 +242,6 @@
                                 <!-- Tanggal 5 -->
                                 <td class="border-r-2 border-black p-2 align-top relative">
                                     <span>5</span>
-                                    <!-- Badge Tunggal Tes CASN -->
                                     <div class="lp-calendar-event mt-1 mx-auto w-[85%] h-6 bg-gray-600 border-2 border-black text-white text-xs font-bold rounded-full flex items-center justify-center shadow-xs" data-category="tes-casn">
                                         Tes CASN
                                     </div>
@@ -235,7 +259,6 @@
                                 <!-- Tanggal 10 -->
                                 <td class="border-r-2 border-black p-2 align-top relative">
                                     <span>10</span>
-                                    <!-- Badge Tunggal Tes CASN -->
                                     <div class="lp-calendar-event mt-4 mx-auto w-[85%] h-6 bg-gray-600 border-2 border-black text-white text-xs font-bold rounded-full flex items-center justify-center shadow-xs" data-category="tes-casn">
                                         Tes CASN
                                     </div>
@@ -379,7 +402,7 @@
         &copy; 2026 Kantor Regional Badan Kepegawaian Negara. Hak Cipta Dilindungi.
     </footer>
 
-    <!-- SCRIPT AUTO-ROTATING CAROUSEL -->
+    <!-- SCRIPT AUTO-ROTATING CAROUSEL & KALENDER -->
     <script>
         const slides = [
             "{{ asset('images/samplegambar1.jpg') }}",
