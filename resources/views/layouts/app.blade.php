@@ -57,7 +57,6 @@
         <!-- LOGO BKN & IDENTITAS INSTANSI DI SIDEBAR -->
         <div class="h-20 flex items-center px-5 border-b border-slate-800 bg-slate-950/50">
             <div class="flex items-center space-x-3">
-                <!-- Gambar Logo BKN (Otomatis membaca file local atau fallback) -->
                 <div class="p-1 bg-white rounded-xl shadow-sm shrink-0 flex items-center justify-center">
                     <img src="{{ asset('images/Logo_BKN.png') }}" 
                          onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/9/9f/Logo_BKN.png';" 
@@ -78,7 +77,6 @@
             <div>
                 <p class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">Utama</p>
                 <nav class="space-y-1">
-                    <!-- Dashboard -->
                     <a href="{{ url('/dashboard') }}" 
                        class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('dashboard') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
                         <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->is('dashboard') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -87,7 +85,6 @@
                         Dashboard
                     </a>
 
-                    <!-- Kalender -->
                     <a href="{{ url('/kalender') }}" 
                        class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('kalender') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
                         <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->is('kalender') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -98,21 +95,18 @@
                 </nav>
             </div>
 
-<!-- Group 2: Pelaksanaan & Karyawan -->
+            <!-- Group 2: Pelaksanaan & Karyawan -->
             <div>
                 <p class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">Pelaksanaan</p>
                 <nav class="space-y-1">
-                    <!-- Kegiatan Pelaksanaan -->
-                <!-- Gunakan request()->is('kegiatan') tepat tanpa bintang '*' -->
-                <a href="{{ url('/kegiatan') }}" 
-                class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('kegiatan') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                    <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->is('kegiatan') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
-                    </svg>
-                    Kegiatan
-                </a>
+                    <a href="{{ url('/kegiatan') }}" 
+                       class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('kegiatan') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                        <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->is('kegiatan') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                        </svg>
+                        Kegiatan
+                    </a>
 
-                    <!-- Riwayat Kerja -->
                     <a href="{{ url('/riwayat-kerja') }}" 
                        class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('riwayat-kerja') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
                         <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->is('riwayat-kerja') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -157,7 +151,7 @@
                 </details>
             </div>
 
-            <!-- Group 4: Dropdown Manajemen Data Master (Terpisah Mandiri) -->
+            <!-- Group 4: Dropdown Manajemen Data Master -->
             <div class="pt-2">
                 <details class="group rounded-xl border border-slate-700/80 bg-slate-900/60 overflow-hidden transition"
                          {{ request()->is('master-user*', 'master-kegiatan*', 'master-lokasi*') ? 'open' : '' }}>
@@ -189,14 +183,25 @@
 
         </div>
 
-        <!-- Footer Tombol Kembali ke Landing Page -->
-        <div class="p-4 border-t border-slate-800 bg-slate-950/20">
+        <!-- Footer: Navigasi Cepat / Tombol Logout di Bawah Sidebar -->
+        <div class="p-4 border-t border-slate-800 bg-slate-950/20 space-y-2">
             <a href="{{ url('/') }}" class="flex items-center justify-center space-x-2 w-full px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                 </svg>
-                <span>Halaman Utama (Publik)</span>
+                <span>Halaman Publik</span>
             </a>
+
+            <!-- Tombol Logout di Sidebar -->
+            <form method="POST" action="{{ route('logout') }}" class="w-full">
+                @csrf
+                <button type="submit" class="flex items-center justify-center space-x-2 w-full px-3 py-2 rounded-xl border border-rose-900/50 bg-rose-950/20 hover:bg-rose-900/40 text-rose-300 hover:text-white text-xs font-semibold transition cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                    <span>Keluar Sistem</span>
+                </button>
+            </form>
         </div>
     </aside>
 
@@ -215,7 +220,7 @@
                     </svg>
                 </button>
 
-                <!-- Page Heading & Subtitle -->
+                <!-- Dynamic Page Heading -->
                 <div>
                     <h2 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">
                         @if(request()->is('dashboard')) Dashboard Ikhtisar
@@ -235,15 +240,35 @@
                 </div>
             </div>
 
-            <!-- Right Profile Info -->
-            <div class="flex items-center space-x-3 pl-3 border-l border-slate-200">
-                <div class="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-xs shadow-xs">
-                    AD
+            <!-- Right Profile Info & Symmetrical Logout Button -->
+            <div class="flex items-center gap-3 pl-4 border-l border-slate-250">
+                <!-- Inisial Avatar -->
+                <div class="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold text-xs shadow-xs uppercase shrink-0">
+                    {{ substr(Auth::user()->username ?? 'AD', 0, 2) }}
                 </div>
-                <div class="hidden sm:block text-left leading-tight">
-                    <p class="text-xs font-bold text-slate-900">Administrator</p>
-                    <p class="text-[11px] text-slate-500">Kanreg VIII Banjarmasin</p>
+                
+                <!-- Teks Akun -->
+                <div class="hidden sm:flex flex-col justify-center leading-tight">
+                    <span class="text-xs font-bold text-slate-900">
+                        {{ Auth::user()->username ?? 'Administrator' }}
+                    </span>
+                    <span class="text-[11px] text-slate-500 capitalize">
+                        {{ Auth::user()->role ?? 'Admin' }} Kanreg VIII
+                    </span>
                 </div>
+
+                <!-- Tombol Logout Simetris -->
+                <form method="POST" action="{{ route('logout') }}" class="flex items-center m-0">
+                    @csrf
+                    <button type="submit" 
+                            title="Keluar dari Sistem" 
+                            class="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl border border-slate-200 bg-white hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 text-slate-600 text-xs font-semibold shadow-2xs transition-colors duration-150 cursor-pointer">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                        <span class="hidden md:inline">Keluar</span>
+                    </button>
+                </form>
             </div>
         </header>
 
