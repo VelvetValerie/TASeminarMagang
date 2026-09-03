@@ -80,9 +80,8 @@ class AppController extends Controller
     }
 
     // 3. Kalender
-    public function kalender()
-    {
-        $kegiatan = Kegiatan::with('jenis')->get();
+    public function kalender() {
+        $kegiatan = \App\Models\Kegiatan::with(['lokasi', 'jenis', 'koordinator'])->get();
         return view('kalender', compact('kegiatan'));
     }
 
@@ -111,7 +110,21 @@ class AppController extends Controller
     // 7. Riwayat Kerja Karyawan
     public function riwayatKerja()
     {
-        $karyawan = Karyawan::with(['rekamKerja.kegiatan.lokasi'])->get();
+        // 1. Ambil semua kegiatan beserta relasi koordinator/lokasi/jenis yang sudah berjalan
+        $semuaKegiatan = \App\Models\Kegiatan::with(['lokasi', 'jenis', 'koordinator'])->get();
+
+        // 2. Ambil semua karyawan
+        $karyawan = \App\Models\Karyawan::all();
+
+        // 3. Pasangkan daftar kegiatan ke tiap karyawan secara dinamis
+        $karyawan->each(function ($kar) use ($semuaKegiatan) {
+            // Cocokkan kegiatan di mana koordinatornya adalah karyawan ini
+            $kar->daftar_kegiatan = $semuaKegiatan->filter(function ($keg) use ($kar) {
+                return $keg->id_karyawan_koor == $kar->id_karyawan 
+                    || ($keg->koordinator && $keg->koordinator->id_karyawan == $kar->id_karyawan);
+            })->values();
+        });
+
         return view('riwayat-kerja', compact('karyawan'));
     }
 
