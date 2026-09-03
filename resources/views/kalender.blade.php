@@ -237,7 +237,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT LOGIKA KALENDER: NON-OVERLAPPING LANE SLOTTING -->
+    <!-- SCRIPT LOGIKA KALENDER: BULAN DEFAULT BERJALAN & NON-OVERLAPPING LANE SLOTTING -->
     <script>
         const dbEvents = [
             @foreach($kegiatan as $k)
@@ -260,7 +260,7 @@
                     }
                 @endphp
                 {
-                    id: {{ $k->id_kegiatan ?? $loop->index }},
+                    id: {{ $k->id_keg ?? $k->id_kegiatan ?? $loop->index }},
                     nama: @json($k->nama_keg),
                     lokasi: @json($k->lokasi->nm_lokasi ?? '-'),
                     alamat: @json($k->lokasi->alamat ?? '-'),
@@ -282,18 +282,10 @@
             'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
         ];
 
-        let calYear = 2026;
-        let calMonth = 5;
-
-        @if($kegiatan->count() > 0)
-            @php
-                $firstKeg = $kegiatan->first();
-                $initY = \Carbon\Carbon::parse($firstKeg->tanggal_mulai)->format('Y');
-                $initM = (int)\Carbon\Carbon::parse($firstKeg->tanggal_mulai)->format('n') - 1;
-            @endphp
-            calYear = {{ $initY }};
-            calMonth = {{ $initM }};
-        @endif
+        // INSIALISASI: DEFAULT KE BULAN DAN TAHUN YANG SEDANG BERJALAN SAAT INI
+        const todayReal = new Date();
+        let calYear = todayReal.getFullYear();
+        let calMonth = todayReal.getMonth(); // 0-indexed (Jan = 0, Sep = 8, dst.)
 
         const monthYearLabel = document.getElementById('calMonthYearLabel');
         const calGridBody = document.getElementById('calGridBody');
@@ -388,7 +380,19 @@
                         td.classList.add('bg-white', 'relative', 'hover:bg-gray-50', 'cursor-pointer');
                         td.setAttribute('data-day', info.day);
                         td.setAttribute('data-date', info.dateStr);
-                        td.innerHTML = `<span class="font-bold text-gray-900">${info.day}</span>`;
+
+                        // Highlight penanda jika tanggal ini adalah hari ini (today)
+                        const isRealToday = (
+                            info.day === todayReal.getDate() && 
+                            calMonth === todayReal.getMonth() && 
+                            calYear === todayReal.getFullYear()
+                        );
+
+                        if (isRealToday) {
+                            td.innerHTML = `<span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-black text-white font-bold text-xs">${info.day}</span>`;
+                        } else {
+                            td.innerHTML = `<span class="font-bold text-gray-900">${info.day}</span>`;
+                        }
 
                         const matchingEventsToday = dbEvents.filter(ev => info.dateStr >= ev.startDate && info.dateStr <= ev.endDate);
                         td.addEventListener('click', function(e) {

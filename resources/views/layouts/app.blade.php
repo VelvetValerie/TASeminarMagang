@@ -256,19 +256,6 @@
                         {{ Auth::user()->role ?? 'Admin' }} Kanreg VIII
                     </span>
                 </div>
-
-                <!-- Tombol Logout Simetris -->
-                <form method="POST" action="{{ route('logout') }}" class="flex items-center m-0">
-                    @csrf
-                    <button type="submit" 
-                            title="Keluar dari Sistem" 
-                            class="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl border border-slate-200 bg-white hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 text-slate-600 text-xs font-semibold shadow-2xs transition-colors duration-150 cursor-pointer">
-                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                        </svg>
-                        <span class="hidden md:inline">Keluar</span>
-                    </button>
-                </form>
             </div>
         </header>
 

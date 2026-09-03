@@ -8,39 +8,84 @@ use App\Models\JenisKeg;
 use App\Models\Instansi;
 use App\Models\TitikLokasi;
 use App\Models\Karyawan;
+use Carbon\Carbon;
 
-class AppController extends Controller
-{
-    // 1. Dashboard
+    class AppController extends Controller
+    {
+        // 1. Dashboard
     public function dashboard()
     {
-        $kegiatan = Kegiatan::with(['jenis', 'lokasi', 'instansi', 'koordinator'])
-            ->orderBy('id_keg', 'desc')
+        $today = Carbon::today()->toDateString();
+
+        // 1. PELAKSANAAN BERJALAN:
+        // - Abaikan kegiatan yang statusnya 'Selesai' atau 'Dibatalkan'
+        // - Hanya ambil kegiatan aktif hari ini yang belum selesai, atau kegiatan mendatang
+        $kegiatan = \App\Models\Kegiatan::with(['jenis', 'lokasi', 'instansi', 'koordinator'])
+            ->whereNotIn('status', ['Selesai', 'Dibatalkan'])
+            ->whereRaw("IFNULL(tanggal_selesai, tanggal_mulai) >= ?", [$today])
+            ->orderByRaw("
+                CASE 
+                    -- Prioritas 1: Sedang Berjalan HARI INI
+                    WHEN ? BETWEEN tanggal_mulai AND IFNULL(tanggal_selesai, tanggal_mulai) THEN 0
+                    -- Prioritas 2: Jadwal Mendatang
+                    ELSE 1
+                END ASC
+            ", [$today])
+            ->orderBy('tanggal_mulai', 'asc')
+            ->take(7)
             ->get();
 
+        // 2. JADWAL TERDEKAT (3 Agenda Mendatang yang Belum Selesai):
+        $jadwalTerdekat = Kegiatan::with(['jenis', 'lokasi', 'koordinator'])
+            ->whereNotIn('status', ['Selesai', 'Dibatalkan'])
+            ->where('tanggal_mulai', '>', $today)
+            ->orderBy('tanggal_mulai', 'asc')
+            ->take(3)
+            ->get();
+
+        // Fallback jika tidak ada kegiatan di masa depan
+        if ($jadwalTerdekat->isEmpty()) {
+            $jadwalTerdekat = Kegiatan::with(['jenis', 'lokasi', 'koordinator'])
+                ->whereNotIn('status', ['Selesai', 'Dibatalkan'])
+                ->whereRaw("IFNULL(tanggal_selesai, tanggal_mulai) >= ?", [$today])
+                ->orderBy('tanggal_mulai', 'asc')
+                ->take(3)
+                ->get();
+        }
+
+        // 3. STATISTIK KARTU
         $stats = [
             'instansi' => Instansi::count(),
             'peserta'  => Kegiatan::sum('jmlh_peserta'),
-            'kegiatan' => Kegiatan::count()
+            'kegiatan' => Kegiatan::count(),
         ];
 
-        return view('dashboard', compact('kegiatan', 'stats'));
+        return view('dashboard', compact('kegiatan', 'jadwalTerdekat', 'stats'));
     }
 
-    // 2. Kegiatan (Daftar & Form Tambah)
+    /**
+     * Halaman Daftar Kegiatan
+     */
     public function kegiatan()
     {
+        // 1. Data utama kegiatan
         $kegiatan = Kegiatan::with(['jenis', 'lokasi', 'instansi', 'koordinator'])
-            ->orderBy('id_keg', 'desc')
+            ->orderBy('tanggal_mulai', 'desc')
             ->get();
 
-        // Data dropdown untuk modal Tambah Kegiatan
-        $jenisList     = JenisKeg::all();
-        $instansiList  = Instansi::all();
-        $lokasiList    = TitikLokasi::all();
-        $karyawanList  = Karyawan::all();
+        // 2. Data master pendukung untuk filter & modal form kegiatan
+        $jenisList = JenisKeg::all();
+        $lokasiList = TitikLokasi::all();
+        $instansiList = Instansi::all();
+        $karyawanList = Karyawan::all();
 
-        return view('kegiatan', compact('kegiatan', 'jenisList', 'instansiList', 'lokasiList', 'karyawanList'));
+        return view('kegiatan', compact(
+            'kegiatan', 
+            'jenisList', 
+            'lokasiList', 
+            'instansiList', 
+            'karyawanList'
+        ));
     }
 
     // Simpan Kegiatan Baru ke Database
@@ -81,7 +126,7 @@ class AppController extends Controller
 
     // 3. Kalender
     public function kalender() {
-        $kegiatan = \App\Models\Kegiatan::with(['lokasi', 'jenis', 'koordinator'])->get();
+        $kegiatan = Kegiatan::with(['lokasi', 'jenis', 'koordinator'])->get();
         return view('kalender', compact('kegiatan'));
     }
 
@@ -111,10 +156,10 @@ class AppController extends Controller
     public function riwayatKerja()
     {
         // 1. Ambil semua kegiatan beserta relasi koordinator/lokasi/jenis yang sudah berjalan
-        $semuaKegiatan = \App\Models\Kegiatan::with(['lokasi', 'jenis', 'koordinator'])->get();
+        $semuaKegiatan = Kegiatan::with(['lokasi', 'jenis', 'koordinator'])->get();
 
         // 2. Ambil semua karyawan
-        $karyawan = \App\Models\Karyawan::all();
+        $karyawan = Karyawan::all();
 
         // 3. Pasangkan daftar kegiatan ke tiap karyawan secara dinamis
         $karyawan->each(function ($kar) use ($semuaKegiatan) {
