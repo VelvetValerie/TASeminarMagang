@@ -174,9 +174,18 @@ use Carbon\Carbon;
     }
 
     // 8. Riwayat Kegiatan
-    public function riwayatKegiatan()
+    public function riwayatKegiatan(Request $request)
     {
-        $kegiatan = Kegiatan::with(['jenis', 'lokasi'])->get();
-        return view('riwayat-kegiatan', compact('kegiatan'));
+        // Tangkap pilihan sort dari request, default-nya 'terbaru'
+        $sort = $request->query('sort', 'terbaru');
+        $direction = ($sort === 'terlama') ? 'asc' : 'desc';
+
+        // Query data dengan pengurutan dinamis dan pagination 5 baris
+        $kegiatan = Kegiatan::with(['jenis', 'lokasi', 'koordinator'])
+            ->orderBy('tanggal_mulai', $direction)
+            ->paginate(5)
+            ->withQueryString(); // Mempertahankan parameter URL saat ganti halaman pagination
+
+        return view('riwayat-kegiatan', compact('kegiatan', 'sort'));
     }
 }

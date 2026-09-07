@@ -237,10 +237,11 @@
                         ];
                     @endphp
 
-                    <!-- Card Berjalan -->
+                    <!-- Card Berjalan: Dilengkapi data-date untuk pengurutan presisi -->
                     <div class="kegiatan-dash-item border-2 border-black p-3 md:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition {{ $isToday ? 'bg-amber-50 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]' : 'bg-white hover:bg-gray-50' }}" 
                          data-id="{{ $item->id_keg }}"
                          data-today="{{ $isToday ? '1' : '0' }}"
+                         data-date="{{ $tglMulai }}"
                          data-name="{{ $item->nama_keg }}">
                         <div>
                             <div class="flex items-center gap-2 flex-wrap">
@@ -346,12 +347,9 @@
 
     </div>
 
-    <!-- ========================================================
-         POPUP MODAL: RINCIAN DETAIL KEGIATAN LENGKAP
-         ======================================================== -->
+    <!-- POPUP MODAL: RINCIAN DETAIL KEGIATAN LENGKAP -->
     <div id="eventDetailModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
         <div class="relative w-full max-w-xl bg-white border-2 border-black p-5 shadow-2xl">
-            <!-- Tombol Close Silang Merah -->
             <button type="button" onclick="closeDetailModal()" class="absolute top-2 right-2 p-1 text-red-600 hover:text-red-800 transition cursor-pointer" title="Tutup">
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
@@ -376,9 +374,9 @@
         </div>
     </div>
 
-    <!-- SCRIPT DASHBOARD: PENCARIAN, SORT, & MODAL DETAIL -->
+    <!-- SCRIPT DASHBOARD: PENCARIAN, SORT KRONOLOGIS TERDEKAT, & MODAL DETAIL -->
     <script>
-        // Pencarian Nama Kegiatan
+        // 1. Pencarian Nama Kegiatan
         document.getElementById('searchInput').addEventListener('input', function() {
             const val = this.value.toLowerCase().trim();
             document.querySelectorAll('.kegiatan-dash-item').forEach(item => {
@@ -386,29 +384,51 @@
             });
         });
 
-        // Dropdown Sort
+        // 2. Dropdown Sort
         const sortBtn = document.getElementById('sortDropdownBtn');
         const sortMenu = document.getElementById('sortMenu');
-        sortBtn.addEventListener('click', (e) => { e.stopPropagation(); sortMenu.classList.toggle('hidden'); });
-        document.addEventListener('click', () => { if (!sortMenu.classList.contains('hidden')) sortMenu.classList.add('hidden'); });
+        sortBtn.addEventListener('click', (e) => { 
+            e.stopPropagation(); 
+            sortMenu.classList.toggle('hidden'); 
+        });
+        document.addEventListener('click', () => { 
+            if (!sortMenu.classList.contains('hidden')) sortMenu.classList.add('hidden'); 
+        });
 
+        // 3. Pengurutan Presisi (Terdekat Kronologis vs A-Z)
         function sortDashboardItems(type) {
             const container = document.getElementById('dashboardKegiatanList');
             const items = Array.from(container.querySelectorAll('.kegiatan-dash-item'));
+
             items.sort((a, b) => {
                 if (type === 'az') {
-                    return a.getAttribute('data-name').localeCompare(b.getAttribute('data-name'));
+                    const nameA = a.getAttribute('data-name') || '';
+                    const nameB = b.getAttribute('data-name') || '';
+                    return nameA.localeCompare(nameB);
                 }
-                // Default: Hari ini selalu di atas
+
+                // Pengurutan "Terdekat":
+                // 1. Prioritas utama: Hari Ini (data-today = 1) selalu di atas
                 const todayA = parseInt(a.getAttribute('data-today')) || 0;
                 const todayB = parseInt(b.getAttribute('data-today')) || 0;
-                return todayB - todayA;
+
+                if (todayA !== todayB) {
+                    return todayB - todayA; // 1 duluan dibanding 0
+                }
+
+                // 2. Jika status sama (sama-sama hari ini atau sama-sama mendatang),
+                // urutkan berdasarkan tanggal mulai terdekat (ASC)
+                const dateA = a.getAttribute('data-date') || '';
+                const dateB = b.getAttribute('data-date') || '';
+                return dateA.localeCompare(dateB);
             });
+
+            // Pasang kembali elemen sesuai urutan yang baru
             items.forEach(el => container.appendChild(el));
             sortMenu.classList.add('hidden');
         }
 
-        // Logika Popup Modal Detail
+        // 4. Logika Popup Modal Detail
         const detailModal = document.getElementById('eventDetailModal');
 
         function openDetailModal(encodedJson) {
