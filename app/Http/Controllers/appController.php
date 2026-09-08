@@ -10,24 +10,20 @@ use App\Models\TitikLokasi;
 use App\Models\Karyawan;
 use Carbon\Carbon;
 
-    class AppController extends Controller
-    {
-        // 1. Dashboard
+class AppController extends Controller
+{
+    // 1. Dashboard
     public function dashboard()
     {
         $today = Carbon::today()->toDateString();
 
-        // 1. PELAKSANAAN BERJALAN:
-        // - Abaikan kegiatan yang statusnya 'Selesai' atau 'Dibatalkan'
-        // - Hanya ambil kegiatan aktif hari ini yang belum selesai, atau kegiatan mendatang
-        $kegiatan = \App\Models\Kegiatan::with(['jenis', 'lokasi', 'instansi', 'koordinator'])
+        // 1. PELAKSANAAN BERJALAN
+        $kegiatan = Kegiatan::with(['jenis', 'lokasi', 'instansi', 'koordinator'])
             ->whereNotIn('status', ['Selesai', 'Dibatalkan'])
             ->whereRaw("IFNULL(tanggal_selesai, tanggal_mulai) >= ?", [$today])
             ->orderByRaw("
                 CASE 
-                    -- Prioritas 1: Sedang Berjalan HARI INI
                     WHEN ? BETWEEN tanggal_mulai AND IFNULL(tanggal_selesai, tanggal_mulai) THEN 0
-                    -- Prioritas 2: Jadwal Mendatang
                     ELSE 1
                 END ASC
             ", [$today])
@@ -35,7 +31,7 @@ use Carbon\Carbon;
             ->take(7)
             ->get();
 
-        // 2. JADWAL TERDEKAT (3 Agenda Mendatang yang Belum Selesai):
+        // 2. JADWAL TERDEKAT
         $jadwalTerdekat = Kegiatan::with(['jenis', 'lokasi', 'koordinator'])
             ->whereNotIn('status', ['Selesai', 'Dibatalkan'])
             ->where('tanggal_mulai', '>', $today)
@@ -43,7 +39,6 @@ use Carbon\Carbon;
             ->take(3)
             ->get();
 
-        // Fallback jika tidak ada kegiatan di masa depan
         if ($jadwalTerdekat->isEmpty()) {
             $jadwalTerdekat = Kegiatan::with(['jenis', 'lokasi', 'koordinator'])
                 ->whereNotIn('status', ['Selesai', 'Dibatalkan'])
@@ -63,19 +58,22 @@ use Carbon\Carbon;
         return view('dashboard', compact('kegiatan', 'jadwalTerdekat', 'stats'));
     }
 
-    /**
-     * Halaman Daftar Kegiatan
-     */
-    public function kegiatan()
+    // 2. Halaman Daftar / Perencanaan Kegiatan
+    public function kegiatan(Request $request)
     {
-        // 1. Data utama kegiatan
-        $kegiatan = Kegiatan::with(['jenis', 'lokasi', 'instansi', 'koordinator'])
-            ->orderBy('tanggal_mulai', 'desc')
-            ->get();
+        // Tangkap parameter filter urutan (default: 'terbaru')
+        $sort = $request->query('sort', 'terbaru');
+        $direction = ($sort === 'terlama') ? 'asc' : 'desc';
 
-        // 2. Data master pendukung untuk filter & modal form kegiatan
-        $jenisList = JenisKeg::all();
-        $lokasiList = TitikLokasi::all();
+        // 1. Data utama kegiatan dengan pagination 5 baris & filter urutan
+        $kegiatan = Kegiatan::with(['jenis', 'lokasi', 'instansi', 'koordinator'])
+            ->orderBy('tanggal_mulai', $direction)
+            ->paginate(5)
+            ->withQueryString();
+
+        // 2. Data master pendukung untuk dropdown modal form kegiatan
+        $jenisList    = JenisKeg::all();
+        $lokasiList   = TitikLokasi::all();
         $instansiList = Instansi::all();
         $karyawanList = Karyawan::all();
 
@@ -84,44 +82,71 @@ use Carbon\Carbon;
             'jenisList', 
             'lokasiList', 
             'instansiList', 
-            'karyawanList'
+            'karyawanList',
+            'sort'
         ));
     }
 
-    // Simpan Kegiatan Baru ke Database
+    // Simpan Kegiatan Baru
     public function storeKegiatan(Request $request)
     {
-        $request->validate([
-            'nama_keg'          => 'required|string|max:150',
-            'id_jeniskeg'       => 'required|integer',
-            'id_karyawan_koor'  => 'required|integer',
-            'tanggal_mulai'     => 'required|date',
-            'id_tklokasi'       => 'required|integer',
-            'id_instansi'       => 'required|integer',
-            'jmlh_peserta'      => 'required|numeric',
+        $validated = $request->validate([
+            'nama_keg'         => 'required|string|max:150',
+            'id_jeniskeg'      => 'required|integer',
+            'id_tklokasi'      => 'required|integer',
+            'id_instansi'      => 'required|integer',
+            'id_karyawan_koor' => 'required|integer',
+            'jmlh_peserta'     => 'required|numeric|min:1',
+            'tanggal_mulai'    => 'required|date',
+            'tanggal_selesai'  => 'nullable|date|after_or_equal:tanggal_mulai',
+            'status'           => 'required|string',
+            'lampiran'         => 'nullable|string|max:255',
         ]);
 
-        Kegiatan::create([
-            'nama_keg'         => $request->nama_keg,
-            'id_jeniskeg'      => $request->id_jeniskeg,
-            'id_karyawan_koor' => $request->id_karyawan_koor,
-            'tanggal_mulai'    => $request->tanggal_mulai,
-            'tanggal_selesai'  => $request->tanggal_selesai ?? $request->tanggal_mulai,
-            'id_tklokasi'      => $request->id_tklokasi,
-            'id_instansi'      => $request->id_instansi,
-            'jmlh_peserta'     => $request->jmlh_peserta,
-            'status'           => 'Belum Konfirmasi',
-            'lampiran'         => $request->lampiran ?? 'https://drive.google.com/...'
+        // Fallback nilai default tanggal selesai jika kosong
+        if (empty($validated['tanggal_selesai'])) {
+            $validated['tanggal_selesai'] = $validated['tanggal_mulai'];
+        }
+
+        Kegiatan::create($validated);
+
+        return redirect()->back()->with('success', 'Kegiatan berhasil ditambahkan!');
+    }
+
+    // Update / Edit Data Kegiatan
+    public function updateKegiatan(Request $request, $id)
+    {
+        $kegiatan = Kegiatan::findOrFail($id);
+
+        $validated = $request->validate([
+            'nama_keg'         => 'required|string|max:150',
+            'id_jeniskeg'      => 'required|integer',
+            'id_tklokasi'      => 'required|integer',
+            'id_instansi'      => 'required|integer',
+            'id_karyawan_koor' => 'required|integer',
+            'jmlh_peserta'     => 'required|numeric|min:1',
+            'tanggal_mulai'    => 'required|date',
+            'tanggal_selesai'  => 'nullable|date|after_or_equal:tanggal_mulai',
+            'status'           => 'required|string',
+            'lampiran'         => 'nullable|string|max:255',
         ]);
 
-        return redirect()->route('kegiatan.index')->with('success', 'Kegiatan berhasil ditambahkan');
+        if (empty($validated['tanggal_selesai'])) {
+            $validated['tanggal_selesai'] = $validated['tanggal_mulai'];
+        }
+
+        $kegiatan->update($validated);
+
+        return redirect()->back()->with('success', 'Kegiatan berhasil diperbarui!');
     }
 
     // Hapus Kegiatan dari Database
     public function destroyKegiatan($id)
     {
-        Kegiatan::where('id_keg', $id)->delete();
-        return redirect()->route('kegiatan.index')->with('success', 'Kegiatan berhasil dihapus');
+        $kegiatan = Kegiatan::findOrFail($id);
+        $kegiatan->delete();
+
+        return redirect()->back()->with('success', 'Kegiatan berhasil dihapus!');
     }
 
     // 3. Kalender
@@ -155,15 +180,10 @@ use Carbon\Carbon;
     // 7. Riwayat Kerja Karyawan
     public function riwayatKerja()
     {
-        // 1. Ambil semua kegiatan beserta relasi koordinator/lokasi/jenis yang sudah berjalan
         $semuaKegiatan = Kegiatan::with(['lokasi', 'jenis', 'koordinator'])->get();
-
-        // 2. Ambil semua karyawan
         $karyawan = Karyawan::all();
 
-        // 3. Pasangkan daftar kegiatan ke tiap karyawan secara dinamis
         $karyawan->each(function ($kar) use ($semuaKegiatan) {
-            // Cocokkan kegiatan di mana koordinatornya adalah karyawan ini
             $kar->daftar_kegiatan = $semuaKegiatan->filter(function ($keg) use ($kar) {
                 return $keg->id_karyawan_koor == $kar->id_karyawan 
                     || ($keg->koordinator && $keg->koordinator->id_karyawan == $kar->id_karyawan);
@@ -176,15 +196,13 @@ use Carbon\Carbon;
     // 8. Riwayat Kegiatan
     public function riwayatKegiatan(Request $request)
     {
-        // Tangkap pilihan sort dari request, default-nya 'terbaru'
         $sort = $request->query('sort', 'terbaru');
         $direction = ($sort === 'terlama') ? 'asc' : 'desc';
 
-        // Query data dengan pengurutan dinamis dan pagination 5 baris
         $kegiatan = Kegiatan::with(['jenis', 'lokasi', 'koordinator'])
             ->orderBy('tanggal_mulai', $direction)
             ->paginate(5)
-            ->withQueryString(); // Mempertahankan parameter URL saat ganti halaman pagination
+            ->withQueryString();
 
         return view('riwayat-kegiatan', compact('kegiatan', 'sort'));
     }

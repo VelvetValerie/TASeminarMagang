@@ -22,8 +22,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [AppController::class, 'dashboard'])->name('dashboard');
     Route::get('/kegiatan', [AppController::class, 'kegiatan'])->name('kegiatan.index');
-    Route::post('/kegiatan', [AppController::class, 'storeKegiatan'])->name('kegiatan.store');
-    Route::delete('/kegiatan/{id}', [AppController::class, 'destroyKegiatan'])->name('kegiatan.destroy');
+    Route::post('/kegiatan', [AppController::class, 'storeKegiatan']);
+    Route::put('/kegiatan/{id}', [AppController::class, 'updateKegiatan']);
+    Route::delete('/kegiatan/{id}', [AppController::class, 'destroyKegiatan']);
     Route::get('/kalender', [AppController::class, 'kalender'])->name('kalender');
     Route::get('/titik-lokasi', [AppController::class, 'titikLokasi'])->name('titik-lokasi');
     Route::get('/instansi', [AppController::class, 'instansi'])->name('instansi');
