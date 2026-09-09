@@ -108,16 +108,37 @@
             </div>
         </div>
 
-        <!-- KEGIATAN YANG SEDANG BERLANGSUNG -->
+    <!-- KEGIATAN YANG SEDANG BERLANGSUNG (RENTANG 1 MINGGU DARI HARI INI) -->
         <div class="border-2 border-black bg-white shadow-sm flex flex-col min-h-[110px]">
             <h3 class="text-xs sm:text-sm font-bold text-gray-900 px-3 py-1.5 border-b-2 border-black bg-gray-50">
-                Kegiatan Terdaftar di Database
+                Kegiatan Minggu Ini ({{ \Carbon\Carbon::today()->format('d/m/Y') }} - {{ \Carbon\Carbon::today()->addDays(7)->format('d/m/Y') }})
             </h3>
             <div class="p-3 text-xs sm:text-sm space-y-1 font-medium text-gray-800 max-h-32 overflow-y-auto">
-                @forelse($kegiatan->take(4) as $idx => $k)
-                    <p class="truncate">{{ $idx + 1 }}. {{ $k->nama_keg }} ({{ $k->jenis->nama_jeniskeg ?? '-' }}) - {{ \Carbon\Carbon::parse($k->tanggal_mulai)->format('d/m/Y') }}</p>
+                @php
+                    // Ambil tanggal hari ini sebagai acuan
+                    $today = \Carbon\Carbon::today();
+                    $nextWeek = $today->copy()->addDays(7);
+
+                    // Filter kegiatan aktif hari ini atau yang dimulai dalam 7 hari ke depan
+                    $kegiatanMingguan = $kegiatan->filter(function($item) use ($today, $nextWeek) {
+                        $tglMulai = \Carbon\Carbon::parse($item->tanggal_mulai);
+                        $tglSelesai = $item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai) : $tglMulai;
+
+                        // Tampilkan jika kegiatan sedang berlangsung hari ini ATAU akan dimulai dalam 7 hari ke depan
+                        return ($today->betweenIncluded($tglMulai, $tglSelesai)) || ($tglMulai->betweenIncluded($today, $nextWeek));
+                    })->sortBy('tanggal_mulai')->take(4);
+                @endphp
+
+                @forelse($kegiatanMingguan as $k)
+                    <p class="truncate">
+                        {{ $loop->iteration }}. {{ $k->nama_keg }} ({{ $k->jenis->nama_jeniskeg ?? '-' }}) - 
+                        {{ \Carbon\Carbon::parse($k->tanggal_mulai)->format('d/m/Y') }}
+                        @if($k->tanggal_selesai && $k->tanggal_selesai !== $k->tanggal_mulai)
+                            s/d {{ \Carbon\Carbon::parse($k->tanggal_selesai)->format('d/m/Y') }}
+                        @endif
+                    </p>
                 @empty
-                    <p class="text-gray-500">Tidak ada data kegiatan di database.</p>
+                    <p class="text-gray-500 italic">Tidak ada kegiatan dalam rentang 1 minggu ke depan.</p>
                 @endforelse
             </div>
         </div>
