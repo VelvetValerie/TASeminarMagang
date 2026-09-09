@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+<title>Kantor Regional BKN - Kalender Kegiatan</title>
+
 @section('sidebar-header')
     <div class="border-2 border-black bg-white p-2.5 text-center font-bold text-gray-900">
         Kantor Regional BKN
@@ -33,7 +35,7 @@
             Jenis Kegiatan
         </a>
         <a href="{{ url('/titik-lokasi') }}" 
-           class="block py-2 px-4 text-center text-sm font-semibold transition {{ request()->is('titik-lokasi') ? 'bg-gray-400 text-gray-900' : 'text-gray-800 hover:bg-gray-100' }}">
+           class="block border-2 border-black py-2 px-4 text-center text-sm font-semibold transition {{ request()->is('titik-lokasi') ? 'bg-gray-400 text-gray-900' : 'bg-white text-gray-800 hover:bg-gray-100' }}">
             Titik Lokasi
         </a>
         <a href="{{ url('/instansi') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center text-sm hover:bg-gray-100 transition">
@@ -108,23 +110,20 @@
             </div>
         </div>
 
-    <!-- KEGIATAN YANG SEDANG BERLANGSUNG (RENTANG 1 MINGGU DARI HARI INI) -->
+        <!-- KEGIATAN YANG SEDANG BERLANGSUNG (RENTANG 1 MINGGU DARI HARI INI) -->
         <div class="border-2 border-black bg-white shadow-sm flex flex-col min-h-[110px]">
             <h3 class="text-xs sm:text-sm font-bold text-gray-900 px-3 py-1.5 border-b-2 border-black bg-gray-50">
                 Kegiatan Minggu Ini ({{ \Carbon\Carbon::today()->format('d/m/Y') }} - {{ \Carbon\Carbon::today()->addDays(7)->format('d/m/Y') }})
             </h3>
             <div class="p-3 text-xs sm:text-sm space-y-1 font-medium text-gray-800 max-h-32 overflow-y-auto">
                 @php
-                    // Ambil tanggal hari ini sebagai acuan
                     $today = \Carbon\Carbon::today();
                     $nextWeek = $today->copy()->addDays(7);
 
-                    // Filter kegiatan aktif hari ini atau yang dimulai dalam 7 hari ke depan
                     $kegiatanMingguan = $kegiatan->filter(function($item) use ($today, $nextWeek) {
                         $tglMulai = \Carbon\Carbon::parse($item->tanggal_mulai);
                         $tglSelesai = $item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai) : $tglMulai;
 
-                        // Tampilkan jika kegiatan sedang berlangsung hari ini ATAU akan dimulai dalam 7 hari ke depan
                         return ($today->betweenIncluded($tglMulai, $tglSelesai)) || ($tglMulai->betweenIncluded($today, $nextWeek));
                     })->sortBy('tanggal_mulai')->take(4);
                 @endphp
@@ -260,43 +259,47 @@
 
     <!-- SCRIPT LOGIKA KALENDER: BULAN DEFAULT BERJALAN & NON-OVERLAPPING LANE SLOTTING -->
     <script>
-        const dbEvents = [
-            @foreach($kegiatan as $k)
-                @php
-                    $namaJenis = strtolower($k->jenis->nama_jeniskeg ?? '');
-                    $kategoriSlug = 'tes-non-asn';
-                    if (str_contains($namaJenis, 'karir') || str_contains($namaJenis, 'pengembangan')) {
-                        $kategoriSlug = 'pengembangan-karir';
-                    } elseif (str_contains($namaJenis, 'cat') || str_contains($namaJenis, 'dinas') || str_contains($namaJenis, 'sekolah')) {
-                        $kategoriSlug = 'tes-cat';
-                    } elseif (str_contains($namaJenis, 'casn') || str_contains($namaJenis, 'cpns')) {
-                        $kategoriSlug = 'tes-casn';
-                    }
+        @php
+            $formattedEvents = $kegiatan->map(function($k, $index) {
+                $namaJenis = strtolower($k->jenis->nama_jeniskeg ?? '');
+                $kategoriSlug = 'tes-non-asn';
+                
+                if (str_contains($namaJenis, 'karir') || str_contains($namaJenis, 'pengembangan')) {
+                    $kategoriSlug = 'pengembangan-karir';
+                } elseif (str_contains($namaJenis, 'cat') || str_contains($namaJenis, 'dinas') || str_contains($namaJenis, 'sekolah')) {
+                    $kategoriSlug = 'tes-cat';
+                } elseif (str_contains($namaJenis, 'casn') || str_contains($namaJenis, 'cpns')) {
+                    $kategoriSlug = 'tes-casn';
+                }
 
-                    $tglMulai = \Carbon\Carbon::parse($k->tanggal_mulai)->format('Y-m-d');
-                    $tglSelesai = $k->tanggal_selesai ? \Carbon\Carbon::parse($k->tanggal_selesai)->format('Y-m-d') : $tglMulai;
-                    $tglLabelLengkap = \Carbon\Carbon::parse($k->tanggal_mulai)->translatedFormat('l, d F Y');
-                    if ($k->tanggal_selesai && $tglMulai !== $tglSelesai) {
-                        $tglLabelLengkap .= ' ~ ' . \Carbon\Carbon::parse($k->tanggal_selesai)->translatedFormat('l, d F Y');
-                    }
-                @endphp
-                {
-                    id: {{ $k->id_keg ?? $k->id_kegiatan ?? $loop->index }},
-                    nama: @json($k->nama_keg),
-                    lokasi: @json($k->lokasi->nm_lokasi ?? '-'),
-                    alamat: @json($k->lokasi->alamat ?? '-'),
-                    koordinator: @json($k->koordinator->nama_karyawan ?? '-'),
-                    jenis: @json($k->jenis->nama_jeniskeg ?? '-'),
-                    peserta: @json(number_format($k->jmlh_peserta ?? 0)),
-                    status: @json($k->status ?? '-'),
-                    lampiran: @json($k->lampiran ?? '-'),
-                    kategori: @json($kategoriSlug),
-                    startDate: @json($tglMulai),
-                    endDate: @json($tglSelesai),
-                    tanggalLengkap: @json($tglLabelLengkap)
-                },
-            @endforeach
-        ];
+                $tglMulai = \Carbon\Carbon::parse($k->tanggal_mulai)->format('Y-m-d');
+                $tglSelesai = $k->tanggal_selesai ? \Carbon\Carbon::parse($k->tanggal_selesai)->format('Y-m-d') : $tglMulai;
+                
+                $tglLabelLengkap = \Carbon\Carbon::parse($k->tanggal_mulai)->translatedFormat('l, d F Y');
+                if ($k->tanggal_selesai && $tglMulai !== $tglSelesai) {
+                    $tglLabelLengkap .= ' ~ ' . \Carbon\Carbon::parse($k->tanggal_selesai)->translatedFormat('l, d F Y');
+                }
+
+                return [
+                    'id'             => $k->id_keg ?? $k->id_kegiatan ?? $index,
+                    'nama'           => $k->nama_keg ?? '-',
+                    'lokasi'         => $k->lokasi->nm_lokasi ?? '-',
+                    'alamat'         => $k->lokasi->alamat ?? '-',
+                    'koordinator'    => $k->koordinator->nama_karyawan ?? '-',
+                    'jenis'          => $k->jenis->nama_jeniskeg ?? '-',
+                    'peserta'        => number_format($k->jmlh_peserta ?? 0),
+                    'status'         => $k->status ?? '-',
+                    'lampiran'       => $k->lampiran ?? '-',
+                    'kategori'       => $kategoriSlug,
+                    'startDate'      => $tglMulai,
+                    'endDate'        => $tglSelesai,
+                    'tanggalLengkap' => $tglLabelLengkap,
+                ];
+            });
+        @endphp
+
+        // Parsing koleksi data Laravel ke JS Array Object secara bersih
+        const dbEvents = @json($formattedEvents);
 
         const monthNames = [
             'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
@@ -306,7 +309,7 @@
         // INSIALISASI: DEFAULT KE BULAN DAN TAHUN YANG SEDANG BERJALAN SAAT INI
         const todayReal = new Date();
         let calYear = todayReal.getFullYear();
-        let calMonth = todayReal.getMonth(); // 0-indexed (Jan = 0, Sep = 8, dst.)
+        let calMonth = todayReal.getMonth(); // 0-indexed
 
         const monthYearLabel = document.getElementById('calMonthYearLabel');
         const calGridBody = document.getElementById('calGridBody');
@@ -402,7 +405,6 @@
                         td.setAttribute('data-day', info.day);
                         td.setAttribute('data-date', info.dateStr);
 
-                        // Highlight penanda jika tanggal ini adalah hari ini (today)
                         const isRealToday = (
                             info.day === todayReal.getDate() && 
                             calMonth === todayReal.getMonth() && 
