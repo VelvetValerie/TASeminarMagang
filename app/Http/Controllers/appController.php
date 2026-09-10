@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Kegiatan;
 use App\Models\JenisKeg;
 use App\Models\Instansi;
@@ -205,5 +206,46 @@ class AppController extends Controller
             ->withQueryString();
 
         return view('riwayat-kegiatan', compact('kegiatan', 'sort'));
+    }
+
+    /**
+     * 9. Menampilkan Form Login
+     */
+    public function showLoginForm()
+    {
+        return view('auth.login');
+    }
+
+    /**
+     * Memproses Autentikasi Login
+     */
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'username' => ['required', 'string'],
+            'password' => ['required', 'string'],
+        ]);
+
+        $remember = $request->has('remember');
+
+        if (Auth::attempt($credentials, $remember)) {
+            $request->session()->regenerate();
+            return redirect()->intended('/dashboard');
+        }
+
+        return back()->withErrors([
+            'username' => 'Username atau password yang Anda masukkan salah.',
+        ])->onlyInput('username');
+    }
+
+    // 10. Logout
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login');
     }
 }

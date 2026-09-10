@@ -46,6 +46,10 @@
 </head>
 <body class="h-full flex overflow-hidden text-slate-800 antialiased">
 
+    @php
+        $userRole = Auth::user()->role ?? 'pegawai';
+    @endphp
+
     <!-- OVERLAY MOBILE BACKDROP -->
     <div id="mobileBackdrop" class="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-xs hidden lg:hidden transition-opacity"></div>
 
@@ -73,7 +77,7 @@
         <!-- Menu Links Container -->
         <div class="flex-1 overflow-y-auto px-4 py-5 space-y-5">
             
-            <!-- Group 1: Menu Utama -->
+            <!-- Group 1: Menu Utama (Akses: Semua Role - Pegawai, Pimpinan, Admin) -->
             <div>
                 <p class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">Utama</p>
                 <nav class="space-y-1">
@@ -95,97 +99,105 @@
                 </nav>
             </div>
 
-            <!-- Group 2: Pelaksanaan & Karyawan -->
-            <div>
-                <p class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">Pelaksanaan</p>
-                <nav class="space-y-1">
-                    <a href="{{ url('/kegiatan') }}" 
-                       class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('kegiatan') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                        <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->is('kegiatan') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
-                        </svg>
-                        Kegiatan
-                    </a>
+            <!-- Group 2: Pelaksanaan & Karyawan (Akses: Hanya Admin untuk Kegiatan, Pimpinan/Admin untuk Riwayat Kerja) -->
+            @if(in_array($userRole, ['pimpinan', 'admin']))
+                <div>
+                    <p class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">Pelaksanaan</p>
+                    <nav class="space-y-1">
+                        @if($userRole === 'admin')
+                            <a href="{{ url('/kegiatan') }}" 
+                               class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('kegiatan') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->is('kegiatan') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                                </svg>
+                                Kegiatan
+                            </a>
+                        @endif
 
-                    <a href="{{ url('/riwayat-kerja') }}" 
-                       class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('riwayat-kerja') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                        <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->is('riwayat-kerja') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                        </svg>
-                        Riwayat Kerja
-                    </a>
-                </nav>
-            </div>
+                        <a href="{{ url('/riwayat-kerja') }}" 
+                           class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('riwayat-kerja') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                            <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->is('riwayat-kerja') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                            </svg>
+                            Riwayat Kerja
+                        </a>
+                    </nav>
+                </div>
+            @endif
 
-            <!-- Group 3: Dropdown Manajemen Data Kegiatan -->
-            <div class="pt-2">
-                <details class="group rounded-xl border border-slate-700/80 bg-slate-900/60 overflow-hidden transition"
-                         {{ request()->is('jenis-kegiatan', 'titik-lokasi', 'instansi', 'riwayat-kegiatan') ? 'open' : '' }}>
-                    <summary class="flex items-center justify-between px-4 py-3 text-xs sm:text-sm font-bold text-white bg-slate-800 hover:bg-slate-750 cursor-pointer transition list-none select-none">
-                        <span class="w-full text-center leading-tight">
-                            Manajemen<br>Data Kegiatan
-                        </span>
-                        <svg class="w-4 h-4 text-slate-400 transition-transform duration-200 group-open:rotate-180 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </summary>
+            <!-- Group 3: Dropdown Manajemen Data Kegiatan (Akses: Pimpinan & Admin) -->
+            @if(in_array($userRole, ['pimpinan', 'admin']))
+                <div class="pt-2">
+                    <details class="group rounded-xl border border-slate-700/80 bg-slate-900/60 overflow-hidden transition"
+                             {{ request()->is('jenis-kegiatan', 'titik-lokasi', 'instansi', 'riwayat-kegiatan') ? 'open' : '' }}>
+                        <summary class="flex items-center justify-between px-4 py-3 text-xs sm:text-sm font-bold text-white bg-slate-800 hover:bg-slate-750 cursor-pointer transition list-none select-none">
+                            <span class="w-full text-center leading-tight">
+                                Manajemen<br>Data Kegiatan
+                            </span>
+                            <svg class="w-4 h-4 text-slate-400 transition-transform duration-200 group-open:rotate-180 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </summary>
 
-                    <div class="divide-y divide-slate-700/70 border-t border-slate-700 bg-slate-950/40">
-                        <a href="{{ url('/jenis-kegiatan') }}" 
-                           class="block py-2.5 px-4 text-center text-xs font-semibold transition {{ request()->is('jenis-kegiatan') ? 'bg-sky-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                            Jenis Kegiatan
-                        </a>
-                        <a href="{{ url('/titik-lokasi') }}" 
-                           class="block py-2.5 px-4 text-center text-xs font-semibold transition {{ request()->is('titik-lokasi') ? 'bg-sky-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                            Titik Lokasi
-                        </a>
-                        <a href="{{ url('/instansi') }}" 
-                           class="block py-2.5 px-4 text-center text-xs font-semibold transition {{ request()->is('instansi') ? 'bg-sky-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                            Instansi
-                        </a>
-                        <a href="{{ url('/riwayat-kegiatan') }}" 
-                           class="block py-2.5 px-4 text-center text-xs font-semibold transition {{ request()->is('riwayat-kegiatan') ? 'bg-sky-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                            Riwayat Kegiatan
-                        </a>
-                    </div>
-                </details>
-            </div>
+                        <div class="divide-y divide-slate-700/70 border-t border-slate-700 bg-slate-950/40">
+                            <a href="{{ url('/jenis-kegiatan') }}" 
+                               class="block py-2.5 px-4 text-center text-xs font-semibold transition {{ request()->is('jenis-kegiatan') ? 'bg-sky-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                Jenis Kegiatan
+                            </a>
+                            <a href="{{ url('/titik-lokasi') }}" 
+                               class="block py-2.5 px-4 text-center text-xs font-semibold transition {{ request()->is('titik-lokasi') ? 'bg-sky-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                Titik Lokasi
+                            </a>
+                            <a href="{{ url('/instansi') }}" 
+                               class="block py-2.5 px-4 text-center text-xs font-semibold transition {{ request()->is('instansi') ? 'bg-sky-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                Instansi
+                            </a>
+                            <a href="{{ url('/riwayat-kegiatan') }}" 
+                               class="block py-2.5 px-4 text-center text-xs font-semibold transition {{ request()->is('riwayat-kegiatan') ? 'bg-sky-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                Riwayat Kegiatan
+                            </a>
+                        </div>
+                    </details>
+                </div>
+            @endif
 
-            <!-- Group 4: Dropdown Manajemen Data Master -->
-            <div class="pt-2">
-                <details class="group rounded-xl border border-slate-700/80 bg-slate-900/60 overflow-hidden transition"
-                         {{ request()->is('master-user*', 'master-kegiatan*', 'master-lokasi*') ? 'open' : '' }}>
-                    <summary class="flex items-center justify-between px-4 py-3 text-xs sm:text-sm font-bold text-white bg-slate-800 hover:bg-slate-750 cursor-pointer transition list-none select-none">
-                        <span class="w-full text-center leading-tight">
-                            Manajemen<br>Data Master
-                        </span>
-                        <svg class="w-4 h-4 text-slate-400 transition-transform duration-200 group-open:rotate-180 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </summary>
+            <!-- Group 4: Dropdown Manajemen Data Master (Akses: Khusus Admin) -->
+            @if($userRole === 'admin')
+                <div class="pt-2">
+                    <details class="group rounded-xl border border-slate-700/80 bg-slate-900/60 overflow-hidden transition"
+                             {{ request()->is('master-user*', 'master-kegiatan*', 'master-lokasi*') ? 'open' : '' }}>
+                        <summary class="flex items-center justify-between px-4 py-3 text-xs sm:text-sm font-bold text-white bg-slate-800 hover:bg-slate-750 cursor-pointer transition list-none select-none">
+                            <span class="w-full text-center leading-tight">
+                                Manajemen<br>Data Master
+                            </span>
+                            <svg class="w-4 h-4 text-slate-400 transition-transform duration-200 group-open:rotate-180 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </summary>
 
-                    <div class="divide-y divide-slate-700/70 border-t border-slate-700 bg-slate-950/40">
-                        <a href="{{ url('/master-user') }}" 
-                           class="block py-2.5 px-4 text-center text-xs font-semibold transition {{ request()->is('master-user*') ? 'bg-sky-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                            User
-                        </a>
-                        <a href="{{ url('/master-kegiatan') }}" 
-                           class="block py-2.5 px-4 text-center text-xs font-semibold transition {{ request()->is('master-kegiatan*') ? 'bg-sky-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                            Kegiatan
-                        </a>
-                        <a href="{{ url('/master-lokasi') }}" 
-                           class="block py-2.5 px-4 text-center text-xs font-semibold transition {{ request()->is('master-lokasi*') ? 'bg-sky-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                            Lokasi
-                        </a>
-                    </div>
-                </details>
-            </div>
+                        <div class="divide-y divide-slate-700/70 border-t border-slate-700 bg-slate-950/40">
+                            <a href="{{ url('/master-user') }}" 
+                               class="block py-2.5 px-4 text-center text-xs font-semibold transition {{ request()->is('master-user*') ? 'bg-sky-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                User
+                            </a>
+                            <a href="{{ url('/master-kegiatan') }}" 
+                               class="block py-2.5 px-4 text-center text-xs font-semibold transition {{ request()->is('master-kegiatan*') ? 'bg-sky-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                Kegiatan
+                            </a>
+                            <a href="{{ url('/master-lokasi') }}" 
+                               class="block py-2.5 px-4 text-center text-xs font-semibold transition {{ request()->is('master-lokasi*') ? 'bg-sky-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                Lokasi
+                            </a>
+                        </div>
+                    </details>
+                </div>
+            @endif
 
         </div>
 
         <!-- Footer: Navigasi Cepat / Tombol ke Halaman Publik -->
         <div class="p-4 border-t border-slate-800 bg-slate-950/20 space-y-2">
-            <a href="{{ route('landing') }}" class="flex items-center justify-center space-x-2 w-full px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition">
+            <a href="{{ url('/') }}" class="flex items-center justify-center space-x-2 w-full px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                 </svg>
@@ -193,7 +205,7 @@
             </a>
 
             <!-- Tombol Logout di Sidebar -->
-            <form method="POST" action="{{ route('logout') }}" class="w-full">
+            <form method="POST" action="{{ url('/logout') }}" class="w-full">
                 @csrf
                 <button type="submit" class="flex items-center justify-center space-x-2 w-full px-3 py-2 rounded-xl border border-rose-900/50 bg-rose-950/20 hover:bg-rose-900/40 text-rose-300 hover:text-white text-xs font-semibold transition cursor-pointer">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
