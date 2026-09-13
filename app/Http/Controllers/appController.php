@@ -248,4 +248,14 @@ class AppController extends Controller
 
         return redirect()->route('login');
     }
+
+    public function landing()
+    {
+        // Ambil seluruh data kegiatan beserta relasi jenis, lokasi, dan koordinator
+        $kegiatan = Kegiatan::with(['jenis', 'lokasi', 'koordinator'])
+            ->orderBy('tanggal_mulai', 'asc')
+            ->get();
+
+        return view('landing', compact('kegiatan')); // Ganti 'landing' ke 'welcome' jika nama file blade Anda welcome.blade.php
+    }
 }
