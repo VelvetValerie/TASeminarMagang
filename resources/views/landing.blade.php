@@ -61,7 +61,7 @@
         </div>
 
         <div class="hidden md:flex items-center space-x-2">
-            <a href="#beranda" class="px-4 py-2 text-base font-semibold text-white transition hover:text-white/80">
+            <a href="#beranda" onclick="window.scrollTo({top: 0, behavior: 'smooth'});" class="px-4 py-2 text-base font-semibold text-white transition hover:text-white/80">
                 Beranda
             </a>
             <a href="#kalender" class="px-4 py-2 text-base font-semibold text-white transition hover:text-white/80">
@@ -281,27 +281,20 @@
                 </div>
             </div>
 
-            <!-- MODAL 2: RINCIAN DETAIL KEGIATAN LENGKAP -->
+            <!-- MODAL 2: DETAIL KEGIATAN LENGKAP (RINGKAS) -->
             <div id="eventDetailModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-                <div class="relative w-full max-w-xl bg-white border-2 border-black p-5 shadow-2xl">
+                <div class="relative w-full max-w-lg bg-white border-2 border-black p-5 shadow-2xl">
                     <button type="button" onclick="closeEventDetailModal()" class="absolute top-2 right-2 p-1 text-red-600 hover:text-red-800 transition cursor-pointer">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                     </button>
                     <h3 id="dtJudulModal" class="text-base sm:text-lg font-bold text-gray-900 pr-8 pb-3 border-b-2 border-black">
                         Detail Kegiatan
                     </h3>
-                    <div class="mt-4 border-2 border-black bg-[#d1d5db] p-5 space-y-2.5 text-xs sm:text-sm text-gray-900">
-                        <p><span class="font-semibold">Nama Kegiatan :</span> <span id="dtNamaKeg">-</span></p>
-                        <p><span class="font-semibold">Koordinator :</span> <span id="dtKoordinator">-</span></p>
-                        <p><span class="font-semibold">Jenis Kegiatan :</span> <span id="dtJenis">-</span></p>
-                        <p><span class="font-semibold">Tanggal pelaksanaan :</span> <span id="dtTanggalPelaksanaan">-</span></p>
-                        <p><span class="font-semibold">Titik Lokasi :</span> <span id="dtTitikLokasi">-</span></p>
-                        <p><span class="font-semibold">Jumlah peserta :</span> <span id="dtJumlahPeserta">-</span> Orang</p>
-                        <p><span class="font-semibold">Status :</span> <span id="dtStatusKegiatan">-</span></p>
-                        <p>
-                            <span class="font-semibold">Lampiran :</span> 
-                            <a id="dtLampiranUrl" href="#" target="_blank" class="text-blue-700 underline font-medium break-all">-</a>
-                        </p>
+                    <div class="mt-4 border-2 border-black bg-[#d1d5db] p-5 space-y-3 text-xs sm:text-sm text-gray-900 font-medium">
+                        <p><span class="font-bold">Nama Kegiatan :</span> <span id="dtNamaKeg">-</span></p>
+                        <p><span class="font-bold">Jenis Kegiatan :</span> <span id="dtJenis">-</span></p>
+                        <p><span class="font-bold">Titik Lokasi :</span> <span id="dtTitikLokasi">-</span></p>
+                        <p><span class="font-bold">Status :</span> <span id="dtStatusKegiatan">-</span></p>
                     </div>
                 </div>
             </div>
@@ -738,18 +731,11 @@
 
             document.getElementById('dtJudulModal').innerText = `Detail ${item.nama}`;
             document.getElementById('dtNamaKeg').innerText = item.nama;
-            document.getElementById('dtKoordinator').innerText = item.koordinator;
             document.getElementById('dtJenis').innerText = item.jenis;
-            document.getElementById('dtTanggalPelaksanaan').innerText = item.tanggalLengkap;
             document.getElementById('dtTitikLokasi').innerText = `${item.lokasi} (${item.alamat})`;
-            document.getElementById('dtJumlahPeserta').innerText = item.peserta;
             document.getElementById('dtStatusKegiatan').innerText = item.status;
-            
-            const lampiranElem = document.getElementById('dtLampiranUrl');
-            lampiranElem.innerText = item.lampiran;
-            lampiranElem.href = (item.lampiran && item.lampiran !== '-') ? item.lampiran : '#';
 
-            detailModal.classList.remove('hidden');
+            if (detailModal) detailModal.classList.remove('hidden');
         }
 
         function closeEventDetailModal() {
