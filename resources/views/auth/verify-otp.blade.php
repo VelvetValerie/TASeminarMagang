@@ -13,16 +13,18 @@
             Konfirmasi Kode OTP
         </h2>
         
+        <!-- NOTIFIKASI OTP ACAK DINAMIS -->
         <div class="mb-4 bg-amber-50 border-2 border-black p-3 text-xs font-bold text-amber-900">
-            <strong>[Demo Presentasi]:</strong> Kode OTP dikirimkan ke <u>{{ session('reset_email') }}</u> (Kode OTP terisi otomatis: <strong>854912</strong>).
+            <strong>[Demo Presentasi]:</strong> Kode OTP dikirimkan ke <u>{{ session('reset_email') }}</u> (Kode OTP terisi otomatis: <strong>{{ session('reset_otp') }}</strong>).
         </div>
 
         <form method="POST" action="{{ route('password.update') }}" class="space-y-4">
             @csrf
 
+            <!-- INPUT OTP (AUTO-FILL NILAI ACAK DARI SESSION) -->
             <div>
                 <label class="block text-xs font-bold uppercase mb-1">Kode Konfirmasi OTP</label>
-                <input type="text" name="otp" value="{{ session('reset_otp', '854912') }}" required readonly
+                <input type="text" name="otp" value="{{ session('reset_otp') }}" required readonly
                        class="w-full border-2 border-black p-2.5 text-sm font-bold bg-gray-100 text-center tracking-widest text-lg">
                 @error('otp')
                     <p class="text-xs text-rose-600 font-bold mt-1">{{ $message }}</p>

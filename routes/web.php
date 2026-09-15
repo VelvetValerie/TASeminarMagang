@@ -39,7 +39,8 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:admin'])->group(function () {
         Route::get('/kegiatan', [AppController::class, 'kegiatan'])->name('kegiatan');
         Route::get('/master-user', [AppController::class, 'masterUser'])->name('master-user');
-        Route::get('/master-kegiatan', [AppController::class, 'masterKegiatan'])->name('master-kegiatan');
-        Route::get('/master-lokasi', [AppController::class, 'masterLokasi'])->name('master-lokasi');
+        Route::post('/master-user', [AppController::class, 'storeUser'])->name('master-user.store');
+        Route::put('/master-user/{id}', [AppController::class, 'updateUser'])->name('master-user.update');
+        Route::delete('/master-user/{id}', [AppController::class, 'destroyUser'])->name('master-user.destroy');
     });
 });

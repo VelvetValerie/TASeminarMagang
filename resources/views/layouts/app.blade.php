@@ -161,38 +161,16 @@
                 </div>
             @endif
 
-            <!-- Group 4: Dropdown Manajemen Data Master (Akses: Khusus Admin) -->
-            @if($userRole === 'admin')
-                <div class="pt-2">
-                    <details class="group rounded-xl border border-slate-700/80 bg-slate-900/60 overflow-hidden transition"
-                             {{ request()->is('master-user*', 'master-kegiatan*', 'master-lokasi*') ? 'open' : '' }}>
-                        <summary class="flex items-center justify-between px-4 py-3 text-xs sm:text-sm font-bold text-white bg-slate-800 hover:bg-slate-750 cursor-pointer transition list-none select-none">
-                            <span class="w-full text-center leading-tight">
-                                Manajemen<br>Data Master
-                            </span>
-                            <svg class="w-4 h-4 text-slate-400 transition-transform duration-200 group-open:rotate-180 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </summary>
-
-                        <div class="divide-y divide-slate-700/70 border-t border-slate-700 bg-slate-950/40">
-                            <a href="{{ url('/master-user') }}" 
-                               class="block py-2.5 px-4 text-center text-xs font-semibold transition {{ request()->is('master-user*') ? 'bg-sky-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                                User
-                            </a>
-                            <a href="{{ url('/master-kegiatan') }}" 
-                               class="block py-2.5 px-4 text-center text-xs font-semibold transition {{ request()->is('master-kegiatan*') ? 'bg-sky-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                                Kegiatan
-                            </a>
-                            <a href="{{ url('/master-lokasi') }}" 
-                               class="block py-2.5 px-4 text-center text-xs font-semibold transition {{ request()->is('master-lokasi*') ? 'bg-sky-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                                Lokasi
-                            </a>
-                        </div>
-                    </details>
-                </div>
+        <!-- Item Menu 3: Manajemen Data User (Khusus Admin, Berdiri Sendiri Tanpa Submenu Dropdown) -->
+            @if(Auth::check() && Auth::user()->role === 'admin')
+                <a href="{{ route('master-user') }}" 
+                   class="flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-lg transition {{ request()->routeIs('master-user*') ? 'bg-slate-800 text-white font-bold' : 'text-gray-300 hover:bg-slate-800/60 hover:text-white' }}">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                    <span>Manajemen Data User</span>
+                </a>
             @endif
-
         </div>
 
         <!-- Footer: Navigasi Cepat / Tombol ke Halaman Publik -->
