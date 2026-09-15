@@ -6,13 +6,19 @@ use App\Http\Controllers\AppController;
 // 1. Rute Akar (Landing Page Utama Publik)
 Route::get('/', [AppController::class, 'landing'])->name('landing');
 
-// 2. Rute Tamu / Belum Login
+// 2. Rute Tamu / Belum Login (Guest)
 Route::middleware(['guest'])->group(function () {
     Route::get('/login', [AppController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AppController::class, 'login'])->name('login.perform');
+
+    // Fitur Tambahan: Lupa Password & OTP (Auto-fill)
+    Route::get('/forgot-password', [AppController::class, 'showForgotPasswordForm'])->name('password.request');
+    Route::post('/forgot-password', [AppController::class, 'sendResetOtp'])->name('password.email');
+    Route::get('/verify-otp', [AppController::class, 'showVerifyOtpForm'])->name('password.verify.form');
+    Route::post('/reset-password', [AppController::class, 'resetPassword'])->name('password.update');
 });
 
-// 3. Rute Autentikasi / Sudah Login
+// 3. Rute Autentikasi / Sudah Login (Auth)
 Route::middleware(['auth'])->group(function () {
     Route::post('/logout', [AppController::class, 'logout'])->name('logout');
 

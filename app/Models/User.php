@@ -13,10 +13,17 @@ class User extends Authenticatable
     protected $table = 'users';
     protected $primaryKey = 'id_user';
 
-    protected $guarded = [];
+    protected $fillable = [
+        'username',
+        'nip',
+        'email',
+        'password',
+        'role',
+    ];
 
     protected $hidden = [
         'password',
+        'remember_token',
     ];
 
     protected function casts(): array

@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Kegiatan;
 use App\Models\JenisKeg;
 use App\Models\Instansi;
 use App\Models\TitikLokasi;
 use App\Models\Karyawan;
+use App\Models\User;
 use Carbon\Carbon;
 
 class AppController extends Controller
@@ -219,23 +221,88 @@ class AppController extends Controller
     /**
      * Memproses Autentikasi Login
      */
+// --- DUAL LOGIN (NIP ATAU USERNAME) ---
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'username' => ['required', 'string'],
+            'login'    => ['required', 'string'],
             'password' => ['required', 'string'],
+        ], [
+            'login.required'    => 'NIP atau Username wajib diisi.',
+            'password.required' => 'Password wajib diisi.',
         ]);
 
-        $remember = $request->has('remember');
+        // Deteksi otomatis input: angka = NIP, string = Username
+        $fieldType = is_numeric($request->login) ? 'nip' : 'username';
 
-        if (Auth::attempt($credentials, $remember)) {
+        if (Auth::attempt([$fieldType => $credentials['login'], 'password' => $credentials['password']])) {
             $request->session()->regenerate();
             return redirect()->intended('/dashboard');
         }
 
         return back()->withErrors([
-            'username' => 'Username atau password yang Anda masukkan salah.',
-        ])->onlyInput('username');
+            'login' => 'NIP/Username atau Password yang Anda masukkan salah.',
+        ])->onlyInput('login');
+    }
+
+    // --- ALUR LUPA PASSWORD & VERIFIKASI OTP ---
+    public function showForgotPasswordForm()
+    {
+        return view('auth.forgot-password');
+    }
+
+    public function sendResetOtp(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+        ], [
+            'email.exists' => 'Alamat email tidak terdaftar dalam sistem kepegawaian.',
+        ]);
+
+        // Kode OTP simulasi auto-fill untuk demo/presentasi
+        $otpCode = '854912';
+
+        session([
+            'reset_email' => $request->email,
+            'reset_otp'   => $otpCode
+        ]);
+
+        return redirect()->route('password.verify.form')->with('success', 'Kode konfirmasi OTP telah dikirim ke email Anda.');
+    }
+
+    public function showVerifyOtpForm()
+    {
+        if (!session('reset_email')) {
+            return redirect()->route('password.request');
+        }
+        return view('auth.verify-otp');
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'otp'                   => 'required',
+            'password'              => 'required|min:6|confirmed',
+        ], [
+            'password.confirmed'    => 'Konfirmasi password baru tidak cocok.',
+            'password.min'          => 'Password minimal 6 karakter.'
+        ]);
+
+        if ($request->otp != session('reset_otp')) {
+            return back()->withErrors(['otp' => 'Kode OTP tidak valid.']);
+        }
+
+        $user = User::where('email', session('reset_email'))->first();
+        if ($user) {
+            $user->password = Hash::make($request->password);
+            $user->save();
+
+            session()->forget(['reset_email', 'reset_otp']);
+
+            return redirect()->route('login')->with('success', 'Password berhasil diperbarui! Silakan login kembali.');
+        }
+
+        return back()->withErrors(['email' => 'Terjadi kesalahan sistem.']);
     }
 
     // 10. Logout
