@@ -47,74 +47,9 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-900 antialiased">
+<body class="m-0 p-0 bg-gray-100 text-gray-900 antialiased">
 
-    <!-- NAVBAR TRANSPARAN DINAMIS -->
-    <nav id="main-navbar" class="w-full fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-6 md:px-12 py-4 transition-all duration-300 bg-transparent">
-        <div class="h-12 overflow-hidden flex-shrink-0 flex items-center">
-            <a href="{{ url('/') }}" class="flex items-center gap-3">
-                <img src="{{ asset('images/Logo_BKN.png') }}" 
-                     onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/9/9f/Logo_BKN.png';" 
-                     alt="Logo BKN" class="h-10 w-auto object-contain bg-white p-1 border-2 border-black">
-                <span class="text-white font-black text-sm tracking-wider uppercase hidden sm:block drop-shadow">KANREG VIII BKN</span>
-            </a>
-        </div>
-
-        <div class="hidden md:flex items-center space-x-2">
-            <a href="#beranda" onclick="window.scrollTo({top: 0, behavior: 'smooth'});" class="px-4 py-2 text-base font-semibold text-white transition hover:text-white/80">
-                Beranda
-            </a>
-            <a href="#kalender" class="px-4 py-2 text-base font-semibold text-white transition hover:text-white/80">
-                Kalender
-            </a>
-            <a href="#publikasi" class="px-4 py-2 text-base font-semibold text-white transition hover:text-white/80">
-                Publikasi
-            </a>
-            <a href="#kontak" class="px-4 py-2 text-base font-semibold text-white transition hover:text-white/80">
-                Kontak
-            </a>
-
-            <!-- Dropdown Informasi -->
-            <div class="relative group">
-                <button class="px-4 py-2 flex items-center gap-1.5 text-base font-semibold text-white transition hover:text-white/80 cursor-pointer">
-                    Informasi
-                    <svg class="w-4 h-4 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </button>
-
-                <div class="absolute left-0 top-full mt-1 w-56 bg-white opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden shadow-xl border-2 border-black">
-                    <a href="#timeline" class="block px-4 py-2.5 text-sm font-semibold text-gray-800 border-b border-gray-200 hover:bg-gray-100">Timeline Pelaksanaan</a>
-                    <a href="#kalender" class="block px-4 py-2.5 text-sm font-semibold text-gray-800 border-b border-gray-200 hover:bg-gray-100">Tes CASN</a>
-                    <a href="#kalender" class="block px-4 py-2.5 text-sm font-semibold text-gray-800 border-b border-gray-200 hover:bg-gray-100">Tes Non-ASN</a>
-                    <a href="#kalender" class="block px-4 py-2.5 text-sm font-semibold text-gray-800 hover:bg-gray-100">Pengembangan Karir</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- DETEKSI STATUS LOGIN DI NAVBAR KANAN -->
-        <div class="flex items-center gap-2">
-            @auth
-                <a href="{{ url('/dashboard') }}" 
-                   class="border-2 border-black bg-white hover:bg-gray-200 font-bold px-4 py-1.5 text-xs sm:text-sm transition inline-flex items-center gap-1.5 shadow-xs">
-                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
-                    <span class="max-w-[120px] sm:max-w-none truncate">{{ Auth::user()->username }}</span>
-                </a>
-
-                <form method="POST" action="{{ route('logout') }}" class="inline m-0">
-                    @csrf
-                    <button type="submit" 
-                            class="border-2 border-black bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold px-3 py-1.5 text-xs sm:text-sm transition inline-flex items-center gap-1 cursor-pointer shadow-xs">
-                        <span>Keluar</span>
-                    </button>
-                </form>
-            @else
-                <a href="{{ route('login') }}" class="px-6 py-2 border-2 border-white text-white font-bold text-sm transition hover:bg-white hover:text-black shadow-xs">
-                    Login
-                </a>
-            @endauth
-        </div>
-    </nav>
+    <!-- NAVBAR COMPONENTS (resources/views/components/navbar.blade.php) -->
 
     <main class="w-full">
 
@@ -187,13 +122,11 @@
             </div>
         </section>
 
-        <!-- ==========================================
-             SECTION 2: KALENDER PUBLIK DINAMIS (GAMBAR KE-2)
-             ========================================== -->
+        <!-- SECTION 2: KALENDER PUBLIK DINAMIS -->
         <section id="kalender" class="min-h-[calc(100vh-65px)] w-full max-w-7xl mx-auto p-4 md:p-8 flex flex-col justify-center space-y-6 scroll-mt-28">
             <h2 class="text-2xl md:text-3xl font-bold text-gray-900 border-b-2 border-black pb-2">Agenda & Jadwal Kegiatan</h2>
 
-            <!-- KOTAK KALENDER UTAMA -->
+            <!-- KOTAK KALENDER UTAMA INLINE -->
             <div class="border-2 border-black bg-white p-4 md:p-6 relative shadow-sm">
                 
                 <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b-2 border-black relative">
@@ -281,7 +214,7 @@
                 </div>
             </div>
 
-            <!-- MODAL 2: DETAIL KEGIATAN LENGKAP (RINGKAS) -->
+            <!-- MODAL 2: DETAIL KEGIATAN LENGKAP -->
             <div id="eventDetailModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
                 <div class="relative w-full max-w-lg bg-white border-2 border-black p-5 shadow-2xl">
                     <button type="button" onclick="closeEventDetailModal()" class="absolute top-2 right-2 p-1 text-red-600 hover:text-red-800 transition cursor-pointer">
@@ -300,87 +233,11 @@
             </div>
         </section>
 
-        <!-- SECTION 3: PUSAT INFORMASI & PENGUMUMAN -->
+        <!-- SECTION 3: PUSAT INFORMASI (COMPONENTS: resources/views/components/publikasi.blade.php) -->
         <section id="publikasi" class="min-h-[calc(100vh-65px)] w-full max-w-7xl mx-auto p-4 md:p-8 flex flex-col justify-center space-y-6 scroll-mt-28">
             <h2 class="text-2xl md:text-3xl font-bold text-gray-900 border-b-2 border-black pb-2 text-center">Pusat Informasi & Pengumuman</h2>
             
-            <div class="flex flex-col md:flex-row gap-5 w-full items-stretch">
-                <div class="wire-box md:w-[28%] bg-white p-4 flex flex-col border-2 border-black shrink-0 overflow-hidden">
-                    <h3 class="text-lg font-bold border-b-2 border-black pb-2 text-center bg-white z-10">Pengumuman Terbaru</h3>
-                    <div class="flex flex-col gap-3 mt-4 overflow-y-auto pr-1">
-                        <div class="border-l-4 border-gray-600 pl-3">
-                            <p class="text-xs text-gray-500 font-medium">12 Agustus 2026</p>
-                            <a href="#" class="text-sm font-semibold hover:underline leading-tight mt-0.5 block">Hasil Seleksi Administrasi Tahap 1 CPNS & PPPK</a>
-                        </div>
-                        <div class="border-l-4 border-gray-600 pl-3">
-                            <p class="text-xs text-gray-500 font-medium">08 Agustus 2026</p>
-                            <a href="#" class="text-sm font-semibold hover:underline leading-tight mt-0.5 block">Jadwal Pengambilan Kartu Ujian Fisik</a>
-                        </div>
-                        <div class="border-l-4 border-gray-600 pl-3">
-                            <p class="text-xs text-gray-500 font-medium">01 Agustus 2026</p>
-                            <a href="#" class="text-sm font-semibold hover:underline leading-tight mt-0.5 block">Panduan Penggunaan Sistem CAT 2026 Lengkap</a>
-                        </div>
-                    </div>
-                    <button type="button" class="w-full py-2 mt-auto border-2 border-black text-sm font-bold hover:bg-gray-100 transition-colors cursor-pointer">Lihat Semua</button>
-                </div>
-
-                <div class="md:w-[72%] aspect-video border-2 border-black relative group/news bg-black overflow-hidden" id="newsFadeContainer">
-                    <div class="news-slide absolute inset-0 transition-opacity duration-700 ease-in-out opacity-100 z-10 pointer-events-auto">
-                        <img src="{{ asset('images/samplegambar1.jpg') }}" onerror="this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1200';" alt="Thumbnail" class="absolute inset-0 w-full h-full object-cover">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none"></div>
-
-                        <div class="absolute bottom-0 inset-x-0 p-6 flex flex-col justify-end">
-                            <div class="marquee-container mb-2">
-                                <h3 class="text-xl md:text-2xl font-black text-white marquee-text drop-shadow-md cursor-default">
-                                    Persiapan Mengikuti Seleksi Kompetensi Dasar (SKD) Tahun 2026 Secara Serentak
-                                </h3>
-                            </div>
-
-                            <div class="relative">
-                                <div class="h-[105px] overflow-hidden text-gray-300 text-sm leading-relaxed relative z-0">
-                                    <p class="mb-1">Menjelang pelaksanaan SKD tahun 2026, seluruh peserta diwajibkan untuk mempersiapkan dokumen identitas asli berupa KTP dan Kartu Peserta Ujian yang dicetak berwarna.</p>
-                                    <ul class="list-disc pl-5 space-y-1 opacity-80">
-                                        <li>Hadir 90 menit sebelum jadwal sesi dimulai.</li>
-                                        <li>Mengenakan kemeja putih polos.</li>
-                                        <li>Dilarang membawa alat elektronik, perhiasan, maupun ikat pinggang.</li>
-                                    </ul>
-                                </div>
-                                <button type="button" class="absolute bottom-0 right-0 z-20 py-1.5 px-4 bg-white/90 hover:bg-white text-black font-bold text-xs transition-colors shadow-lg border border-transparent hover:border-black backdrop-blur-sm translate-y-1/4 cursor-pointer">
-                                    Baca selengkapnya...
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="news-slide absolute inset-0 transition-opacity duration-700 ease-in-out opacity-0 z-0 pointer-events-none">
-                        <img src="{{ asset('images/samplegambar2.jpg') }}" onerror="this.src='https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=1200';" alt="Thumbnail" class="absolute inset-0 w-full h-full object-cover">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none"></div>
-                        
-                        <div class="absolute bottom-0 inset-x-0 p-6 flex flex-col justify-end">
-                            <div class="marquee-container mb-2">
-                                <h3 class="text-xl md:text-2xl font-black text-white marquee-text drop-shadow-md cursor-default">
-                                    Pengumuman Hasil Verifikasi Sanggah Kelulusan Administrasi CASN 2026
-                                </h3>
-                            </div>
-                            <div class="relative">
-                                <div class="h-[105px] overflow-hidden text-gray-300 text-sm leading-relaxed relative z-0">
-                                    <p>Berdasarkan hasil verifikasi ulang dokumen yang diajukan pada masa sanggah, panitia seleksi nasional telah merilis daftar nama peserta yang berhak melanjutkan ke tahap selanjutnya.</p>
-                                </div>
-                                <button type="button" class="absolute bottom-0 right-0 z-20 py-1.5 px-4 bg-white/90 hover:bg-white text-black font-bold text-xs transition-colors shadow-lg border border-transparent hover:border-black backdrop-blur-sm translate-y-1/4 cursor-pointer">
-                                    Baca selengkapnya...
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button id="btnPrevFade" type="button" class="absolute left-0 top-1/2 -translate-y-1/2 w-12 h-14 bg-black/40 hover:bg-black/80 text-white flex items-center justify-center opacity-0 group-hover/news:opacity-100 transition-all duration-300 z-30 focus:outline-none backdrop-blur-sm border-none cursor-pointer">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
-                    </button>
-                    <button id="btnNextFade" type="button" class="absolute right-0 top-1/2 -translate-y-1/2 w-12 h-14 bg-black/40 hover:bg-black/80 text-white flex items-center justify-center opacity-0 group-hover/news:opacity-100 transition-all duration-300 z-30 focus:outline-none backdrop-blur-sm border-none cursor-pointer">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
-                    </button>
-                </div>
-            </div>
+            <x-publikasi />
         </section>
 
         <!-- SECTION 4: TIMELINE PELAKSANAAN -->
@@ -424,33 +281,9 @@
             </div>
         </section>
 
-        <!-- SECTION 5: KONTAK -->
+        <!-- SECTION 5: KONTAK (COMPONENTS: resources/views/components/information.blade.php) -->
         <section id="kontak" class="min-h-[calc(100vh-65px)] w-full max-w-7xl mx-auto p-4 md:p-8 flex flex-col justify-center space-y-6 scroll-mt-28">
-            <div class="bg-gray-300 border-2 border-black p-6 md:p-8 rounded-xl shadow-sm">
-                <h2 class="text-3xl font-bold mb-8 text-center text-gray-900">Hubungi Kami</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="wire-box bg-white flex-1 h-56 flex flex-col items-center justify-center text-center p-6 hover:-translate-y-1 transition-transform border-2 border-black">
-                        <svg class="w-12 h-12 mb-4 text-gray-700" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"></path></svg>
-                        <h3 class="text-xl font-bold mb-2">Alamat</h3>
-                        <p class="text-xs text-gray-600 font-medium">Jl. Hasan Basri No. 1<br>Banjarbaru, Kalimantan Selatan</p>
-                    </div>
-                    <div class="wire-box bg-white flex-1 h-56 flex flex-col items-center justify-center text-center p-6 hover:-translate-y-1 transition-transform border-2 border-black">
-                        <svg class="w-12 h-12 mb-4 text-gray-700" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"></path></svg>
-                        <h3 class="text-xl font-bold mb-2">Email</h3>
-                        <p class="text-xs text-gray-600 font-medium">bantuan@bkn.go.id<br>info@bkn.go.id</p>
-                    </div>
-                    <div class="wire-box bg-white flex-1 h-56 flex flex-col items-center justify-center text-center p-6 hover:-translate-y-1 transition-transform border-2 border-black">
-                        <svg class="w-12 h-12 mb-4 text-gray-700" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-2.896-1.596-5.48-4.18-7.077-7.077l1.293-.97c.362-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"></path></svg>
-                        <h3 class="text-xl font-bold mb-2">Telepon</h3>
-                        <p class="text-xs text-gray-600 font-medium">(0511) 1234-5678<br>0812-3456-7890</p>
-                    </div>
-                    <div class="wire-box bg-white flex-1 h-56 flex flex-col items-center justify-center text-center p-6 hover:-translate-y-1 transition-transform border-2 border-black">
-                        <svg class="w-12 h-12 mb-4 text-gray-700" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z"></path></svg>
-                        <h3 class="text-xl font-bold mb-2">Konsultasi</h3>
-                        <p class="text-xs text-gray-600 font-medium">Senin - Jumat<br>08:00 - 15:00 WITA</p>
-                    </div>
-                </div>
-            </div>
+            <x-information />
         </section>
 
     </main>
@@ -460,11 +293,8 @@
         &copy; 2026 Kantor Regional Badan Kepegawaian Negara. Hak Cipta Dilindungi.
     </footer>
 
-    <!-- SCRIPT GABUNGAN: NAVBAR SCROLL, HERO CAROUSEL, FADE SLIDER & KALENDER JAVASCRIPT DINAMIS -->
+    <!-- SCRIPT GABUNGAN JAVASCRIPT DINAMIS -->
     <script>
-        // ==========================================
-        // DOKUMEN PARSING & LOGIKA KALENDER UTAMA
-        // ==========================================
         @php
             $formattedEvents = collect($kegiatan ?? [])->map(function($k, $index) {
                 $namaJenis = strtolower($k->jenis->nama_jeniskeg ?? '');
@@ -513,7 +343,7 @@
 
         const todayReal = new Date();
         let calYear = todayReal.getFullYear();
-        let calMonth = todayReal.getMonth(); // 0-indexed
+        let calMonth = todayReal.getMonth();
 
         const monthYearLabel = document.getElementById('calMonthYearLabel');
         const calGridBody = document.getElementById('calGridBody');
@@ -711,11 +541,11 @@
                 container.appendChild(card);
             });
 
-            dayModal.classList.remove('hidden');
+            if (dayModal) dayModal.classList.remove('hidden');
         }
 
         function closeDayEventsModal() {
-            dayModal.classList.add('hidden');
+            if (dayModal) dayModal.classList.add('hidden');
         }
 
         function openDetailFromDayModal(e, eventId) {
@@ -739,7 +569,7 @@
         }
 
         function closeEventDetailModal() {
-            detailModal.classList.add('hidden');
+            if (detailModal) detailModal.classList.add('hidden');
         }
 
         const calBtn = document.getElementById('filterCalendarBtn');
@@ -775,20 +605,16 @@
             applyCalendarFilter();
         }
 
-        // ==========================================
-        // DOKUMEN DOM LOADED (NAVBAR & HERO CAROUSEL)
-        // ==========================================
         document.addEventListener('DOMContentLoaded', () => {
             renderCalendar();
 
             // Navbar Transparan ke Solid (#fca855)
             const navbar = document.getElementById('main-navbar');
-            const heroSection = document.getElementById('hero-section');
 
-            if (navbar && heroSection) {
+            if (navbar) {
                 window.addEventListener('scroll', () => {
-                    const heroHeight = heroSection.offsetHeight - 80;
-                    if (window.scrollY > heroHeight) {
+                    // Deteksi scroll murni: jika posisi scroll > 50px dari atas, ubah ke oranye solid
+                    if (window.scrollY > 50) {
                         navbar.classList.remove('bg-transparent', 'py-4');
                         navbar.classList.add('bg-[#fca855]', 'shadow-md', 'py-2');
                     } else {
@@ -821,10 +647,10 @@
 
                     dots.forEach((dot, idx) => {
                         if (idx === dotIndex) { 
-                            dot.classList.add('bg-white', 'scale-125'); 
+                            dot.classList.add('bg-[#fca855]', 'scale-125'); 
                             dot.classList.remove('bg-white/50'); 
                         } else { 
-                            dot.classList.remove('bg-white', 'scale-125'); 
+                            dot.classList.remove('bg-[#fca855]', 'scale-125'); 
                             dot.classList.add('bg-white/50'); 
                         }
                     });

@@ -100,7 +100,7 @@
                                 @if($u->role === 'admin')
                                     <!-- JIKA ROLE ADMIN: TOMBOL TERKUNCI / DISABLED -->
                                     <span class="text-[11px] font-bold text-gray-400 italic bg-gray-100 border border-gray-300 px-2 py-1 rounded">
-                                        Protected Admin
+                                        Protected
                                     </span>
                                 @else
                                     <!-- JIKA PEGAWAI / PIMPINAN: TOMBOL EDIT DAN HAPUS AKTIF -->
