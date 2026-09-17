@@ -49,7 +49,8 @@
 </head>
 <body class="m-0 p-0 bg-gray-100 text-gray-900 antialiased">
 
-    <!-- NAVBAR COMPONENTS (resources/views/components/navbar.blade.php) -->
+    <!-- NAVBAR DARI FOLDER COMPONENTS (resources/views/components/navbar.blade.php) -->
+    <x-navbar />
 
     <main class="w-full">
 
@@ -122,7 +123,7 @@
             </div>
         </section>
 
-        <!-- SECTION 2: KALENDER PUBLIK DINAMIS -->
+        <!-- SECTION 2: KALENDER PUBLIK INLINE -->
         <section id="kalender" class="min-h-[calc(100vh-65px)] w-full max-w-7xl mx-auto p-4 md:p-8 flex flex-col justify-center space-y-6 scroll-mt-28">
             <h2 class="text-2xl md:text-3xl font-bold text-gray-900 border-b-2 border-black pb-2">Agenda & Jadwal Kegiatan</h2>
 
@@ -233,14 +234,21 @@
             </div>
         </section>
 
-        <!-- SECTION 3: PUSAT INFORMASI (COMPONENTS: resources/views/components/publikasi.blade.php) -->
+        <!-- SECTION 3: BERITA TERBARU (DARI COMPONENTS) -->
+        <section id="berita" class="w-full max-w-7xl mx-auto p-4 md:p-8 flex flex-col justify-center space-y-6 scroll-mt-28">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 border-b-2 border-black pb-2 text-center">Berita & Informasi Terbaru</h2>
+            
+            <x-news />
+        </section>
+
+        <!-- SECTION 4: PUSAT PUBLIKASI (DARI COMPONENTS) -->
         <section id="publikasi" class="min-h-[calc(100vh-65px)] w-full max-w-7xl mx-auto p-4 md:p-8 flex flex-col justify-center space-y-6 scroll-mt-28">
-            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 border-b-2 border-black pb-2 text-center">Pusat Informasi & Pengumuman</h2>
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 border-b-2 border-black pb-2 text-center">Pusat Publikasi & Dokumen</h2>
             
             <x-publikasi />
         </section>
 
-        <!-- SECTION 4: TIMELINE PELAKSANAAN -->
+        <!-- SECTION 5: TIMELINE PELAKSANAAN -->
         <section id="timeline" class="mb-16 w-full scroll-mt-28 bg-gray-200 border-y-2 border-black py-12 md:py-16 shadow-sm">
             <div class="max-w-7xl mx-auto w-full px-4">
                 <div class="text-center mb-12 md:mb-16">
@@ -281,23 +289,23 @@
             </div>
         </section>
 
-        <!-- SECTION 5: KONTAK (COMPONENTS: resources/views/components/information.blade.php) -->
+        <!-- SECTION 6: KONTAK & INFORMASI (DARI COMPONENTS) -->
         <section id="kontak" class="min-h-[calc(100vh-65px)] w-full max-w-7xl mx-auto p-4 md:p-8 flex flex-col justify-center space-y-6 scroll-mt-28">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 border-b-2 border-black pb-2 text-center">Kontak & Informasi</h2>
+            
             <x-information />
         </section>
 
     </main>
 
-    <!-- FOOTER -->
-    <footer class="border-t-2 border-black bg-white p-4 text-center font-bold text-xs sm:text-sm text-gray-900">
-        &copy; 2026 Kantor Regional Badan Kepegawaian Negara. Hak Cipta Dilindungi.
-    </footer>
+    <!-- FOOTER DARI COMPONENTS -->
+    <x-footer />
 
     <!-- SCRIPT GABUNGAN JAVASCRIPT DINAMIS -->
     <script>
         @php
             $formattedEvents = collect($kegiatan ?? [])->map(function($k, $index) {
-                $namaJenis = strtolower($k->jenis->nama_jeniskeg ?? '');
+                $namaJenis = strtolower($k->jenis->nama_jeniskeg ?? $k->jenis_kegiatan ?? '');
                 $kategoriSlug = 'tes-non-asn';
                 
                 if (str_contains($namaJenis, 'karir') || str_contains($namaJenis, 'pengembangan')) {
@@ -308,22 +316,24 @@
                     $kategoriSlug = 'tes-casn';
                 }
 
-                $tglMulai = \Carbon\Carbon::parse($k->tanggal_mulai)->format('Y-m-d');
-                $tglSelesai = $k->tanggal_selesai ? \Carbon\Carbon::parse($k->tanggal_selesai)->format('Y-m-d') : $tglMulai;
+                $tglMulai = \Carbon\Carbon::parse($k->tanggal_mulai ?? $k->tgl_mulai ?? now())->format('Y-m-d');
+                $tglSelesai = !empty($k->tanggal_selesai ?? $k->tgl_selesai) 
+                    ? \Carbon\Carbon::parse($k->tanggal_selesai ?? $k->tgl_selesai)->format('Y-m-d') 
+                    : $tglMulai;
                 
-                $tglLabelLengkap = \Carbon\Carbon::parse($k->tanggal_mulai)->translatedFormat('l, d F Y');
-                if ($k->tanggal_selesai && $tglMulai !== $tglSelesai) {
-                    $tglLabelLengkap .= ' ~ ' . \Carbon\Carbon::parse($k->tanggal_selesai)->translatedFormat('l, d F Y');
+                $tglLabelLengkap = \Carbon\Carbon::parse($tglMulai)->translatedFormat('l, d F Y');
+                if ($tglSelesai !== $tglMulai) {
+                    $tglLabelLengkap .= ' ~ ' . \Carbon\Carbon::parse($tglSelesai)->translatedFormat('l, d F Y');
                 }
 
                 return [
-                    'id'             => $k->id_keg ?? $k->id_kegiatan ?? $index,
-                    'nama'           => $k->nama_keg ?? '-',
-                    'lokasi'         => $k->lokasi->nm_lokasi ?? '-',
+                    'id'             => $k->id_keg ?? $k->id_kegiatan ?? $k->id ?? $index,
+                    'nama'           => $k->nama_keg ?? $k->nama_kegiatan ?? '-',
+                    'lokasi'         => $k->lokasi->nm_lokasi ?? $k->lokasi->nama_lokasi ?? '-',
                     'alamat'         => $k->lokasi->alamat ?? '-',
                     'koordinator'    => $k->koordinator->nama_karyawan ?? '-',
                     'jenis'          => $k->jenis->nama_jeniskeg ?? '-',
-                    'peserta'        => number_format($k->jmlh_peserta ?? 0),
+                    'peserta'        => number_format($k->jmlh_peserta ?? $k->jumlah_peserta ?? 0),
                     'status'         => $k->status ?? '-',
                     'lampiran'       => $k->lampiran ?? '-',
                     'kategori'       => $kategoriSlug,
@@ -613,7 +623,6 @@
 
             if (navbar) {
                 window.addEventListener('scroll', () => {
-                    // Deteksi scroll murni: jika posisi scroll > 50px dari atas, ubah ke oranye solid
                     if (window.scrollY > 50) {
                         navbar.classList.remove('bg-transparent', 'py-4');
                         navbar.classList.add('bg-[#fca855]', 'shadow-md', 'py-2');
@@ -684,8 +693,8 @@
                 });
 
                 window.goToSlide = (realIndex) => { if (!isTransitioning) { moveToIndex(realIndex); resetInterval(); } };
-                document.getElementById('btnNext').addEventListener('click', () => { if (!isTransitioning) { moveToIndex(currentSlide + 1); resetInterval(); } });
-                document.getElementById('btnPrev').addEventListener('click', () => { if (!isTransitioning) { moveToIndex(currentSlide - 1); resetInterval(); } });
+                document.getElementById('btnNext')?.addEventListener('click', () => { if (!isTransitioning) { moveToIndex(currentSlide + 1); resetInterval(); } });
+                document.getElementById('btnPrev')?.addEventListener('click', () => { if (!isTransitioning) { moveToIndex(currentSlide - 1); resetInterval(); } });
 
                 const startInterval = () => { autoPlayInterval = setInterval(() => moveToIndex(currentSlide + 1), 6000); };
                 const resetInterval = () => { clearInterval(autoPlayInterval); startInterval(); };
