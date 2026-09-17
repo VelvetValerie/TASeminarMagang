@@ -2,9 +2,17 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AppController;
+use App\Http\Controllers\AuthController;
+use App\Models\Kegiatan;
 
 // 1. Rute Akar (Landing Page Utama Publik)
-Route::get('/', [AppController::class, 'landing'])->name('landing');
+Route::get('/', function () {return view('landing'); })->name('landing');
+Route::get('/', function () {
+    // Ambil data kegiatan beserta relasinya (jenis, lokasi, koordinator)
+    $kegiatan = Kegiatan::with(['jenis', 'lokasi', 'koordinator'])->get();
+
+    return view('landing', compact('kegiatan'));
+})->name('landing');
 
 // 2. Rute Tamu / Belum Login (Guest)
 Route::middleware(['guest'])->group(function () {
@@ -20,7 +28,7 @@ Route::middleware(['guest'])->group(function () {
 
 // 3. Rute Autentikasi / Sudah Login (Auth)
 Route::middleware(['auth'])->group(function () {
-    Route::post('/logout', [AppController::class, 'logout'])->name('logout');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Dilihat oleh SEMUA Role (Admin, Pimpinan, Pegawai)
     Route::get('/dashboard', [AppController::class, 'dashboard'])->name('dashboard');
