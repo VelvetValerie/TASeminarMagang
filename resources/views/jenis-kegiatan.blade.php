@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+<title>Kantor Regional BKN - Jenis Kegiatan</title>
+
 @section('content')
     <!-- KONTEN UTAMA: DAFTAR JENIS KEGIATAN (DATABASE CONNECTED) -->
     <div class="border-2 border-black bg-white p-4 md:p-6 flex flex-col min-h-[520px] shadow-sm">

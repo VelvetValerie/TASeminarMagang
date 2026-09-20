@@ -64,29 +64,47 @@ class AppController extends Controller
     // 2. Halaman Daftar / Perencanaan Kegiatan
     public function kegiatan(Request $request)
     {
-        // Tangkap parameter filter urutan (default: 'terbaru')
-        $sort = $request->query('sort', 'terbaru');
-        $direction = ($sort === 'terlama') ? 'asc' : 'desc';
+        // Load relasi pendukung
+        $query = Kegiatan::with(['jenis', 'koordinator', 'lokasi', 'instansi']);
 
-        // 1. Data utama kegiatan dengan pagination 5 baris & filter urutan
-        $kegiatan = Kegiatan::with(['jenis', 'lokasi', 'instansi', 'koordinator'])
-            ->orderBy('tanggal_mulai', $direction)
-            ->paginate(5)
-            ->withQueryString();
+        // 1. Logika Pencarian Server-Side (by Nama Kegiatan)
+        if ($request->filled('search')) {
+            $search = trim($request->input('search'));
+            $query->where('nama_keg', 'LIKE', '%' . $search . '%');
+        }
 
-        // 2. Data master pendukung untuk dropdown modal form kegiatan
-        $jenisList    = JenisKeg::all();
-        $lokasiList   = TitikLokasi::all();
-        $instansiList = Instansi::all();
-        $karyawanList = Karyawan::all();
+        // 2. Logika Pengurutan
+        $sort = $request->input('sort', 'terbaru');
+        switch ($sort) {
+            case 'az':
+                $query->orderBy('nama_keg', 'asc');
+                break;
+            case 'terlama':
+                $query->orderBy('tanggal_mulai', 'asc');
+                break;
+            case 'terbaru':
+            default:
+                $query->orderBy('tanggal_mulai', 'desc');
+                break;
+        }
+
+        // Paginate data
+        $kegiatan = $query->paginate(5);
+        $kegiatan->appends($request->all());
+
+        // Ambil master data untuk modal form
+        $jenisList = \App\Models\JenisKeg::all();
+        $karyawanList = \App\Models\Karyawan::all();
+        $lokasiList = \App\Models\TitikLokasi::all();
+        $instansiList = \App\Models\Instansi::all();
 
         return view('kegiatan', compact(
             'kegiatan', 
+            'sort', 
             'jenisList', 
+            'karyawanList', 
             'lokasiList', 
-            'instansiList', 
-            'karyawanList',
-            'sort'
+            'instansiList'
         ));
     }
 
@@ -159,11 +177,33 @@ class AppController extends Controller
     }
 
     // 4. Titik Lokasi
-    public function titikLokasi()
+    public function titikLokasi(Request $request)
     {
+        $today = Carbon::today()->toDateString();
+
+        // 1. Tracking Kegiatan yang Sedang Berjalan Saat Ini
+        // Mengambil kegiatan dengan status 'Terkonfirmasi' di mana hari ini berada di antara tanggal mulai & selesai
+        $kegiatanBerjalan = Kegiatan::with(['lokasi', 'instansi'])
+            ->where('status', 'Terkonfirmasi')
+            ->whereDate('tanggal_mulai', '<=', $today)
+            ->where(function ($q) use ($today) {
+                $q->whereDate('tanggal_selesai', '>=', $today)
+                  ->orWhereNull('tanggal_selesai');
+            })
+            ->first();
+
+        // Jika tidak ada yang sesuai rentang tanggal hari ini, ambil kegiatan terkonfirmasi paling awal/terdekat
+        if (!$kegiatanBerjalan) {
+            $kegiatanBerjalan = Kegiatan::with(['lokasi', 'instansi'])
+                ->where('status', 'Terkonfirmasi')
+                ->orderBy('tanggal_mulai', 'asc')
+                ->first();
+        }
+
+        // 2. Query Master Data Titik Lokasi
         $lokasi = TitikLokasi::all();
-        $kegiatanBerjalan = Kegiatan::with('lokasi')->first();
-        return view('titik-lokasi', compact('lokasi', 'kegiatanBerjalan'));
+
+        return view('titik-lokasi', compact('kegiatanBerjalan', 'lokasi'));
     }
 
     // 5. Instansi
@@ -196,16 +236,41 @@ class AppController extends Controller
         return view('riwayat-kerja', compact('karyawan'));
     }
 
-    // 8. Riwayat Kegiatan
+    /**
+     * Menampilkan halaman Riwayat Kegiatan dengan fitur Search & Sort Database
+     */
     public function riwayatKegiatan(Request $request)
     {
-        $sort = $request->query('sort', 'terbaru');
-        $direction = ($sort === 'terlama') ? 'asc' : 'desc';
+        // Inisialisasi query model dengan relasi yang dibutuhkan
+        $query = Kegiatan::with(['lokasi', 'koordinator', 'jenis']);
 
-        $kegiatan = Kegiatan::with(['jenis', 'lokasi', 'koordinator'])
-            ->orderBy('tanggal_mulai', $direction)
-            ->paginate(5)
-            ->withQueryString();
+        // 1. Logika Pencarian Advanced berdasarkan Nama Kegiatan (Database Server-Side)
+        if ($request->filled('search')) {
+            $search = trim($request->input('search'));
+            $query->where('nama_keg', 'LIKE', '%' . $search . '%');
+        }
+
+        // 2. Logika Pengurutan Data (Sorting)
+        $sort = $request->input('sort', 'terbaru');
+        
+        switch ($sort) {
+            case 'az':
+                $query->orderBy('nama_keg', 'asc');
+                break;
+            case 'terlama':
+                $query->orderBy('tanggal_mulai', 'asc');
+                break;
+            case 'terbaru':
+            default:
+                $query->orderBy('tanggal_mulai', 'desc');
+                break;
+        }
+
+        // 3. Paginate data (5 baris per halaman)
+        $kegiatan = $query->paginate(5);
+
+        // Retain query string agar parameter 'search' dan 'sort' tidak hilang saat ganti halaman pagination
+        $kegiatan->appends($request->all());
 
         return view('riwayat-kegiatan', compact('kegiatan', 'sort'));
     }
@@ -408,5 +473,31 @@ class AppController extends Controller
         ]);
 
         return back()->with('success', 'User baru berhasil ditambahkan.');
+    }
+
+    public function index(Request $request)
+    {
+        $query = Kegiatan::with(['lokasi', 'koordinator', 'jenis']);
+
+        // 1. Pencarian Database (Server-side Search by Name)
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where('nama_keg', 'LIKE', '%' . $search . '%');
+        }
+
+        // 2. Pengurutan Database (Server-side Sorting)
+        $sort = $request->input('sort', 'terbaru');
+        if ($sort === 'az') {
+            $query->orderBy('nama_keg', 'asc');
+        } elseif ($sort === 'terlama') {
+            $query->orderBy('tanggal_mulai', 'asc');
+        } else {
+            $query->orderBy('tanggal_mulai', 'desc'); // terbaru (default)
+        }
+
+        // Pagination 5 item per halaman
+        $kegiatan = $query->paginate(5);
+
+        return view('riwayat-kegiatan', compact('kegiatan', 'sort'));
     }
 }

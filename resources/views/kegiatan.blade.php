@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-<title>Kantor Regional BKN - Perencanaan Kegiatan</title>
+<title>Kantor Regional BKN - Kegiatan</title>
 
 @section('sidebar-header')
     <div class="border-2 border-black bg-white p-2.5 text-center font-bold text-gray-900">
@@ -104,14 +104,41 @@
     <!-- KONTEN UTAMA -->
     <div class="border-2 border-black bg-white p-4 md:p-6 flex flex-col space-y-4 shadow-sm">
         
-        <!-- Header: Judul + Filter + Tambah -->
-        <div class="flex items-center justify-between pb-3 border-b-2 border-black relative">
+        <!-- Header Kotak: Judul + Search Database & Filter + Tombol Tambah -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b-2 border-black relative">
             <h2 class="text-base md:text-lg font-bold text-gray-900">
                 Daftar Perencanaan Kegiatan
             </h2>
 
+            <!-- Kontrol Filter, Search, & Tambah -->
             <div class="flex items-center space-x-2">
-                <!-- Dropdown Filter -->
+                <!-- Form Search Server-Side ke AppController -->
+                <form id="searchForm" method="GET" action="{{ url('/kegiatan') }}" class="m-0 p-0 flex items-center">
+                    @if(request('sort'))
+                        <input type="hidden" name="sort" value="{{ request('sort') }}">
+                    @endif
+                    
+                    <div class="flex items-center border-2 border-black bg-gray-100 px-2 py-1 relative">
+                        <svg class="w-4 h-4 text-gray-700 mr-2 shrink-0 cursor-pointer" onclick="document.getElementById('searchForm').submit()" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <input type="text" 
+                               name="search" 
+                               id="searchInput" 
+                               value="{{ request('search') }}" 
+                               placeholder="cari nama kegiatan" 
+                               class="bg-transparent text-sm focus:outline-none w-32 sm:w-48 text-gray-900 pr-5">
+                        
+                        @if(request('search'))
+                            <a href="{{ url('/kegiatan') }}{{ request('sort') ? '?sort='.request('sort') : '' }}" 
+                               class="absolute right-2 text-gray-500 hover:text-black font-bold text-xs" title="Reset Pencarian">
+                                ✕
+                            </a>
+                        @endif
+                    </div>
+                </form>
+
+                <!-- Dropdown Filter Sort -->
                 <div class="relative">
                     <button type="button" id="filterDropdownBtn" class="border-2 border-black p-1.5 hover:bg-gray-100 block transition cursor-pointer" title="Urutkan Data">
                         <svg class="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -125,8 +152,12 @@
                             Terbaru {{ ($sort ?? 'terbaru') === 'terbaru' ? '✓' : '' }}
                         </a>
                         <a href="{{ request()->fullUrlWithQuery(['sort' => 'terlama', 'page' => 1]) }}" 
-                           class="block text-center py-1.5 text-xs sm:text-sm font-semibold text-gray-900 hover:bg-gray-100 {{ ($sort ?? '') === 'terlama' ? 'bg-gray-200 font-bold' : '' }}">
+                           class="block text-center py-1.5 text-xs sm:text-sm font-semibold text-gray-900 border-b-2 border-black hover:bg-gray-100 {{ ($sort ?? '') === 'terlama' ? 'bg-gray-200 font-bold' : '' }}">
                             Terlama {{ ($sort ?? '') === 'terlama' ? '✓' : '' }}
+                        </a>
+                        <a href="{{ request()->fullUrlWithQuery(['sort' => 'az', 'page' => 1]) }}" 
+                           class="block text-center py-1.5 text-xs sm:text-sm font-semibold text-gray-900 hover:bg-gray-100 {{ ($sort ?? '') === 'az' ? 'bg-gray-200 font-bold' : '' }}">
+                            A - Z {{ ($sort ?? '') === 'az' ? '✓' : '' }}
                         </a>
                     </div>
                 </div>
@@ -140,67 +171,107 @@
             </div>
         </div>
 
-        <!-- Daftar Kartu Kegiatan -->
-        <div class="space-y-3">
-            @forelse($kegiatan as $item)
-                <div class="kegiatan-row border-2 border-black bg-[#d1d5db] p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 transition hover:bg-[#c5c9ce]"
-                     data-id="{{ $item->id_keg }}"
-                     data-nama="{{ $item->nama_keg }}"
-                     data-id-jenis="{{ $item->id_jeniskeg }}"
-                     data-jenis="{{ $item->jenis->nama_jeniskeg ?? '-' }}"
-                     data-id-koordinator="{{ $item->id_karyawan_koor }}"
-                     data-koordinator="{{ $item->koordinator->nama_karyawan ?? 'Belum ditentukan' }}"
-                     data-id-lokasi="{{ $item->id_tklokasi }}"
-                     data-lokasi="{{ $item->lokasi->nm_lokasi ?? '-' }}"
-                     data-id-instansi="{{ $item->id_instansi }}"
-                     data-instansi="{{ $item->instansi->nm_instansi ?? '-' }}"
-                     data-tgl-mulai="{{ $item->tanggal_mulai }}"
-                     data-tgl-selesai="{{ $item->tanggal_selesai ?? $item->tanggal_mulai }}"
-                     data-tanggal="{{ \Carbon\Carbon::parse($item->tanggal_mulai)->translatedFormat('l, d F Y') }}"
-                     data-peserta="{{ $item->jmlh_peserta }}"
-                     data-status="{{ $item->status }}"
-                     data-lampiran="{{ $item->lampiran ?? '-' }}">
-                    
-                    <div>
-                        <h3 class="font-bold text-gray-900 text-base">{{ $item->nama_keg }}</h3>
-                        <p class="text-sm text-gray-700 mt-0.5">
-                            Koordinator: {{ $item->koordinator->nama_karyawan ?? 'Tidak ada data' }}
-                        </p>
-                    </div>
+        <!-- Tabel Perencanaan Kegiatan dengan Kolom Penomoran -->
+        <div class="mt-4 border-2 border-black overflow-x-auto">
+            <table class="w-full border-collapse border-black min-w-[700px] text-xs sm:text-sm">
+                <thead>
+                    <tr class="border-b-2 border-black bg-gray-100 text-center font-bold text-gray-900">
+                        <th class="border-r-2 border-black py-3 px-3 w-12">No</th>
+                        <th class="border-r-2 border-black py-3 px-4">Nama & Koordinator Kegiatan</th>
+                        <th class="border-r-2 border-black py-3 px-3 w-32 sm:w-40">Status</th>
+                        <th class="py-3 px-3 w-36 sm:w-44">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="font-medium text-gray-900">
+                    @forelse($kegiatan as $idx => $item)
+                        @php
+                            $no = $kegiatan->firstItem() + $idx;
+                        @endphp
+                        <tr class="kegiatan-row border-b-2 border-black last:border-b-0 bg-[#d1d5db] hover:bg-[#c5c9ce] transition"
+                            data-id="{{ $item->id_keg }}"
+                            data-nama="{{ $item->nama_keg }}"
+                            data-id-jenis="{{ $item->id_jeniskeg }}"
+                            data-jenis="{{ $item->jenis->nama_jeniskeg ?? '-' }}"
+                            data-id-koordinator="{{ $item->id_karyawan_koor }}"
+                            data-koordinator="{{ $item->koordinator->nama_karyawan ?? 'Belum ditentukan' }}"
+                            data-id-lokasi="{{ $item->id_tklokasi }}"
+                            data-lokasi="{{ $item->lokasi->nm_lokasi ?? '-' }}"
+                            data-id-instansi="{{ $item->id_instansi }}"
+                            data-instansi="{{ $item->instansi->nm_instansi ?? '-' }}"
+                            data-tgl-mulai="{{ $item->tanggal_mulai }}"
+                            data-tgl-selesai="{{ $item->tanggal_selesai ?? $item->tanggal_mulai }}"
+                            data-tanggal="{{ \Carbon\Carbon::parse($item->tanggal_mulai)->translatedFormat('l, d F Y') }}"
+                            data-peserta="{{ $item->jmlh_peserta }}"
+                            data-status="{{ $item->status }}"
+                            data-lampiran="{{ $item->lampiran ?? '-' }}">
+                            
+                            <!-- Nomor Baris -->
+                            <td class="border-r-2 border-black py-3 px-3 text-center font-bold">
+                                {{ $no }}
+                            </td>
 
-                    <!-- Grup Tombol Aksi -->
-                    <div class="flex items-center space-x-3 self-end md:self-center shrink-0">
-                        <!-- Icon Detail -->
-                        <button type="button" onclick="openDetailModal(this)" class="p-1 text-gray-900 hover:text-blue-600 transition cursor-pointer leading-none flex items-center justify-center" title="Detail Kegiatan">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
-                            </svg>
-                        </button>
+                            <!-- Informasi Nama & Koordinator -->
+                            <td class="border-r-2 border-black py-3 px-4">
+                                <span class="block font-bold text-gray-900 text-sm sm:text-base">{{ $item->nama_keg }}</span>
+                                <span class="text-xs text-gray-700 font-medium">
+                                    Koordinator: {{ $item->koordinator->nama_karyawan ?? 'Tidak ada data' }}
+                                </span>
+                            </td>
 
-                        <!-- Form Hapus -->
-                        <form action="{{ url('/kegiatan/' . $item->id_keg) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data {{ $item->nama_keg }}?')" class="flex items-center justify-center m-0 p-0">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="p-1 text-gray-900 hover:text-red-600 transition cursor-pointer leading-none flex items-center justify-center" title="Hapus Kegiatan">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                </svg>
-                            </button>
-                        </form>
+                            <!-- Status Kegiatan -->
+                            <td class="border-r-2 border-black py-3 px-3 text-center font-bold">
+                                <span class="inline-block px-2 py-0.5 border border-black text-xs font-bold 
+                                    {{ $item->status === 'Selesai' ? 'bg-emerald-200 text-emerald-900' : '' }}
+                                    {{ $item->status === 'Terkonfirmasi' ? 'bg-blue-200 text-blue-900' : '' }}
+                                    {{ $item->status === 'Belum Konfirmasi' ? 'bg-amber-200 text-amber-900' : '' }}
+                                    {{ $item->status === 'Dibatalkan' ? 'bg-rose-200 text-rose-900' : '' }}">
+                                    {{ $item->status }}
+                                </span>
+                            </td>
 
-                        <!-- Icon Edit -->
-                        <button type="button" onclick="openEditModal(this)" class="p-1 text-gray-900 hover:text-yellow-600 transition cursor-pointer leading-none flex items-center justify-center" title="Edit Kegiatan">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            @empty
-                <div class="text-center py-8 text-gray-500 font-semibold text-sm border-2 border-black p-4">
-                    Belum ada data perencanaan kegiatan yang tersimpan di database.
-                </div>
-            @endforelse
+                            <!-- Grup Tombol Aksi -->
+                            <td class="py-3 px-3 text-center">
+                                <div class="flex items-center justify-center space-x-2">
+                                    <!-- Icon Detail -->
+                                    <button type="button" onclick="openDetailModal(this)" class="p-1 text-gray-900 hover:text-blue-600 transition cursor-pointer leading-none flex items-center justify-center" title="Detail Kegiatan">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                                        </svg>
+                                    </button>
+
+                                    <!-- Form Hapus -->
+                                    <form action="{{ url('/kegiatan/' . $item->id_keg) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data {{ $item->nama_keg }}?')" class="flex items-center justify-center m-0 p-0">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="p-1 text-gray-900 hover:text-red-600 transition cursor-pointer leading-none flex items-center justify-center" title="Hapus Kegiatan">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                        </button>
+                                    </form>
+
+                                    <!-- Icon Edit -->
+                                    <button type="button" onclick="openEditModal(this)" class="p-1 text-gray-900 hover:text-yellow-600 transition cursor-pointer leading-none flex items-center justify-center" title="Edit Kegiatan">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="py-8 text-center text-gray-500 font-semibold text-sm">
+                                @if(request('search'))
+                                    Data perencanaan kegiatan dengan nama "<span class="font-bold">{{ request('search') }}</span>" tidak ditemukan di database.
+                                @else
+                                    Belum ada data perencanaan kegiatan yang tersimpan di database.
+                                @endif
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
 
         <!-- PAGINATION -->
@@ -214,10 +285,10 @@
                     @if ($kegiatan->onFirstPage())
                         <span class="border-2 border-black bg-gray-200 text-gray-400 px-3 py-1 font-bold text-xs sm:text-sm cursor-not-allowed">&laquo;</span>
                     @else
-                        <a href="{{ $kegiatan->previousPageUrl() }}" class="border-2 border-black bg-white hover:bg-gray-200 text-gray-900 px-3 py-1 font-bold text-xs sm:text-sm transition">&laquo;</a>
+                        <a href="{{ $kegiatan->appends(request()->query())->previousPageUrl() }}" class="border-2 border-black bg-white hover:bg-gray-200 text-gray-900 px-3 py-1 font-bold text-xs sm:text-sm transition">&laquo;</a>
                     @endif
 
-                    @foreach ($kegiatan->getUrlRange(1, $kegiatan->lastPage()) as $page => $url)
+                    @foreach ($kegiatan->appends(request()->query())->getUrlRange(1, $kegiatan->lastPage()) as $page => $url)
                         @if ($page == $kegiatan->currentPage())
                             <span class="border-2 border-black bg-black text-white px-3 py-1 font-bold text-xs sm:text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]">{{ $page }}</span>
                         @else
@@ -260,21 +331,18 @@
                     <input type="text" id="inputNamaKeg" name="nama_keg" required placeholder="Masukkan Nama Kegiatan" class="sm:col-span-2 border-2 border-black bg-[#d1d5db] p-2 focus:outline-none focus:bg-white">
                 </div>
 
-                <!-- INSTANSI: INPUT TEXT AUTOCOMPLETE (TANPA DROPDOWN SELECT) -->
+                <!-- INSTANSI: INPUT TEXT AUTOCOMPLETE -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 items-start gap-2 relative">
                     <label class="font-semibold text-gray-800 pt-2">Instansi</label>
                     <div class="sm:col-span-2 relative">
-                        <!-- Input ID Tersembunyi -->
                         <input type="hidden" id="inputInstansiId" name="id_instansi" required>
                         
-                        <!-- Input Text Pencarian -->
                         <input type="text" 
                                id="inputInstansiText" 
                                autocomplete="off"
                                placeholder="🔍 Ketik untuk mencari & memilih instansi..." 
                                class="w-full border-2 border-black bg-[#d1d5db] p-2 focus:outline-none focus:bg-white text-gray-900 font-medium">
 
-                        <!-- Daftar Referensi Hasil Pencarian (Muncul di Bawah Input Text) -->
                         <div id="instansiSuggestions" class="hidden absolute left-0 right-0 top-full mt-1 max-h-48 overflow-y-auto border-2 border-black bg-white shadow-xl z-50">
                             @foreach($instansiList as $ins)
                                 <div class="instansi-item px-3 py-2 text-xs font-semibold text-gray-900 hover:bg-amber-100 cursor-pointer border-b border-gray-200 last:border-b-0"
@@ -397,14 +465,23 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT: LOGIKA AUTOCOMPLETE INSTANSI & MODAL -->
+    <!-- LOGIKA JAVASCRIPT: DROPDOWN, AUTOCOMPLETE, MODAL, & RESET SEARCH -->
     <script>
-        // 1. Filter Dropdown Header (Terbaru / Terlama)
+        // 1. Filter Dropdown Header
         const filterBtn = document.getElementById('filterDropdownBtn');
         const filterMenu = document.getElementById('filterMenu');
+        const searchInput = document.getElementById('searchInput');
+
         filterBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             filterMenu.classList.toggle('hidden');
+        });
+
+        // Submit form otomatis jika teks pencarian dikosongkan
+        searchInput.addEventListener('input', function() {
+            if (this.value === '' && "{{ request('search') }}" !== '') {
+                document.getElementById('searchForm').submit();
+            }
         });
 
         // 2. LOGIKA INPUT TEXT PENCARIAN REKOMENDASI INSTANSI
@@ -414,15 +491,13 @@
         const instansiItems = document.querySelectorAll('.instansi-item');
         const noInstansiFound = document.getElementById('noInstansiFound');
 
-        // Buka rekomendasi saat input text diklik / difokuskan
         inputInstansiText.addEventListener('focus', () => {
             filterInstansiSuggestions();
             instansiSuggestions.classList.remove('hidden');
         });
 
-        // Filter daftar saat pengguna mengetik
         inputInstansiText.addEventListener('input', () => {
-            inputInstansiId.value = ""; // Reset ID jika pengguna mengubah ketikan
+            inputInstansiId.value = "";
             filterInstansiSuggestions();
             instansiSuggestions.classList.remove('hidden');
         });
@@ -448,7 +523,6 @@
             }
         }
 
-        // Pilih instansi dari daftar rekomendasi
         instansiItems.forEach(item => {
             item.addEventListener('click', () => {
                 const selectedId = item.getAttribute('data-id');
@@ -487,7 +561,6 @@
 
             document.getElementById('inputNamaKeg').value = row.getAttribute('data-nama') || '';
             
-            // Set ID dan Nama Instansi pada Input Text
             inputInstansiId.value = row.getAttribute('data-id-instansi') || '';
             inputInstansiText.value = row.getAttribute('data-instansi') || '';
 

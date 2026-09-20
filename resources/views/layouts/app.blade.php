@@ -3,7 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'Sistem Manajemen Kegiatan' }} - BKN Kanreg VIII</title>
+    
+    <!-- FAVICON LOGO BKN (Disesuaikan Presisi dengan nama file Logo_BKN.png) -->
+    <link rel="icon" type="image/png" href="{{ asset('images/Logo_BKN.png') }}?v=1">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/Logo_BKN.png') }}?v=1">
+    <!-- Dukungan untuk Perangkat Mobile / Apple -->
+    <link rel="apple-touch-icon" href="{{ asset('images/Logo_BKN.png') }}?v=1">
+
+    <title>@yield('title', 'Kantor Regional BKN')</title>
     
     <!-- Google Fonts: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

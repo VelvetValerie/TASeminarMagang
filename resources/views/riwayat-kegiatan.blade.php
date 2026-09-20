@@ -85,44 +85,79 @@
     <!-- KONTEN UTAMA: DAFTAR REKAMAN RIWAYAT KEGIATAN -->
     <div class="border-2 border-black bg-white p-4 md:p-6 flex flex-col space-y-4 shadow-sm">
         
-            <!-- Header: Judul + Dropdown Filter Urutan (Sama Presisi dengan Dashboard) -->
-            <div class="flex items-center justify-between pb-3 border-b-2 border-black relative">
+            <!-- Header Kotak: Judul + Search Server-Side & Sort Dropdown -->
+            <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b-2 border-black relative">
                 <h2 class="text-base md:text-lg font-bold text-gray-900">
                     Daftar Rekaman Riwayat Kegiatan
                 </h2>
-                <!-- Tombol & Popover Filter bergaya Brutalist Dashboard -->
-                <div class="relative">
-                    <button type="button" id="filterDropdownBtn" class="border-2 border-black p-1.5 hover:bg-gray-100 block transition cursor-pointer" title="Urutkan Data">
-                        <svg class="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
-                    </button>
-                    <!-- Menu Dropdown Filter -->
-                    <div id="filterMenu" class="hidden absolute right-0 top-full mt-1 w-36 border-2 border-black bg-white shadow-md z-30">
-                        <a href="{{ request()->fullUrlWithQuery(['sort' => 'terbaru', 'page' => 1]) }}" 
-                           class="block text-center py-1.5 text-xs sm:text-sm font-semibold text-gray-900 border-b-2 border-black hover:bg-gray-100 {{ ($sort ?? 'terbaru') === 'terbaru' ? 'bg-gray-200 font-bold' : '' }}">
-                            Terbaru {{ ($sort ?? 'terbaru') === 'terbaru' ? '✓' : '' }}
-                        </a>
-                        <a href="{{ request()->fullUrlWithQuery(['sort' => 'terlama', 'page' => 1]) }}" 
-                           class="block text-center py-1.5 text-xs sm:text-sm font-semibold text-gray-900 hover:bg-gray-100 {{ ($sort ?? '') === 'terlama' ? 'bg-gray-200 font-bold' : '' }}">
-                            Terlama {{ ($sort ?? '') === 'terlama' ? '✓' : '' }}
-                        </a>
+
+                <!-- Kontrol Filter & Search -->
+                <div class="flex items-center space-x-2">
+                    <!-- Search Input Form (Database Server-Side Search) -->
+                    <form id="searchForm" method="GET" action="{{ url('/riwayat-kegiatan') }}" class="m-0 p-0 flex items-center">
+                        @if(request('sort'))
+                            <input type="hidden" name="sort" value="{{ request('sort') }}">
+                        @endif
+                        
+                        <div class="flex items-center border-2 border-black bg-gray-100 px-2 py-1 relative">
+                            <svg class="w-4 h-4 text-gray-700 mr-2 shrink-0 cursor-pointer" onclick="document.getElementById('searchForm').submit()" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            <input type="text" 
+                                   name="search" 
+                                   id="searchInput" 
+                                   value="{{ request('search') }}" 
+                                   placeholder="cari nama kegiatan" 
+                                   class="bg-transparent text-sm focus:outline-none w-32 sm:w-48 text-gray-900 pr-5">
+                            
+                            @if(request('search'))
+                                <a href="{{ url('/riwayat-kegiatan') }}{{ request('sort') ? '?sort='.request('sort') : '' }}" 
+                                   class="absolute right-2 text-gray-500 hover:text-black font-bold text-xs" title="Reset Pencarian">
+                                    ✕
+                                </a>
+                            @endif
+                        </div>
+                    </form>
+
+                    <!-- Tombol Menu Sort List -->
+                    <div class="relative">
+                        <button id="sortDropdownBtn" class="border-2 border-black p-1.5 hover:bg-gray-100 block transition cursor-pointer" title="Urutkan Data">
+                            <svg class="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"></path>
+                            </svg>
+                        </button>
+
+                        <!-- Popover Pilihan: Terbaru, Terlama, A - Z (Server-side Sorting Query) -->
+                        <div id="sortMenu" class="hidden absolute right-0 top-full mt-1 w-32 border-2 border-black bg-white shadow-md z-30">
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'terbaru', 'page' => 1]) }}" 
+                               class="block text-center py-1.5 text-xs sm:text-sm font-medium text-gray-900 border-b-2 border-black hover:bg-gray-100 {{ ($sort ?? 'terbaru') === 'terbaru' ? 'bg-gray-200 font-bold' : '' }}">
+                                Terbaru {{ ($sort ?? 'terbaru') === 'terbaru' ? '✓' : '' }}
+                            </a>
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'terlama', 'page' => 1]) }}" 
+                               class="block text-center py-1.5 text-xs sm:text-sm font-medium text-gray-900 border-b-2 border-black hover:bg-gray-100 {{ ($sort ?? '') === 'terlama' ? 'bg-gray-200 font-bold' : '' }}">
+                                Terlama {{ ($sort ?? '') === 'terlama' ? '✓' : '' }}
+                            </a>
+                            <a href="{{ request()->fullUrlWithQuery(['sort' => 'az', 'page' => 1]) }}" 
+                               class="block text-center py-1.5 text-xs sm:text-sm font-medium text-gray-900 hover:bg-gray-100 {{ ($sort ?? '') === 'az' ? 'bg-gray-200 font-bold' : '' }}">
+                                A - Z {{ ($sort ?? '') === 'az' ? '✓' : '' }}
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Tabel Rekaman Riwayat Kegiatan (Maksimal 5 Baris per Laman) -->
+            <!-- Tabel Rekaman Riwayat Kegiatan -->
             <div class="mt-4 border-2 border-black overflow-x-auto">
                 <table class="w-full border-collapse border-black min-w-[650px] text-xs sm:text-sm">
                     <thead>
                         <tr class="border-b-2 border-black bg-gray-100 text-center font-bold text-gray-900">
                             <th class="border-r-2 border-black py-3 px-3 w-12">No</th>
                             <th class="border-r-2 border-black py-3 px-3 w-28 sm:w-36">Log ID</th>
-                            <th class="border-r-2 border-black py-3 px-3">Rentang Tanggal & Waktu</th>
+                            <th class="border-r-2 border-black py-3 px-3">Nama & Rentang Tanggal</th>
                             <th class="py-3 px-3 w-32 sm:w-40">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="font-medium text-gray-900">
+                    <tbody id="riwayatKegiatanBody" class="font-medium text-gray-900">
                         @forelse($kegiatan as $idx => $item)
                             @php
                                 $no = $kegiatan->firstItem() + $idx;
@@ -141,15 +176,16 @@
                                 $tglLengkap = \Carbon\Carbon::parse($item->tanggal_mulai)->translatedFormat('l, d F Y');
                             @endphp
 
-                            <tr class="border-b-2 border-black last:border-b-0 bg-[#d1d5db] hover:bg-[#c4c8ce] transition">
-                                <td class="border-r-2 border-black py-3 px-3 text-center font-bold">
+                            <tr class="kegiatan-row border-b-2 border-black last:border-b-0 bg-[#d1d5db] hover:bg-[#c4c8ce] transition">
+                                <td class="row-number border-r-2 border-black py-3 px-3 text-center font-bold">
                                     {{ $no }}
                                 </td>
                                 <td class="border-r-2 border-black py-3 px-3 text-center font-bold tracking-wider">
                                     {{ $logId }}
                                 </td>
                                 <td class="border-r-2 border-black py-3 px-4 text-center font-semibold">
-                                    {{ $rentangDisplay }}
+                                    <span class="block font-bold text-gray-900 item-title">{{ $item->nama_keg }}</span>
+                                    <span class="text-xs text-gray-700 font-medium">{{ $rentangDisplay }}</span>
                                 </td>
                                 <td class="py-3 px-3 text-center">
                                     <button type="button"
@@ -172,60 +208,63 @@
                         @empty
                             <tr>
                                 <td colspan="4" class="py-8 text-center text-gray-500 font-semibold text-sm">
-                                    Belum ada rekaman riwayat kegiatan di database.
+                                    @if(request('search'))
+                                        Data riwayat kegiatan dengan nama "<span class="font-bold">{{ request('search') }}</span>" tidak ditemukan di database.
+                                    @else
+                                        Belum ada rekaman riwayat kegiatan di database.
+                                    @endif
                                 </td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
-        </div>
 
-        <!-- NAVIGASI PAGINATION ANGKA (1, 2, 3, dst.) -->
-        @if ($kegiatan->hasPages())
-            <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t-2 border-black">
-                <p class="text-xs sm:text-sm font-semibold text-gray-700">
-                    Menampilkan <span class="font-bold text-gray-900">{{ $kegiatan->firstItem() }}</span> - <span class="font-bold text-gray-900">{{ $kegiatan->lastItem() }}</span> dari <span class="font-bold text-gray-900">{{ $kegiatan->total() }}</span> rekaman
-                </p>
+            <!-- NAVIGASI PAGINATION ANGKA -->
+            @if ($kegiatan->hasPages())
+                <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t-2 border-black">
+                    <p class="text-xs sm:text-sm font-semibold text-gray-700">
+                        Menampilkan <span class="font-bold text-gray-900">{{ $kegiatan->firstItem() }}</span> - <span class="font-bold text-gray-900">{{ $kegiatan->lastItem() }}</span> dari <span class="font-bold text-gray-900">{{ $kegiatan->total() }}</span> rekaman
+                    </p>
 
-                <div class="flex items-center space-x-1.5">
-                    <!-- Tombol Laman Sebelumnya (<) -->
-                    @if ($kegiatan->onFirstPage())
-                        <span class="border-2 border-black bg-gray-200 text-gray-400 px-3 py-1 font-bold text-xs sm:text-sm cursor-not-allowed">
-                            &laquo;
-                        </span>
-                    @else
-                        <a href="{{ $kegiatan->previousPageUrl() }}" class="border-2 border-black bg-white hover:bg-gray-200 text-gray-900 px-3 py-1 font-bold text-xs sm:text-sm transition">
-                            &laquo;
-                        </a>
-                    @endif
-
-                    <!-- Tombol Nomor Laman (1, 2, 3, dst) -->
-                    @foreach ($kegiatan->getUrlRange(1, $kegiatan->lastPage()) as $page => $url)
-                        @if ($page == $kegiatan->currentPage())
-                            <span class="border-2 border-black bg-black text-white px-3 py-1 font-bold text-xs sm:text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]">
-                                {{ $page }}
+                    <div class="flex items-center space-x-1.5">
+                        <!-- Tombol Laman Sebelumnya (<) -->
+                        @if ($kegiatan->onFirstPage())
+                            <span class="border-2 border-black bg-gray-200 text-gray-400 px-3 py-1 font-bold text-xs sm:text-sm cursor-not-allowed">
+                                &laquo;
                             </span>
                         @else
-                            <a href="{{ $url }}" class="border-2 border-black bg-white hover:bg-gray-200 text-gray-900 px-3 py-1 font-bold text-xs sm:text-sm transition">
-                                {{ $page }}
+                            <a href="{{ $kegiatan->appends(request()->query())->previousPageUrl() }}" class="border-2 border-black bg-white hover:bg-gray-200 text-gray-900 px-3 py-1 font-bold text-xs sm:text-sm transition">
+                                &laquo;
                             </a>
                         @endif
-                    @endforeach
 
-                    <!-- Tombol Laman Berikutnya (>) -->
-                    @if ($kegiatan->hasMorePages())
-                        <a href="{{ $kegiatan->nextPageUrl() }}" class="border-2 border-black bg-white hover:bg-gray-200 text-gray-900 px-3 py-1 font-bold text-xs sm:text-sm transition">
-                            &raquo;
-                        </a>
-                    @else
-                        <span class="border-2 border-black bg-gray-200 text-gray-400 px-3 py-1 font-bold text-xs sm:text-sm cursor-not-allowed">
-                            &raquo;
-                        </span>
-                    @endif
+                        <!-- Tombol Nomor Laman -->
+                        @foreach ($kegiatan->appends(request()->query())->getUrlRange(1, $kegiatan->lastPage()) as $page => $url)
+                            @if ($page == $kegiatan->currentPage())
+                                <span class="border-2 border-black bg-black text-white px-3 py-1 font-bold text-xs sm:text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]">
+                                    {{ $page }}
+                                </span>
+                            @else
+                                <a href="{{ $url }}" class="border-2 border-black bg-white hover:bg-gray-200 text-gray-900 px-3 py-1 font-bold text-xs sm:text-sm transition">
+                                    {{ $page }}
+                                </a>
+                            @endif
+                        @endforeach
+
+                        <!-- Tombol Laman Berikutnya (>) -->
+                        @if ($kegiatan->hasMorePages())
+                            <a href="{{ $kegiatan->appends(request()->query())->nextPageUrl() }}" class="border-2 border-black bg-white hover:bg-gray-200 text-gray-900 px-3 py-1 font-bold text-xs sm:text-sm transition">
+                                &raquo;
+                            </a>
+                        @else
+                            <span class="border-2 border-black bg-gray-200 text-gray-400 px-3 py-1 font-bold text-xs sm:text-sm cursor-not-allowed">
+                                &raquo;
+                            </span>
+                        @endif
+                    </div>
                 </div>
-            </div>
-        @endif
+            @endif
 
     </div>
 
@@ -290,20 +329,28 @@
         </div>
     </div>
 
-    <!-- LOGIKA JAVASCRIPT -->
+    <!-- LOGIKA JAVASCRIPT: DROPDOWN & POPUP MODAL -->
     <script>
-        // Toggle Dropdown Filter
-        const filterBtn = document.getElementById('filterDropdownBtn');
-        const filterMenu = document.getElementById('filterMenu');
+        const sortDropdownBtn = document.getElementById('sortDropdownBtn');
+        const sortMenu = document.getElementById('sortMenu');
+        const searchInput = document.getElementById('searchInput');
 
-        filterBtn.addEventListener('click', (e) => {
+        // Toggle dropdown sorting
+        sortDropdownBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            filterMenu.classList.toggle('hidden');
+            sortMenu.classList.toggle('hidden');
         });
 
         document.addEventListener('click', () => {
-            if (!filterMenu.classList.contains('hidden')) {
-                filterMenu.classList.add('hidden');
+            if (!sortMenu.classList.contains('hidden')) {
+                sortMenu.classList.add('hidden');
+            }
+        });
+
+        // Submit form otomatis jika pengguna menghapus teks pencarian sampai kosong
+        searchInput.addEventListener('input', function() {
+            if (this.value === '' && "{{ request('search') }}" !== '') {
+                document.getElementById('searchForm').submit();
             }
         });
 
