@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Portal BKN Kanreg VIII</title>
+    <!-- FAVICON LOGO BKN (Disesuaikan Presisi dengan nama file Logo_BKN.png) -->
+    <link rel="icon" type="image/png" href="{{ asset('images/Logo_BKN.png') }}?v=1">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/Logo_BKN.png') }}?v=1">
+    <!-- Dukungan untuk Perangkat Mobile / Apple -->
+    <link rel="apple-touch-icon" href="{{ asset('images/Logo_BKN.png') }}?v=1">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">

@@ -1,6 +1,85 @@
 @extends('layouts.app')
 
-<title>Kantor Regional BKN - Riwayat Kerja</title>
+<title>Kantor Regional BKN - Riwayat Kerja Pegawai</title>
+
+@section('sidebar-header')
+    <div class="border-2 border-black bg-white p-2.5 text-center font-bold text-gray-900">
+        Kantor Regional BKN
+    </div>
+@endsection
+
+@section('sidebar-menu')
+    <div class="space-y-4">
+        <!-- Grup 1: Menu Utama -->
+        <div class="space-y-2">
+            <a href="{{ url('/dashboard') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center hover:bg-gray-100 transition">
+                Menu Dasboard
+            </a>
+            <a href="{{ url('/kalender') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center hover:bg-gray-100 transition">
+                Kalender
+            </a>
+        </div>
+
+        <!-- Grup 2: Operasional -->
+        <div class="space-y-2 pt-2">
+            <a href="{{ url('/kegiatan') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center hover:bg-gray-100 transition">
+                Kegiatan
+            </a>
+            <a href="{{ url('/riwayat-kerja') }}" class="block border-2 border-black bg-gray-500 text-white font-semibold py-2 px-4 text-center transition">
+                Rekam Kerja
+            </a>
+        </div>
+
+        <!-- Grup 3: Master Data & Dropdown -->
+        <div class="space-y-2 pt-2">
+            <a href="{{ url('/jenis-kegiatan') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center text-sm hover:bg-gray-100 transition">
+                Jenis Kegiatan
+            </a>
+            <a href="{{ url('/titik-lokasi') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center text-sm hover:bg-gray-100 transition">
+                Titik Lokasi
+            </a>
+            <a href="{{ url('/instansi') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center text-sm hover:bg-gray-100 transition">
+                Instansi
+            </a>
+            <a href="{{ url('/riwayat-kegiatan') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center text-sm hover:bg-gray-100 transition">
+                Status
+            </a>
+
+            <!-- Dropdown Manajemen -->
+            <details class="group border-2 border-black bg-white">
+                <summary class="list-none py-2 px-4 font-semibold text-gray-900 flex items-center justify-between text-sm cursor-pointer hover:bg-gray-100 transition">
+                    <span>Manajemen</span>
+                    <svg class="w-4 h-4 transition-transform duration-200 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </summary>
+                <div class="border-t-2 border-black bg-white">
+                    <a href="{{ url('/master-user') }}" class="block py-2 px-4 text-center text-sm font-medium text-gray-800 border-b-2 border-black hover:bg-gray-100 transition">
+                        User
+                    </a>
+                    <a href="{{ url('/master-kegiatan') }}" class="block py-2 px-4 text-center text-sm font-medium text-gray-800 border-b-2 border-black hover:bg-gray-100 transition">
+                        Kegiatan
+                    </a>
+                    <a href="{{ url('/master-lokasi') }}" class="block py-2 px-4 text-center text-sm font-medium text-gray-800 hover:bg-gray-100 transition">
+                        Lokasi
+                    </a>
+                </div>
+            </details>
+        </div>
+    </div>
+@endsection
+
+@section('navbar-left')
+    <div class="border-2 border-black bg-white px-6 py-1.5 font-bold text-gray-900">
+        Rekam Kerja
+    </div>
+@endsection
+
+@section('navbar-right')
+    <div class="border-2 border-black bg-white px-8 py-1.5 font-semibold text-gray-900">
+        {{ Auth::user()->username ?? 'Username' }}
+    </div>
+@endsection
 
 @section('content')
     <!-- KONTEN UTAMA: DAFTAR KARYAWAN -->
@@ -9,7 +88,7 @@
         <!-- Header Kotak: Judul + Kontrol Filter & Search -->
         <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b-2 border-black relative">
             <h2 class="text-base md:text-lg font-bold text-gray-900">
-                Daftar Karyawan
+                Daftar Riwayat Kerja Pegawai
             </h2>
 
             <!-- Kontrol Search & Dropdown Sorting -->
@@ -19,7 +98,7 @@
                     <svg class="w-4 h-4 text-gray-700 mr-2 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
-                    <input type="text" id="searchInput" placeholder="cari nama" class="bg-transparent text-sm focus:outline-none w-28 sm:w-40 text-gray-900">
+                    <input type="text" id="searchInput" placeholder="cari nama pegawai" class="bg-transparent text-sm focus:outline-none w-32 sm:w-48 text-gray-900">
                 </div>
 
                 <!-- Tombol Menu Sort List -->
@@ -35,10 +114,10 @@
                         <button type="button" onclick="sortItems('az')" class="w-full text-center py-1.5 text-xs sm:text-sm font-medium text-gray-900 border-b-2 border-black hover:bg-gray-100 block cursor-pointer">
                             A - Z
                         </button>
-                        <button type="button" onclick="sortItems('terbaru')" class="w-full text-center py-1.5 text-xs sm:text-sm font-medium text-gray-900 border-b-2 border-black hover:bg-gray-100 block cursor-pointer">
+                        <button type="button" onclick="sortItems('terbanyak')" class="w-full text-center py-1.5 text-xs sm:text-sm font-medium text-gray-900 border-b-2 border-black hover:bg-gray-100 block cursor-pointer">
                             Terbanyak
                         </button>
-                        <button type="button" onclick="sortItems('terlama')" class="w-full text-center py-1.5 text-xs sm:text-sm font-medium text-gray-900 hover:bg-gray-100 block cursor-pointer">
+                        <button type="button" onclick="sortItems('tersedikit')" class="w-full text-center py-1.5 text-xs sm:text-sm font-medium text-gray-900 hover:bg-gray-100 block cursor-pointer">
                             Tersedikit
                         </button>
                     </div>
@@ -46,111 +125,122 @@
             </div>
         </div>
 
-        <!-- Kontainer Daftar Karyawan -->
-        <div id="karyawanList" class="mt-4 border-2 border-black p-3 md:p-4 max-h-[460px] overflow-y-auto space-y-4">
-            @if(isset($karyawan) && $karyawan->count() > 0)
-                {{-- Mode Dinamis Database --}}
-                @foreach($karyawan as $idx => $item)
-                    @php
-                        $kegiatanList = $item->kegiatan ?? collect();
-                        $kegiatanTerakhir = $kegiatanList->sortByDesc('tanggal_mulai')->first();
-                        $kegiatanPayload = $kegiatanList->map(function($k) use ($item) {
-                            $tglMulai = \Carbon\Carbon::parse($k->tanggal_mulai)->translatedFormat('l, d F Y');
-                            $tglSelesai = $k->tanggal_selesai ? \Carbon\Carbon::parse($k->tanggal_selesai)->translatedFormat('l, d F Y') : $tglMulai;
-                            $tglText = ($tglMulai === $tglSelesai) ? $tglMulai : "{$tglMulai} ~ {$tglSelesai}";
-                            return [
-                                'nama' => $k->nama_keg,
-                                'lokasi' => $k->lokasi->nm_lokasi ?? '-',
-                                'alamat' => $k->lokasi->alamat ?? '-',
-                                'tanggal' => $tglText,
-                                'koordinator' => $item->nama_karyawan ?? '-',
-                                'jenis' => $k->jenis->nama_jeniskeg ?? '-',
-                                'peserta' => number_format($k->jmlh_peserta ?? 0),
-                                'status' => $k->status ?? '-',
-                                'lampiran' => $k->lampiran ?? '-'
-                            ];
-                        })->values();
-                    @endphp
-                    <div class="karyawan-item border-2 border-black bg-[#d1d5db] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-                         data-order="{{ $idx + 1 }}"
-                         data-name="{{ $item->nama_karyawan }}"
-                         data-jumlah="{{ $kegiatanList->count() }}"
-                         data-kegiatan="{{ $kegiatanTerakhir->nama_keg ?? '-' }}"
-                         data-lokasi="{{ $kegiatanTerakhir->lokasi->nm_lokasi ?? '-' }}"
-                         data-items='@json($kegiatanPayload)'>
-                        <p class="font-medium text-gray-900 text-sm md:text-base">{{ $item->nama_karyawan }}</p>
-                        <button type="button" onclick="openModal1(this)" class="detail-main-btn self-end sm:self-center border-2 border-black bg-gray-400 hover:bg-blue-600 hover:text-white text-gray-900 font-semibold px-6 py-1 text-sm transition cursor-pointer">
-                            Detail
-                        </button>
-                    </div>
-                @endforeach
-            @else
-                {{-- Mode Fallback Statis (Jika Belum Memuat Variabel dari Controller) --}}
-                <div class="karyawan-item border-2 border-black bg-[#d1d5db] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-                     data-order="1"
-                     data-name="Karyawan A"
-                     data-jumlah="4"
-                     data-kegiatan="Tes CASN"
-                     data-lokasi="Gedung A"
-                     data-items='[{"nama":"Kegiatan A","lokasi":"Gedung A","alamat":"Ruang 1","tanggal":"Selasa, 03 Juni 2026","koordinator":"Karyawan A","jenis":"Tes CASN","peserta":"200","status":"Terlaksana","lampiran":"-"},{"nama":"Kegiatan B","lokasi":"Gedung B","alamat":"Ruang 2","tanggal":"Rabu, 04 Juni 2026","koordinator":"Karyawan A","jenis":"Tes CAT","peserta":"150","status":"Terlaksana","lampiran":"-"},{"nama":"Kegiatan C","lokasi":"Gedung C","alamat":"Ruang 3","tanggal":"Kamis, 05 Juni 2026","koordinator":"Karyawan A","jenis":"Seleksi CPNS","peserta":"180","status":"Terlaksana","lampiran":"-"},{"nama":"Kegiatan D","lokasi":"Gedung D","alamat":"Ruang 4","tanggal":"Selasa, 10 Juni 2026","koordinator":"Karyawan A","jenis":"Tes Non-ASN","peserta":"120","status":"Terlaksana","lampiran":"-"}]'>
-                    <p class="font-medium text-gray-900 text-sm md:text-base">Karyawan A</p>
-                    <button type="button" onclick="openModal1(this)" class="detail-main-btn self-end sm:self-center border-2 border-black bg-gray-400 hover:bg-blue-600 hover:text-white text-gray-900 font-semibold px-6 py-1 text-sm transition cursor-pointer">
-                        Detail
-                    </button>
-                </div>
+        <!-- Tabel Informatif Daftar Riwayat Kerja Pegawai -->
+        <div class="mt-4 border-2 border-black overflow-x-auto">
+            <table class="w-full border-collapse border-black min-w-[650px] text-xs sm:text-sm">
+                <thead>
+                    <tr class="border-b-2 border-black bg-gray-100 text-center font-bold text-gray-900">
+                        <th class="border-r-2 border-black py-3 px-3 w-12">No</th>
+                        <th class="border-r-2 border-black py-3 px-4">Nama Pegawai / Karyawan</th>
+                        <th class="border-r-2 border-black py-3 px-3 w-40 sm:w-48">Total Kegiatan Difasilitasi</th>
+                        <th class="py-3 px-3 w-28 sm:w-36">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="karyawanList" class="font-medium text-gray-900">
+                    @if(isset($karyawan) &&$karyawan->count() > 0)
+                        {{-- Mode Dinamis Database --}}
+                        @foreach($karyawan as $idx =>$item)
+                            @php
+                                $kegiatanList =$item->kegiatan ?? collect();
+                                $kegiatanTerakhir =$kegiatanList->sortByDesc('tanggal_mulai')->first();
+                                $kegiatanPayload =$kegiatanList->map(function($k) use ($item) {
+                                    $tglMulai = \Carbon\Carbon::parse($k->tanggal_mulai)->translatedFormat('l, d F Y');
+                                    $tglSelesai =$k->tanggal_selesai ? \Carbon\Carbon::parse($k->tanggal_selesai)->translatedFormat('l, d F Y') :$tglMulai;
+                                    $tglText = ($tglMulai === $tglSelesai) ?$tglMulai : "{$tglMulai} ~ {$tglSelesai}";
+                                    return [
+                                        'nama' => $k->nama_keg,
+                                        'lokasi' => $k->lokasi->nm_lokasi ?? '-',
+                                        'alamat' => $k->lokasi->alamat ?? '-',
+                                        'tanggal' => $tglText,
+                                        'koordinator' => $item->nama_karyawan ?? '-',
+                                        'jenis' => $k->jenis->nama_jeniskeg ?? '-',
+                                        'peserta' => number_format($k->jmlh_peserta ?? 0),
+                                        'status' => $k->status ?? '-',
+                                        'lampiran' => $k->lampiran ?? '-'
+                                    ];
+                                })->values();
+                            @endphp
+                            <tr class="karyawan-item border-b-2 border-black last:border-b-0 bg-[#d1d5db] hover:bg-[#c5c9ce] transition"
+                                data-order="{{ $idx + 1 }}"
+                                data-name="{{ $item->nama_karyawan }}"
+                                data-jumlah="{{ $kegiatanList->count() }}"
+                                data-kegiatan="{{ $kegiatanTerakhir->nama_keg ?? '-' }}"
+                                data-lokasi="{{ $kegiatanTerakhir->lokasi->nm_lokasi ?? '-' }}"
+                                data-items='@json($kegiatanPayload)'>
+                                
+                                <td class="row-no border-r-2 border-black py-3 px-3 text-center font-bold">
+                                    {{ $idx + 1 }}
+                                </td>
+                                <td class="border-r-2 border-black py-3 px-4 font-bold text-gray-900 text-sm sm:text-base">
+                                    {{ $item->nama_karyawan }}
+                                </td>
+                                <td class="border-r-2 border-black py-3 px-3 text-center font-bold">
+                                    <span class="inline-block px-3 py-0.5 border border-black bg-white text-gray-900 text-xs sm:text-sm">
+                                        {{ $kegiatanList->count() }} Kegiatan
+                                    </span>
+                                </td>
+                                <td class="py-3 px-3 text-center">
+                                    <button type="button" onclick="openModal1(this)" class="detail-main-btn border-2 border-black bg-gray-400 hover:bg-blue-600 hover:text-white text-gray-900 font-semibold px-4 py-1 text-xs sm:text-sm transition cursor-pointer shadow-xs">
+                                        Detail
+                                    </button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    @else
+                        {{-- Mode Fallback Statis --}}
+                        <tr class="karyawan-item border-b-2 border-black bg-[#d1d5db] hover:bg-[#c5c9ce] transition"
+                            data-order="1"
+                            data-name="Karyawan A"
+                            data-jumlah="4"
+                            data-kegiatan="Tes CASN"
+                            data-lokasi="Gedung A"
+                            data-items='[{"nama":"Kegiatan A","lokasi":"Gedung A","alamat":"Ruang 1","tanggal":"Selasa, 03 Juni 2026","koordinator":"Karyawan A","jenis":"Tes CASN","peserta":"200","status":"Terlaksana","lampiran":"-"},{"nama":"Kegiatan B","lokasi":"Gedung B","alamat":"Ruang 2","tanggal":"Rabu, 04 Juni 2026","koordinator":"Karyawan A","jenis":"Tes CAT","peserta":"150","status":"Terlaksana","lampiran":"-"},{"nama":"Kegiatan C","lokasi":"Gedung C","alamat":"Ruang 3","tanggal":"Kamis, 05 Juni 2026","koordinator":"Karyawan A","jenis":"Seleksi CPNS","peserta":"180","status":"Terlaksana","lampiran":"-"},{"nama":"Kegiatan D","lokasi":"Gedung D","alamat":"Ruang 4","tanggal":"Selasa, 10 Juni 2026","koordinator":"Karyawan A","jenis":"Tes Non-ASN","peserta":"120","status":"Terlaksana","lampiran":"-"}]'>
+                            <td class="row-no border-r-2 border-black py-3 px-3 text-center font-bold">1</td>
+                            <td class="border-r-2 border-black py-3 px-4 font-bold text-gray-900 text-sm sm:text-base">Karyawan A</td>
+                            <td class="border-r-2 border-black py-3 px-3 text-center font-bold">
+                                <span class="inline-block px-3 py-0.5 border border-black bg-white text-gray-900 text-xs sm:text-sm">4 Kegiatan</span>
+                            </td>
+                            <td class="py-3 px-3 text-center">
+                                <button type="button" onclick="openModal1(this)" class="detail-main-btn border-2 border-black bg-gray-400 hover:bg-blue-600 hover:text-white text-gray-900 font-semibold px-4 py-1 text-xs sm:text-sm transition cursor-pointer shadow-xs">Detail</button>
+                            </td>
+                        </tr>
 
-                <div class="karyawan-item border-2 border-black bg-[#d1d5db] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-                     data-order="2"
-                     data-name="Karyawan B"
-                     data-jumlah="2"
-                     data-kegiatan="Seleksi CPNS"
-                     data-lokasi="Gedung B"
-                     data-items='[{"nama":"Kegiatan B","lokasi":"Gedung B","alamat":"Ruang Utama","tanggal":"Rabu, 04 Juni 2026","koordinator":"Karyawan B","jenis":"Seleksi CPNS","peserta":"150","status":"Terlaksana","lampiran":"-"},{"nama":"Kegiatan C","lokasi":"Gedung C","alamat":"Ruang CAT","tanggal":"Kamis, 05 Juni 2026","koordinator":"Karyawan B","jenis":"Tes CAT","peserta":"180","status":"Terlaksana","lampiran":"-"}]'>
-                    <p class="font-medium text-gray-900 text-sm md:text-base">Karyawan B</p>
-                    <button type="button" onclick="openModal1(this)" class="detail-main-btn self-end sm:self-center border-2 border-black bg-gray-400 hover:bg-blue-600 hover:text-white text-gray-900 font-semibold px-6 py-1 text-sm transition cursor-pointer">
-                        Detail
-                    </button>
-                </div>
+                        <tr class="karyawan-item border-b-2 border-black bg-[#d1d5db] hover:bg-[#c5c9ce] transition"
+                            data-order="2"
+                            data-name="Karyawan B"
+                            data-jumlah="2"
+                            data-kegiatan="Seleksi CPNS"
+                            data-lokasi="Gedung B"
+                            data-items='[{"nama":"Kegiatan B","lokasi":"Gedung B","alamat":"Ruang Utama","tanggal":"Rabu, 04 Juni 2026","koordinator":"Karyawan B","jenis":"Seleksi CPNS","peserta":"150","status":"Terlaksana","lampiran":"-"},{"nama":"Kegiatan C","lokasi":"Gedung C","alamat":"Ruang CAT","tanggal":"Kamis, 05 Juni 2026","koordinator":"Karyawan B","jenis":"Tes CAT","peserta":"180","status":"Terlaksana","lampiran":"-"}]'>
+                            <td class="row-no border-r-2 border-black py-3 px-3 text-center font-bold">2</td>
+                            <td class="border-r-2 border-black py-3 px-4 font-bold text-gray-900 text-sm sm:text-base">Karyawan B</td>
+                            <td class="border-r-2 border-black py-3 px-3 text-center font-bold">
+                                <span class="inline-block px-3 py-0.5 border border-black bg-white text-gray-900 text-xs sm:text-sm">2 Kegiatan</span>
+                            </td>
+                            <td class="py-3 px-3 text-center">
+                                <button type="button" onclick="openModal1(this)" class="detail-main-btn border-2 border-black bg-gray-400 hover:bg-blue-600 hover:text-white text-gray-900 font-semibold px-4 py-1 text-xs sm:text-sm transition cursor-pointer shadow-xs">Detail</button>
+                            </td>
+                        </tr>
 
-                <div class="karyawan-item border-2 border-black bg-[#d1d5db] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-                     data-order="3"
-                     data-name="Karyawan C"
-                     data-jumlah="1"
-                     data-kegiatan="Seleksi CAT"
-                     data-lokasi="Gedung C"
-                     data-items='[{"nama":"Kegiatan C","lokasi":"Gedung C","alamat":"Ruang Sidang","tanggal":"Kamis, 05 Juni 2026","koordinator":"Karyawan C","jenis":"Seleksi CAT","peserta":"180","status":"Terlaksana","lampiran":"-"}]'>
-                    <p class="font-medium text-gray-900 text-sm md:text-base">Karyawan C</p>
-                    <button type="button" onclick="openModal1(this)" class="detail-main-btn self-end sm:self-center border-2 border-black bg-gray-400 hover:bg-blue-600 hover:text-white text-gray-900 font-semibold px-6 py-1 text-sm transition cursor-pointer">
-                        Detail
-                    </button>
-                </div>
-
-                <div class="karyawan-item border-2 border-black bg-[#d1d5db] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-                     data-order="4"
-                     data-name="Karyawan D"
-                     data-jumlah="1"
-                     data-kegiatan="Ujian Praktik"
-                     data-lokasi="Gedung A"
-                     data-items='[{"nama":"Kegiatan D","lokasi":"Gedung A","alamat":"Ruang Komputer","tanggal":"Selasa, 10 Juni 2026","koordinator":"Karyawan D","jenis":"Ujian Praktik","peserta":"100","status":"Terlaksana","lampiran":"-"}]'>
-                    <p class="font-medium text-gray-900 text-sm md:text-base">Karyawan D</p>
-                    <button type="button" onclick="openModal1(this)" class="detail-main-btn self-end sm:self-center border-2 border-black bg-gray-400 hover:bg-blue-600 hover:text-white text-gray-900 font-semibold px-6 py-1 text-sm transition cursor-pointer">
-                        Detail
-                    </button>
-                </div>
-
-                <div class="karyawan-item border-2 border-black bg-[#d1d5db] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-                     data-order="5"
-                     data-name="Karyawan E"
-                     data-jumlah="1"
-                     data-kegiatan="Wawancara"
-                     data-lokasi="Gedung D"
-                     data-items='[{"nama":"Kegiatan E","lokasi":"Gedung D","alamat":"Ruang Wawancara","tanggal":"Rabu, 11 Juni 2026","koordinator":"Karyawan E","jenis":"Wawancara","peserta":"50","status":"Terlaksana","lampiran":"-"}]'>
-                    <p class="font-medium text-gray-900 text-sm md:text-base">Karyawan E</p>
-                    <button type="button" onclick="openModal1(this)" class="detail-main-btn self-end sm:self-center border-2 border-black bg-gray-400 hover:bg-blue-600 hover:text-white text-gray-900 font-semibold px-6 py-1 text-sm transition cursor-pointer">
-                        Detail
-                    </button>
-                </div>
-            @endif
+                        <tr class="karyawan-item border-b-2 border-black bg-[#d1d5db] hover:bg-[#c5c9ce] transition"
+                            data-order="3"
+                            data-name="Karyawan C"
+                            data-jumlah="1"
+                            data-kegiatan="Seleksi CAT"
+                            data-lokasi="Gedung C"
+                            data-items='[{"nama":"Kegiatan C","lokasi":"Gedung C","alamat":"Ruang Sidang","tanggal":"Kamis, 05 Juni 2026","koordinator":"Karyawan C","jenis":"Seleksi CAT","peserta":"180","status":"Terlaksana","lampiran":"-"}]'>
+                            <td class="row-no border-r-2 border-black py-3 px-3 text-center font-bold">3</td>
+                            <td class="border-r-2 border-black py-3 px-4 font-bold text-gray-900 text-sm sm:text-base">Karyawan C</td>
+                            <td class="border-r-2 border-black py-3 px-3 text-center font-bold">
+                                <span class="inline-block px-3 py-0.5 border border-black bg-white text-gray-900 text-xs sm:text-sm">1 Kegiatan</span>
+                            </td>
+                            <td class="py-3 px-3 text-center">
+                                <button type="button" onclick="openModal1(this)" class="detail-main-btn border-2 border-black bg-gray-400 hover:bg-blue-600 hover:text-white text-gray-900 font-semibold px-4 py-1 text-xs sm:text-sm transition cursor-pointer shadow-xs">Detail</button>
+                            </td>
+                        </tr>
+                    @endif
+                </tbody>
+            </table>
         </div>
     </div>
 
@@ -241,7 +331,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT JAVASCRIPT: FILTER, SEARCH, & MODAL DINAMIS -->
+    <!-- SCRIPT JAVASCRIPT: FILTER, SEARCH, SORTING, & MODAL DINAMIS -->
     <script>
         const searchInput = document.getElementById('searchInput');
         const sortDropdownBtn = document.getElementById('sortDropdownBtn');
@@ -269,23 +359,31 @@
             }
         });
 
-        // Search Karyawan
+        // Search Karyawan Realtime
         searchInput.addEventListener('input', function() {
             const query = this.value.trim().toLowerCase();
             const items = karyawanList.querySelectorAll('.karyawan-item');
             items.forEach(item => {
                 const name = item.getAttribute('data-name').toLowerCase();
                 if (name.includes(query)) {
-                    item.classList.remove('hidden');
-                    item.classList.add('flex');
+                    item.style.display = '';
                 } else {
-                    item.classList.add('hidden');
-                    item.classList.remove('flex');
+                    item.style.display = 'none';
                 }
             });
+            updateRowNumbers();
         });
 
-        // Sorting
+        // Update Penomoran Urut Setelah Filter / Sort
+        function updateRowNumbers() {
+            const visibleItems = Array.from(karyawanList.querySelectorAll('.karyawan-item')).filter(i => i.style.display !== 'none');
+            visibleItems.forEach((item, idx) => {
+                const noElem = item.querySelector('.row-no');
+                if (noElem) noElem.innerText = idx + 1;
+            });
+        }
+
+        // Sorting Client-Side (A-Z, Terbanyak, Tersedikit)
         function sortItems(type) {
             const items = Array.from(karyawanList.querySelectorAll('.karyawan-item'));
             items.sort((a, b) => {
@@ -294,9 +392,10 @@
                 }
                 const countA = parseInt(a.getAttribute('data-jumlah')) || 0;
                 const countB = parseInt(b.getAttribute('data-jumlah')) || 0;
-                return type === 'terbaru' ? countB - countA : countA - countB;
+                return type === 'terbanyak' ? countB - countA : countA - countB;
             });
             items.forEach(item => karyawanList.appendChild(item));
+            updateRowNumbers();
             sortMenu.classList.add('hidden');
         }
 
@@ -316,7 +415,6 @@
             document.getElementById('modal1Kegiatan').innerText = parent.getAttribute('data-kegiatan') || '-';
             document.getElementById('modal1Lokasi').innerText = parent.getAttribute('data-lokasi') || '-';
 
-            // Masukkan cuplikan nomor daftar kegiatan
             const snippetContainer = document.getElementById('modal1ListSnippet');
             snippetContainer.innerHTML = '';
             if (currentKaryawanItems.length > 0) {
@@ -334,7 +432,6 @@
                 snippetContainer.innerHTML = '<p class="text-gray-500 italic">Belum ada kegiatan yang difasilitasi.</p>';
             }
 
-            // Reset highlight tombol detail baris
             document.querySelectorAll('.detail-main-btn').forEach(b => {
                 b.classList.remove('bg-blue-600', 'text-white');
                 b.classList.add('bg-gray-400', 'text-gray-900');
@@ -403,7 +500,7 @@
             }
         }
 
-        // Buka Modal 3 (Rincian Lengkap Kegiatan)
+        // Buka Modal 3 (Rincian Detail Kegiatan)
         function openModal3(encodedJson) {
             const item = JSON.parse(decodeURIComponent(encodedJson));
             document.getElementById('dtJudulModal').innerText = `Detail ${item.nama}`;
