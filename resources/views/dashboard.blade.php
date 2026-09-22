@@ -85,7 +85,7 @@
 @section('content')
     <?php $todayDate = \Carbon\Carbon::today()->toDateString(); ?>
 
-    <!-- BANNER NOTIFIKASI KOORDINATOR HARI INI -->
+    <!-- BANNER NOTIFIKASI KOORDINATOR HARI INI + TOMBOL DETAIL MODAL -->
     <?php if (isset($notifTugas) && count($notifTugas) > 0): ?>
         <div class="mb-6 border-2 border-black bg-amber-100 p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <div class="flex items-center justify-between pb-2 border-b-2 border-black mb-3">
@@ -102,17 +102,42 @@
 
             <div class="space-y-2">
                 <?php foreach ($notifTugas as $kegNotif): ?>
+                    <?php
+                        $tglMulaiN = \Carbon\Carbon::parse($kegNotif->tanggal_mulai)->translatedFormat('l, d F Y');
+                        $tglSelesaiN = $kegNotif->tanggal_selesai ? \Carbon\Carbon::parse($kegNotif->tanggal_selesai)->translatedFormat('l, d F Y') : $tglMulaiN;
+                        $tglLengkapN = ($tglMulaiN === $tglSelesaiN) ? $tglMulaiN : "{$tglMulaiN} ~ {$tglSelesaiN}";
+
+                        $detailPayloadNotif = [
+                            'nama' => $kegNotif->nama_keg,
+                            'koordinator' => $kegNotif->koordinator->nama_karyawan ?? '-',
+                            'jenis' => $kegNotif->jenis->nama_jeniskeg ?? '-',
+                            'tanggal' => $tglLengkapN,
+                            'lokasi' => ($kegNotif->lokasi->nm_lokasi ?? '-') . ' (' . ($kegNotif->lokasi->alamat ?? '-') . ')',
+                            'peserta' => number_format($kegNotif->jmlh_peserta ?? 0),
+                            'status' => $kegNotif->status ?? '-',
+                            'lampiran' => $kegNotif->lampiran ?? '-'
+                        ];
+                    ?>
                     <div class="border-2 border-black bg-white p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div>
-                            <p class="font-bold text-gray-900 text-sm sm:text-base"><?php echo $kegNotif->nama_keg; ?></p>
-                            <p class="text-xs text-gray-700 mt-0.5">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <p class="font-bold text-gray-900 text-sm sm:text-base"><?php echo $kegNotif->nama_keg; ?></p>
+                                <span class="px-2 py-0.5 text-[10px] font-extrabold uppercase border border-black bg-amber-400 text-black rounded">
+                                    Wajib Diampu Hari Ini
+                                </span>
+                            </div>
+                            <p class="text-xs text-gray-700 mt-1">
                                 Titik Lokasi: <span class="font-semibold text-gray-900"><?php echo $kegNotif->lokasi->nm_lokasi ?? '-'; ?></span> | 
                                 Instansi: <span class="font-semibold text-gray-900"><?php echo $kegNotif->instansi->nm_instansi ?? '-'; ?></span>
                             </p>
                         </div>
-                        <span class="border border-black bg-amber-400 px-3 py-1 text-xs font-bold text-black self-start sm:self-center">
-                            Wajib Diampu Hari Ini
-                        </span>
+                        
+                        <!-- TOMBOL DETAIL MEMANGGIL POPUP MODAL -->
+                        <button type="button" 
+                                onclick="openDetailModal('<?php echo rawurlencode(json_encode($detailPayloadNotif)); ?>')" 
+                                class="self-end sm:self-center border-2 border-black bg-amber-500 hover:bg-amber-600 text-black font-bold px-4 py-1.5 text-xs transition cursor-pointer shrink-0">
+                            Detail
+                        </button>
                     </div>
                 <?php endforeach; ?>
             </div>

@@ -18,27 +18,27 @@ class AppController extends Controller
     // 1. Dashboard Utama dengan Banner Pengingat Koordinator
     public function dashboard()
     {
-        $today = Carbon::today()->toDateString();
+        $today = \Carbon\Carbon::today()->toDateString();
         $user = Auth::user();
 
-        // 1. Ambil Notifikasi Tugas Koordinator Hari Ini
+        // Ambil Notifikasi Tugas Koordinator Hari Ini
         $notifTugas = collect();
 
         if ($user) {
             $username = strtolower(trim($user->username ?? ''));
             
-            $notifTugas = Kegiatan::with(['lokasi', 'instansi', 'koordinator'])
+            $notifTugas = Kegiatan::with(['jenis', 'lokasi', 'instansi', 'koordinator'])
                 ->whereNotIn('status', ['Selesai', 'Dibatalkan'])
                 ->whereDate('tanggal_mulai', '<=', $today)
                 ->whereRaw("IFNULL(tanggal_selesai, tanggal_mulai) >= ?", [$today])
                 ->get()
                 ->filter(function($keg) use ($user, $username) {
-                    // A. Cek lewat ID Karyawan jika relasi user -> id_karyawan ada
+                    // A. Cek berdasarkan id_karyawan jika tersambung
                     if (!empty($user->id_karyawan) && $keg->id_karyawan_koor == $user->id_karyawan) {
                         return true;
                     }
 
-                    // B. Cek pencocokan kata (Pencocokan fleksibel nama koordinator vs username)
+                    // B. Cek pencocokan kata (username vs nama_karyawan)
                     $namaKoor = strtolower($keg->koordinator->nama_karyawan ?? '');
                     if (!empty($username) && !empty($namaKoor)) {
                         return str_contains($namaKoor, $username) || str_contains($username, $namaKoor);
@@ -48,7 +48,7 @@ class AppController extends Controller
                 })->values();
         }
 
-        // 2. Data Pelaksanaan Berjalan
+        // Data Pelaksanaan Berjalan
         $kegiatan = Kegiatan::with(['jenis', 'lokasi', 'instansi', 'koordinator'])
             ->whereNotIn('status', ['Selesai', 'Dibatalkan'])
             ->whereRaw("IFNULL(tanggal_selesai, tanggal_mulai) >= ?", [$today])
@@ -62,7 +62,7 @@ class AppController extends Controller
             ->take(7)
             ->get();
 
-        // 3. Jadwal Terdekat
+        // Jadwal Terdekat
         $jadwalTerdekat = Kegiatan::with(['jenis', 'lokasi', 'koordinator'])
             ->whereNotIn('status', ['Selesai', 'Dibatalkan'])
             ->where('tanggal_mulai', '>', $today)
@@ -79,7 +79,7 @@ class AppController extends Controller
                 ->get();
         }
 
-        // 4. Statistik
+        // Statistik
         $stats = [
             'instansi' => Instansi::count(),
             'peserta'  => Kegiatan::sum('jmlh_peserta'),
