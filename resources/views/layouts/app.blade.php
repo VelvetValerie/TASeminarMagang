@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- FAVICON LOGO BKN (Disesuaikan Presisi dengan nama file Logo_BKN.png) -->
+    <!-- FAVICON LOGO BKN -->
     <link rel="icon" type="image/png" href="{{ asset('images/Logo_BKN.png') }}?v=1">
     <link rel="shortcut icon" type="image/png" href="{{ asset('images/Logo_BKN.png') }}?v=1">
-    <!-- Dukungan untuk Perangkat Mobile / Apple -->
     <link rel="apple-touch-icon" href="{{ asset('images/Logo_BKN.png') }}?v=1">
 
     <title>@yield('title', 'Kantor Regional BKN')</title>
@@ -84,7 +83,7 @@
         <!-- Menu Links Container -->
         <div class="flex-1 overflow-y-auto px-4 py-5 space-y-5">
             
-            <!-- Group 1: Menu Utama (Akses: Semua Role - Pegawai, Pimpinan, Admin) -->
+            <!-- Group 1: Menu Utama -->
             <div>
                 <p class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">Utama</p>
                 <nav class="space-y-1">
@@ -106,7 +105,7 @@
                 </nav>
             </div>
 
-            <!-- Group 2: Pelaksanaan & Karyawan (Akses: Hanya Admin untuk Kegiatan, Pimpinan/Admin untuk Riwayat Kerja) -->
+            <!-- Group 2: Pelaksanaan -->
             @if(in_array($userRole, ['pimpinan', 'admin']))
                 <div>
                     <p class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">Pelaksanaan</p>
@@ -132,7 +131,7 @@
                 </div>
             @endif
 
-            <!-- Group 3: Dropdown Manajemen Data Kegiatan (Akses: Pimpinan & Admin) -->
+            <!-- Group 3: Dropdown Manajemen Data Kegiatan -->
             @if(in_array($userRole, ['pimpinan', 'admin']))
                 <div class="pt-2">
                     <details class="group rounded-xl border border-slate-700/80 bg-slate-900/60 overflow-hidden transition"
@@ -168,7 +167,7 @@
                 </div>
             @endif
 
-        <!-- Item Menu 3: Manajemen Data User (Khusus Admin, Berdiri Sendiri Tanpa Submenu Dropdown) -->
+            <!-- Item Menu 3: Manajemen Data User -->
             @if(Auth::check() && Auth::user()->role === 'admin')
                 <a href="{{ route('master-user') }}" 
                    class="flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-lg transition {{ request()->routeIs('master-user*') ? 'bg-slate-800 text-white font-bold' : 'text-gray-300 hover:bg-slate-800/60 hover:text-white' }}">
@@ -180,7 +179,7 @@
             @endif
         </div>
 
-        <!-- Footer: Navigasi Cepat / Tombol ke Halaman Publik -->
+        <!-- Footer -->
         <div class="p-4 border-t border-slate-800 bg-slate-950/20 space-y-2">
             <a href="{{ url('/') }}" class="flex items-center justify-center space-x-2 w-full px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -189,7 +188,6 @@
                 <span>Halaman Utama (Publik)</span>
             </a>
 
-            <!-- Tombol Logout di Sidebar -->
             <form method="POST" action="{{ url('/logout') }}" class="w-full">
                 @csrf
                 <button type="submit" class="flex items-center justify-center space-x-2 w-full px-3 py-2 rounded-xl border border-rose-900/50 bg-rose-950/20 hover:bg-rose-900/40 text-rose-300 hover:text-white text-xs font-semibold transition cursor-pointer">
@@ -210,14 +208,12 @@
         <!-- Top Header Bar -->
         <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 lg:px-8 z-30 shrink-0">
             <div class="flex items-center space-x-3">
-                <!-- Hamburger Button (Mobile) -->
                 <button id="mobileMenuBtn" class="p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 lg:hidden transition" aria-label="Menu">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
                 </button>
 
-                <!-- Dynamic Page Heading -->
                 <div>
                     <h2 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">
                         @if(request()->is('dashboard')) Dashboard Ikhtisar
@@ -237,8 +233,57 @@
                 </div>
             </div>
 
-            <!-- Right Profile Info & Symmetrical Logout Button -->
+            <!-- Right Profile Info & Symmetrical Logout Button & Notifikasi -->
             <div class="flex items-center gap-3 pl-4 border-l border-slate-250">
+                
+                <!-- PENGINGAT NOTIFIKASI KOORDINATOR HARI INI -->
+                @php
+                    $todayStr = \Carbon\Carbon::today()->toDateString();
+                    $loggedUser = Auth::user()->username ?? '';
+                    
+                    $tugasKoordinatorToday = \App\Models\Kegiatan::with(['lokasi', 'instansi', 'koordinator'])
+                        ->whereNotIn('status', ['Selesai', 'Dibatalkan'])
+                        ->whereDate('tanggal_mulai', '<=', $todayStr)
+                        ->whereRaw("IFNULL(tanggal_selesai, tanggal_mulai) >= ?", [$todayStr])
+                        ->get()
+                        ->filter(function($keg) use ($loggedUser) {
+                            $namaKoor = strtolower($keg->koordinator->nama_karyawan ?? '');
+                            $uName = strtolower($loggedUser);
+                            return !empty($uName) && !empty($namaKoor) && (str_contains($namaKoor, $uName) || str_contains($uName, $namaKoor));
+                        });
+                @endphp
+
+                @if($tugasKoordinatorToday->count() > 0)
+                    <div class="relative group">
+                        <button type="button" class="relative p-2 text-amber-600 hover:text-amber-700 bg-amber-50 hover:bg-amber-100 rounded-xl border border-amber-300 transition cursor-pointer flex items-center gap-1.5">
+                            <svg class="w-5 h-5 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                            </svg>
+                            <span class="text-xs font-extrabold hidden sm:inline">
+                                {{ $tugasKoordinatorToday->count() }} Tugas Hari Ini
+                            </span>
+                            <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-600 rounded-full border-2 border-white"></span>
+                        </button>
+
+                        <div class="hidden group-hover:block absolute right-0 top-full mt-2 w-72 sm:w-80 bg-white border-2 border-black p-3 shadow-2xl z-50 text-xs">
+                            <div class="font-extrabold text-gray-900 border-b border-black pb-1.5 mb-2 flex justify-between items-center">
+                                <span>⚠️ Tugas Koordinator Hari Ini</span>
+                                <span class="bg-amber-200 text-amber-900 px-1.5 py-0.5 rounded font-bold">{{ $tugasKoordinatorToday->count() }}</span>
+                            </div>
+                            <div class="space-y-2 max-h-60 overflow-y-auto">
+                                @foreach($tugasKoordinatorToday as $kegNotif)
+                                    <div class="p-2 border border-black bg-amber-50 rounded">
+                                        <p class="font-bold text-gray-900">{{ $kegNotif->nama_keg }}</p>
+                                        <p class="text-[11px] text-gray-700 mt-0.5">
+                                            Lokasi: <b>{{ $kegNotif->lokasi->nm_lokasi ?? '-' }}</b>
+                                        </p>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <!-- Inisial Avatar -->
                 <div class="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold text-xs shadow-xs uppercase shrink-0">
                     {{ substr(Auth::user()->username ?? 'AD', 0, 2) }}

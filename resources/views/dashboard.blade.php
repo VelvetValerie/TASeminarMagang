@@ -83,11 +83,43 @@
 @endsection
 
 @section('content')
-    @php
-        $todayDate = \Carbon\Carbon::today()->toDateString();
-    @endphp
+    <?php $todayDate = \Carbon\Carbon::today()->toDateString(); ?>
 
-    <!-- 1. STATISTIC CARDS (DINAMIS DARI DATABASE) -->
+    <!-- BANNER NOTIFIKASI KOORDINATOR HARI INI -->
+    <?php if (isset($notifTugas) && count($notifTugas) > 0): ?>
+        <div class="mb-6 border-2 border-black bg-amber-100 p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <div class="flex items-center justify-between pb-2 border-b-2 border-black mb-3">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-rose-600 animate-ping"></span>
+                    <h3 class="font-extrabold text-gray-900 text-sm sm:text-base uppercase tracking-wider">
+                        ⚠️ Pengingat Tugas Koordinator Hari Ini (<?php echo \Carbon\Carbon::now()->translatedFormat('d F Y'); ?>)
+                    </h3>
+                </div>
+                <span class="text-xs font-bold px-2 py-0.5 border border-black bg-rose-200 text-rose-900">
+                    <?php echo count($notifTugas); ?> Kegiatan
+                </span>
+            </div>
+
+            <div class="space-y-2">
+                <?php foreach ($notifTugas as $kegNotif): ?>
+                    <div class="border-2 border-black bg-white p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                            <p class="font-bold text-gray-900 text-sm sm:text-base"><?php echo $kegNotif->nama_keg; ?></p>
+                            <p class="text-xs text-gray-700 mt-0.5">
+                                Titik Lokasi: <span class="font-semibold text-gray-900"><?php echo $kegNotif->lokasi->nm_lokasi ?? '-'; ?></span> | 
+                                Instansi: <span class="font-semibold text-gray-900"><?php echo $kegNotif->instansi->nm_instansi ?? '-'; ?></span>
+                            </p>
+                        </div>
+                        <span class="border border-black bg-amber-400 px-3 py-1 text-xs font-bold text-black self-start sm:self-center">
+                            Wajib Diampu Hari Ini
+                        </span>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <!-- 1. STATISTIC CARDS -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
         
         <!-- Kartu Jumlah Instansi -->
@@ -172,7 +204,7 @@
     <!-- 2. AREA UTAMA KONTEN -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         
-        <!-- KOTAK TENGAH: PELAKSANAAN BERJALAN (7 KEGIATAN AKTIF & MENDATANG TERDEKAT) -->
+        <!-- KOTAK TENGAH: PELAKSANAAN BERJALAN -->
         <div class="lg:col-span-2 border-2 border-black bg-white p-4 md:p-6 flex flex-col shadow-sm">
             <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b-2 border-black relative">
                 <h2 class="text-base md:text-lg font-bold text-gray-900">
@@ -207,147 +239,145 @@
 
             <!-- List Kegiatan SQL -->
             <div id="dashboardKegiatanList" class="mt-4 border-2 border-black p-3 md:p-4 max-h-[460px] overflow-y-auto space-y-3">
-                @forelse($kegiatan as $item)
-                    @php
-                        $tglMulai = \Carbon\Carbon::parse($item->tanggal_mulai)->format('Y-m-d');
-                        $tglSelesai = $item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->format('Y-m-d') : $tglMulai;
-                        
-                        // Cek apakah kegiatan aktif berlangsung hari ini
-                        $isToday = ($todayDate >= $tglMulai && $todayDate <= $tglSelesai);
+                <?php if (isset($kegiatan) && count($kegiatan) > 0): ?>
+                    <?php foreach ($kegiatan as$item): ?>
+                        <?php
+                            $tglMulai = \Carbon\Carbon::parse($item->tanggal_mulai)->format('Y-m-d');
+                            $tglSelesai =$item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->format('Y-m-d') :$tglMulai;
+                            
+                            $isToday = ($todayDate >=$tglMulai && $todayDate <=$tglSelesai);
 
-                        // Format tampilan tanggal ringkas untuk kartu
-                        $tglMulaiCard = \Carbon\Carbon::parse($item->tanggal_mulai)->translatedFormat('d M Y');
-                        $tglSelesaiCard = $item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->translatedFormat('d M Y') : $tglMulaiCard;
-                        $tglDisplayCard = ($tglMulaiCard === $tglSelesaiCard) ? $tglMulaiCard : "{$tglMulaiCard} - {$tglSelesaiCard}";
+                            $tglMulaiCard = \Carbon\Carbon::parse($item->tanggal_mulai)->translatedFormat('d M Y');
+                            $tglSelesaiCard =$item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->translatedFormat('d M Y') :$tglMulaiCard;
+                            $tglDisplayCard = ($tglMulaiCard === $tglSelesaiCard) ?$tglMulaiCard : "{$tglMulaiCard} - {$tglSelesaiCard}";
 
-                        // Format tampilan tanggal lengkap untuk popup modal
-                        $tglMulaiFmt = \Carbon\Carbon::parse($item->tanggal_mulai)->translatedFormat('l, d F Y');
-                        $tglSelesaiFmt = $item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->translatedFormat('l, d F Y') : $tglMulaiFmt;
-                        $tglLengkap = ($tglMulaiFmt === $tglSelesaiFmt) ? $tglMulaiFmt : "{$tglMulaiFmt} ~ {$tglSelesaiFmt}";
-                        
-                        $detailPayload = [
-                            'nama' => $item->nama_keg,
-                            'koordinator' => $item->koordinator->nama_karyawan ?? '-',
-                            'jenis' => $item->jenis->nama_jeniskeg ?? '-',
-                            'tanggal' => $tglLengkap,
-                            'lokasi' => ($item->lokasi->nm_lokasi ?? '-') . ' (' . ($item->lokasi->alamat ?? '-') . ')',
-                            'peserta' => number_format($item->jmlh_peserta ?? 0),
-                            'status' => $item->status ?? '-',
-                            'lampiran' => $item->lampiran ?? '-'
-                        ];
-                    @endphp
+                            $tglMulaiFmt = \Carbon\Carbon::parse($item->tanggal_mulai)->translatedFormat('l, d F Y');
+                            $tglSelesaiFmt =$item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->translatedFormat('l, d F Y') :$tglMulaiFmt;
+                            $tglLengkap = ($tglMulaiFmt === $tglSelesaiFmt) ?$tglMulaiFmt : "{$tglMulaiFmt} ~ {$tglSelesaiFmt}";
+                            
+                            $detailPayload = [
+                                'nama' => $item->nama_keg,
+                                'koordinator' => $item->koordinator->nama_karyawan ?? '-',
+                                'jenis' => $item->jenis->nama_jeniskeg ?? '-',
+                                'tanggal' => $tglLengkap,
+                                'lokasi' => ($item->lokasi->nm_lokasi ?? '-') . ' (' . ($item->lokasi->alamat ?? '-') . ')',
+                                'peserta' => number_format($item->jmlh_peserta ?? 0),
+                                'status' => $item->status ?? '-',
+                                'lampiran' => $item->lampiran ?? '-'
+                            ];
+                        ?>
 
-                    <!-- Card Berjalan: Dilengkapi data-date untuk pengurutan presisi -->
-                    <div class="kegiatan-dash-item border-2 border-black p-3 md:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition {{ $isToday ? 'bg-amber-50 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]' : 'bg-white hover:bg-gray-50' }}" 
-                         data-id="{{ $item->id_keg }}"
-                         data-today="{{ $isToday ? '1' : '0' }}"
-                         data-date="{{ $tglMulai }}"
-                         data-name="{{ $item->nama_keg }}">
-                        <div>
-                            <div class="flex items-center gap-2 flex-wrap">
-                                <h3 class="text-base md:text-lg font-bold {{ $isToday ? 'text-amber-950' : 'text-gray-900' }}">
-                                    {{ $item->nama_keg }}
-                                </h3>
-                                @if($isToday)
-                                    <span class="px-2 py-0.5 text-[11px] font-extrabold uppercase border border-black bg-black text-amber-300 rounded-full tracking-wider animate-pulse">
-                                        ● Hari Ini
+                        <div class="kegiatan-dash-item border-2 border-black p-3 md:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition <?php echo $isToday ? 'bg-amber-50 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]' : 'bg-white hover:bg-gray-50'; ?>" 
+                             data-id="{{ $item->id_keg }}"
+                             data-today="<?php echo $isToday ? '1' : '0'; ?>"
+                             data-date="{{ $tglMulai }}"
+                             data-name="{{ $item->nama_keg }}">
+                            <div>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <h3 class="text-base md:text-lg font-bold <?php echo $isToday ? 'text-amber-950' : 'text-gray-900'; ?>">
+                                        {{ $item->nama_keg }}
+                                    </h3>
+                                    <?php if ($isToday): ?>
+                                        <span class="px-2 py-0.5 text-[11px] font-extrabold uppercase border border-black bg-black text-amber-300 rounded-full tracking-wider animate-pulse">
+                                            ● Hari Ini
+                                        </span>
+                                    <?php endif; ?>
+                                </div>
+
+                                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs md:text-sm font-medium mt-1 <?php echo $isToday ? 'text-amber-900' : 'text-gray-600'; ?>">
+                                    <span>{{ $item->jenis->nama_jeniskeg ?? '-' }}</span>
+                                    <span>&bull;</span>
+                                    <span>{{ $item->lokasi->nm_lokasi ?? '-' }}</span>
+                                    <span>&bull;</span>
+                                    <span class="flex items-center gap-1 font-semibold <?php echo $isToday ? 'text-amber-950 font-bold' : 'text-gray-800'; ?>">
+                                        📅 {{ $tglDisplayCard }}
                                     </span>
-                                @endif
-                            </div>
+                                </div>
 
-                            <!-- Info Jenis, Lokasi, dan Tanggal Pelaksanaan -->
-                            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs md:text-sm font-medium mt-1 {{ $isToday ? 'text-amber-900' : 'text-gray-600' }}">
-                                <span>{{ $item->jenis->nama_jeniskeg ?? '-' }}</span>
-                                <span>&bull;</span>
-                                <span>{{ $item->lokasi->nm_lokasi ?? '-' }}</span>
-                                <span>&bull;</span>
-                                <span class="flex items-center gap-1 font-semibold {{ $isToday ? 'text-amber-950 font-bold' : 'text-gray-800' }}">
-                                    📅 {{ $tglDisplayCard }}
-                                </span>
+                                <p class="text-xs md:text-sm text-gray-700 mt-1">
+                                    Koordinator: <span class="font-semibold">{{ $item->koordinator->nama_karyawan ?? '-' }}</span>
+                                </p>
                             </div>
-
-                            <p class="text-xs md:text-sm text-gray-700 mt-1">
-                                Koordinator: <span class="font-semibold">{{ $item->koordinator->nama_karyawan ?? '-' }}</span>
-                            </p>
+                            <button type="button" 
+                                    onclick="openDetailModal('{{ rawurlencode(json_encode($detailPayload)) }}')" 
+                                    class="self-end sm:self-center border-2 border-black <?php echo $isToday ? 'bg-amber-600 hover:bg-amber-700' : 'bg-gray-500 hover:bg-gray-600'; ?> text-white font-semibold px-5 py-1 text-sm transition cursor-pointer">
+                                Detail
+                            </button>
                         </div>
-                        <button type="button" 
-                                onclick="openDetailModal('{{ rawurlencode(json_encode($detailPayload)) }}')" 
-                                class="self-end sm:self-center border-2 border-black {{ $isToday ? 'bg-amber-600 hover:bg-amber-700' : 'bg-gray-500 hover:bg-gray-600' }} text-white font-semibold px-5 py-1 text-sm transition cursor-pointer">
-                            Detail
-                        </button>
-                    </div>
-                @empty
+                    <?php endforeach; ?>
+                <?php else: ?>
                     <p class="text-center text-gray-500 py-6 text-sm font-medium">Tidak ada pelaksanaan kegiatan aktif saat ini.</p>
-                @endforelse
+                <?php endif; ?>
             </div>
         </div>
 
-        <!-- KOTAK KANAN: JADWAL TERDEKAT (MAKSIMAL 3 BARIS TERDEKAT) -->
+        <!-- KOTAK KANAN: JADWAL TERDEKAT -->
         <div class="border-2 border-black bg-white p-4 md:p-6 flex flex-col shadow-sm">
             <h2 class="text-base md:text-lg font-bold text-gray-900 pb-3 border-b-2 border-black">
                 Jadwal Terdekat
             </h2>
             <div class="mt-4 space-y-3">
-                @forelse($jadwalTerdekat as $first)
-                    @php
-                        $tglMulaiF = \Carbon\Carbon::parse($first->tanggal_mulai)->format('Y-m-d');
-                        $tglSelesaiF = $first->tanggal_selesai ? \Carbon\Carbon::parse($first->tanggal_selesai)->format('Y-m-d') : $tglMulaiF;
-                        
-                        $isUpcomingToday = ($todayDate >= $tglMulaiF && $todayDate <= $tglSelesaiF);
+                <?php if (isset($jadwalTerdekat) && count($jadwalTerdekat) > 0): ?>
+                    <?php foreach ($jadwalTerdekat as$first): ?>
+                        <?php
+                            $tglMulaiF = \Carbon\Carbon::parse($first->tanggal_mulai)->format('Y-m-d');
+                            $tglSelesaiF =$first->tanggal_selesai ? \Carbon\Carbon::parse($first->tanggal_selesai)->format('Y-m-d') :$tglMulaiF;
+                            
+                            $isUpcomingToday = ($todayDate >=$tglMulaiF && $todayDate <=$tglSelesaiF);
 
-                        $tglMulaiFmt = \Carbon\Carbon::parse($first->tanggal_mulai)->translatedFormat('l, d F Y');
-                        $tglSelesaiFmt = $first->tanggal_selesai ? \Carbon\Carbon::parse($first->tanggal_selesai)->translatedFormat('l, d F Y') : $tglMulaiFmt;
-                        $tglLengkapF = ($tglMulaiFmt === $tglSelesaiFmt) ? $tglMulaiFmt : "{$tglMulaiFmt} ~ {$tglSelesaiFmt}";
+                            $tglMulaiFmt = \Carbon\Carbon::parse($first->tanggal_mulai)->translatedFormat('l, d F Y');
+                            $tglSelesaiFmt =$first->tanggal_selesai ? \Carbon\Carbon::parse($first->tanggal_selesai)->translatedFormat('l, d F Y') :$tglMulaiFmt;
+                            $tglLengkapF = ($tglMulaiFmt === $tglSelesaiFmt) ?$tglMulaiFmt : "{$tglMulaiFmt} ~ {$tglSelesaiFmt}";
+                            
+                            $detailUpcoming = [
+                                'nama' => $first->nama_keg,
+                                'koordinator' => $first->koordinator->nama_karyawan ?? '-',
+                                'jenis' => $first->jenis->nama_jeniskeg ?? '-',
+                                'tanggal' => $tglLengkapF,
+                                'lokasi' => ($first->lokasi->nm_lokasi ?? '-') . ' (' . ($first->lokasi->alamat ?? '-') . ')',
+                                'peserta' => number_format($first->jmlh_peserta ?? 0),
+                                'status' => $first->status ?? '-',
+                                'lampiran' => $first->lampiran ?? '-'
+                            ];
+                        ?>
                         
-                        $detailUpcoming = [
-                            'nama' => $first->nama_keg,
-                            'koordinator' => $first->koordinator->nama_karyawan ?? '-',
-                            'jenis' => $first->jenis->nama_jeniskeg ?? '-',
-                            'tanggal' => $tglLengkapF,
-                            'lokasi' => ($first->lokasi->nm_lokasi ?? '-') . ' (' . ($first->lokasi->alamat ?? '-') . ')',
-                            'peserta' => number_format($first->jmlh_peserta ?? 0),
-                            'status' => $first->status ?? '-',
-                            'lampiran' => $first->lampiran ?? '-'
-                        ];
-                    @endphp
-                    
-                    <!-- Card Jadwal Terdekat -->
-                    <div onclick="openDetailModal('{{ rawurlencode(json_encode($detailUpcoming)) }}')" 
-                         class="border-2 border-black p-3 transition cursor-pointer {{ $isUpcomingToday ? 'bg-amber-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]' : 'bg-white hover:bg-gray-50' }}" 
-                         title="Klik untuk melihat detail">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <div class="flex items-center gap-1.5 flex-wrap">
-                                    <p class="font-bold text-sm {{ $isUpcomingToday ? 'text-amber-950' : 'text-gray-900' }}">
-                                        {{ $first->nama_keg }}
+                        <div onclick="openDetailModal('{{ rawurlencode(json_encode($detailUpcoming)) }}')" 
+                             class="border-2 border-black p-3 transition cursor-pointer <?php echo $isUpcomingToday ? 'bg-amber-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]' : 'bg-white hover:bg-gray-50'; ?>" 
+                             title="Klik untuk melihat detail">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                        <p class="font-bold text-sm <?php echo $isUpcomingToday ? 'text-amber-950' : 'text-gray-900'; ?>">
+                                            {{ $first->nama_keg }}
+                                        </p>
+                                        <?php if ($isUpcomingToday): ?>
+                                            <span class="px-1.5 py-0.2 text-[9px] font-extrabold uppercase border border-black bg-black text-amber-300 rounded">
+                                                Hari Ini
+                                            </span>
+                                        <?php endif; ?>
+                                    </div>
+                                    <p class="text-xs <?php echo $isUpcomingToday ? 'text-amber-800' : 'text-gray-600'; ?>">
+                                        {{ $first->jenis->nama_jeniskeg ?? '-' }}
                                     </p>
-                                    @if($isUpcomingToday)
-                                        <span class="px-1.5 py-0.2 text-[9px] font-extrabold uppercase border border-black bg-black text-amber-300 rounded">
-                                            Hari Ini
-                                        </span>
-                                    @endif
                                 </div>
-                                <p class="text-xs {{ $isUpcomingToday ? 'text-amber-800' : 'text-gray-600' }}">
-                                    {{ $first->jenis->nama_jeniskeg ?? '-' }}
+                                <p class="text-[11px] font-semibold <?php echo $isUpcomingToday ? 'text-amber-900 font-bold' : 'text-gray-700'; ?>">
+                                    {{ \Carbon\Carbon::parse($first->tanggal_mulai)->translatedFormat('d M Y') }}
                                 </p>
                             </div>
-                            <p class="text-[11px] font-semibold {{ $isUpcomingToday ? 'text-amber-900 font-bold' : 'text-gray-700' }}">
-                                {{ \Carbon\Carbon::parse($first->tanggal_mulai)->translatedFormat('d M Y') }}
+                            <p class="text-[11px] text-gray-600 mt-2">
+                                Koordinator: {{ $first->koordinator->nama_karyawan ?? '-' }}
                             </p>
                         </div>
-                        <p class="text-[11px] text-gray-600 mt-2">
-                            Koordinator: {{ $first->koordinator->nama_karyawan ?? '-' }}
-                        </p>
-                    </div>
-                @empty
+                    <?php endforeach; ?>
+                <?php else: ?>
                     <p class="text-xs text-gray-500">Tidak ada jadwal dalam waktu dekat.</p>
-                @endforelse
+                <?php endif; ?>
             </div>
         </div>
 
     </div>
 
-    <!-- POPUP MODAL: RINCIAN DETAIL KEGIATAN LENGKAP -->
+    <!-- POPUP MODAL: DETAIL KEGIATAN -->
     <div id="eventDetailModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
         <div class="relative w-full max-w-xl bg-white border-2 border-black p-5 shadow-2xl">
             <button type="button" onclick="closeDetailModal()" class="absolute top-2 right-2 p-1 text-red-600 hover:text-red-800 transition cursor-pointer" title="Tutup">
@@ -374,9 +404,8 @@
         </div>
     </div>
 
-    <!-- SCRIPT DASHBOARD: PENCARIAN, SORT KRONOLOGIS TERDEKAT, & MODAL DETAIL -->
+    <!-- SCRIPT DASHBOARD -->
     <script>
-        // 1. Pencarian Nama Kegiatan
         document.getElementById('searchInput').addEventListener('input', function() {
             const val = this.value.toLowerCase().trim();
             document.querySelectorAll('.kegiatan-dash-item').forEach(item => {
@@ -384,7 +413,6 @@
             });
         });
 
-        // 2. Dropdown Sort
         const sortBtn = document.getElementById('sortDropdownBtn');
         const sortMenu = document.getElementById('sortMenu');
         sortBtn.addEventListener('click', (e) => { 
@@ -395,7 +423,6 @@
             if (!sortMenu.classList.contains('hidden')) sortMenu.classList.add('hidden'); 
         });
 
-        // 3. Pengurutan Presisi (Terdekat Kronologis vs A-Z)
         function sortDashboardItems(type) {
             const container = document.getElementById('dashboardKegiatanList');
             const items = Array.from(container.querySelectorAll('.kegiatan-dash-item'));
@@ -407,28 +434,22 @@
                     return nameA.localeCompare(nameB);
                 }
 
-                // Pengurutan "Terdekat":
-                // 1. Prioritas utama: Hari Ini (data-today = 1) selalu di atas
                 const todayA = parseInt(a.getAttribute('data-today')) || 0;
                 const todayB = parseInt(b.getAttribute('data-today')) || 0;
 
                 if (todayA !== todayB) {
-                    return todayB - todayA; // 1 duluan dibanding 0
+                    return todayB - todayA;
                 }
 
-                // 2. Jika status sama (sama-sama hari ini atau sama-sama mendatang),
-                // urutkan berdasarkan tanggal mulai terdekat (ASC)
                 const dateA = a.getAttribute('data-date') || '';
                 const dateB = b.getAttribute('data-date') || '';
                 return dateA.localeCompare(dateB);
             });
 
-            // Pasang kembali elemen sesuai urutan yang baru
             items.forEach(el => container.appendChild(el));
             sortMenu.classList.add('hidden');
         }
 
-        // 4. Logika Popup Modal Detail
         const detailModal = document.getElementById('eventDetailModal');
 
         function openDetailModal(encodedJson) {

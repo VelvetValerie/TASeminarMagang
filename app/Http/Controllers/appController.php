@@ -15,12 +15,40 @@ use Carbon\Carbon;
 
 class AppController extends Controller
 {
-    // 1. Dashboard
+    // 1. Dashboard Utama dengan Banner Pengingat Koordinator
     public function dashboard()
     {
         $today = Carbon::today()->toDateString();
+        $user = Auth::user();
 
-        // 1. PELAKSANAAN BERJALAN
+        // 1. Ambil Notifikasi Tugas Koordinator Hari Ini
+        $notifTugas = collect();
+
+        if ($user) {
+            $username = strtolower(trim($user->username ?? ''));
+            
+            $notifTugas = Kegiatan::with(['lokasi', 'instansi', 'koordinator'])
+                ->whereNotIn('status', ['Selesai', 'Dibatalkan'])
+                ->whereDate('tanggal_mulai', '<=', $today)
+                ->whereRaw("IFNULL(tanggal_selesai, tanggal_mulai) >= ?", [$today])
+                ->get()
+                ->filter(function($keg) use ($user, $username) {
+                    // A. Cek lewat ID Karyawan jika relasi user -> id_karyawan ada
+                    if (!empty($user->id_karyawan) && $keg->id_karyawan_koor == $user->id_karyawan) {
+                        return true;
+                    }
+
+                    // B. Cek pencocokan kata (Pencocokan fleksibel nama koordinator vs username)
+                    $namaKoor = strtolower($keg->koordinator->nama_karyawan ?? '');
+                    if (!empty($username) && !empty($namaKoor)) {
+                        return str_contains($namaKoor, $username) || str_contains($username, $namaKoor);
+                    }
+
+                    return false;
+                })->values();
+        }
+
+        // 2. Data Pelaksanaan Berjalan
         $kegiatan = Kegiatan::with(['jenis', 'lokasi', 'instansi', 'koordinator'])
             ->whereNotIn('status', ['Selesai', 'Dibatalkan'])
             ->whereRaw("IFNULL(tanggal_selesai, tanggal_mulai) >= ?", [$today])
@@ -34,7 +62,7 @@ class AppController extends Controller
             ->take(7)
             ->get();
 
-        // 2. JADWAL TERDEKAT
+        // 3. Jadwal Terdekat
         $jadwalTerdekat = Kegiatan::with(['jenis', 'lokasi', 'koordinator'])
             ->whereNotIn('status', ['Selesai', 'Dibatalkan'])
             ->where('tanggal_mulai', '>', $today)
@@ -51,29 +79,26 @@ class AppController extends Controller
                 ->get();
         }
 
-        // 3. STATISTIK KARTU
+        // 4. Statistik
         $stats = [
             'instansi' => Instansi::count(),
             'peserta'  => Kegiatan::sum('jmlh_peserta'),
             'kegiatan' => Kegiatan::count(),
         ];
 
-        return view('dashboard', compact('kegiatan', 'jadwalTerdekat', 'stats'));
+        return view('dashboard', compact('kegiatan', 'jadwalTerdekat', 'stats', 'notifTugas'));
     }
 
     // 2. Halaman Daftar / Perencanaan Kegiatan
     public function kegiatan(Request $request)
     {
-        // Load relasi pendukung
         $query = Kegiatan::with(['jenis', 'koordinator', 'lokasi', 'instansi']);
 
-        // 1. Logika Pencarian Server-Side (by Nama Kegiatan)
         if ($request->filled('search')) {
             $search = trim($request->input('search'));
             $query->where('nama_keg', 'LIKE', '%' . $search . '%');
         }
 
-        // 2. Logika Pengurutan
         $sort = $request->input('sort', 'terbaru');
         switch ($sort) {
             case 'az':
@@ -88,11 +113,9 @@ class AppController extends Controller
                 break;
         }
 
-        // Paginate data
         $kegiatan = $query->paginate(5);
         $kegiatan->appends($request->all());
 
-        // Ambil master data untuk modal form
         $jenisList = \App\Models\JenisKeg::all();
         $karyawanList = \App\Models\Karyawan::all();
         $lokasiList = \App\Models\TitikLokasi::all();
@@ -124,7 +147,6 @@ class AppController extends Controller
             'lampiran'         => 'nullable|string|max:255',
         ]);
 
-        // Fallback nilai default tanggal selesai jika kosong
         if (empty($validated['tanggal_selesai'])) {
             $validated['tanggal_selesai'] = $validated['tanggal_mulai'];
         }
@@ -181,8 +203,6 @@ class AppController extends Controller
     {
         $today = Carbon::today()->toDateString();
 
-        // 1. Tracking Kegiatan yang Sedang Berjalan Saat Ini
-        // Mengambil kegiatan dengan status 'Terkonfirmasi' di mana hari ini berada di antara tanggal mulai & selesai
         $kegiatanBerjalan = Kegiatan::with(['lokasi', 'instansi'])
             ->where('status', 'Terkonfirmasi')
             ->whereDate('tanggal_mulai', '<=', $today)
@@ -192,7 +212,6 @@ class AppController extends Controller
             })
             ->first();
 
-        // Jika tidak ada yang sesuai rentang tanggal hari ini, ambil kegiatan terkonfirmasi paling awal/terdekat
         if (!$kegiatanBerjalan) {
             $kegiatanBerjalan = Kegiatan::with(['lokasi', 'instansi'])
                 ->where('status', 'Terkonfirmasi')
@@ -200,7 +219,6 @@ class AppController extends Controller
                 ->first();
         }
 
-        // 2. Query Master Data Titik Lokasi
         $lokasi = TitikLokasi::all();
 
         return view('titik-lokasi', compact('kegiatanBerjalan', 'lokasi'));
@@ -236,21 +254,16 @@ class AppController extends Controller
         return view('riwayat-kerja', compact('karyawan'));
     }
 
-    /**
-     * Menampilkan halaman Riwayat Kegiatan dengan fitur Search & Sort Database
-     */
+    // 8. Riwayat Kegiatan
     public function riwayatKegiatan(Request $request)
     {
-        // Inisialisasi query model dengan relasi yang dibutuhkan
         $query = Kegiatan::with(['lokasi', 'koordinator', 'jenis']);
 
-        // 1. Logika Pencarian Advanced berdasarkan Nama Kegiatan (Database Server-Side)
         if ($request->filled('search')) {
             $search = trim($request->input('search'));
             $query->where('nama_keg', 'LIKE', '%' . $search . '%');
         }
 
-        // 2. Logika Pengurutan Data (Sorting)
         $sort = $request->input('sort', 'terbaru');
         
         switch ($sort) {
@@ -266,27 +279,18 @@ class AppController extends Controller
                 break;
         }
 
-        // 3. Paginate data (5 baris per halaman)
         $kegiatan = $query->paginate(5);
-
-        // Retain query string agar parameter 'search' dan 'sort' tidak hilang saat ganti halaman pagination
         $kegiatan->appends($request->all());
 
         return view('riwayat-kegiatan', compact('kegiatan', 'sort'));
     }
 
-    /**
-     * 9. Menampilkan Form Login
-     */
+    // 9. Autentikasi Login
     public function showLoginForm()
     {
         return view('auth.login');
     }
 
-    /**
-     * Memproses Autentikasi Login
-     */
-// --- DUAL LOGIN (NIP ATAU USERNAME) ---
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -297,7 +301,6 @@ class AppController extends Controller
             'password.required' => 'Password wajib diisi.',
         ]);
 
-        // Deteksi otomatis input: angka = NIP, string = Username
         $fieldType = is_numeric($request->login) ? 'nip' : 'username';
 
         if (Auth::attempt([$fieldType => $credentials['login'], 'password' => $credentials['password']])) {
@@ -310,7 +313,6 @@ class AppController extends Controller
         ])->onlyInput('login');
     }
 
-    // --- ALUR LUPA PASSWORD & VERIFIKASI OTP ---
     public function showForgotPasswordForm()
     {
         return view('auth.forgot-password');
@@ -324,10 +326,8 @@ class AppController extends Controller
             'email.exists' => 'Alamat email tidak terdaftar dalam sistem kepegawaian.',
         ]);
 
-        // Generasi Kode OTP 6 Digit Acak Dinamis
         $otpCode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
-        // Simpan email & OTP acak ke dalam session
         session([
             'reset_email' => $request->email,
             'reset_otp'   => $otpCode
@@ -384,28 +384,23 @@ class AppController extends Controller
 
     public function landing()
     {
-        // Ambil seluruh data kegiatan beserta relasi jenis, lokasi, dan koordinator
         $kegiatan = Kegiatan::with(['jenis', 'lokasi', 'koordinator'])
             ->orderBy('tanggal_mulai', 'asc')
             ->get();
 
-        return view('landing', compact('kegiatan')); // Ganti 'landing' ke 'welcome' jika nama file blade Anda welcome.blade.php
+        return view('landing', compact('kegiatan'));
     }
 
     public function masterUser(Request $request)
     {
-        // Ambil data user dari database (termasuk NIP & Email baru)
         $users = User::orderBy('created_at', 'desc')->get();
-
         return view('master-user', compact('users'));
     }
 
-    // --- UPDATE DATA USER ---
     public function updateUser(Request $request, $id)
     {
         $user = User::findOrFail($id);
 
-        // Proteksi Server-Side: Mencegah perubahan pada akun Admin
         if ($user->role === 'admin') {
             return back()->withErrors(['admin' => 'Data pengguna dengan Role Admin dilindungi dan tidak dapat diubah.']);
         }
@@ -431,12 +426,10 @@ class AppController extends Controller
         return back()->with('success', 'Data user '.$user->username.' berhasil diperbarui.');
     }
 
-    // --- HAPUS DATA USER ---
     public function destroyUser($id)
     {
         $user = User::findOrFail($id);
 
-        // Proteksi Server-Side: Mencegah penghapusan akun Admin
         if ($user->role === 'admin') {
             return back()->withErrors(['admin' => 'Akun dengan Role Admin tidak dapat dihapus.']);
         }
@@ -446,14 +439,12 @@ class AppController extends Controller
         return back()->with('success', 'User berhasil dihapus dari sistem.');
     }
 
-    // --- SIMPAN USER BARU ---
     public function storeUser(Request $request)
     {
         $request->validate([
             'username' => 'required|string|max:50|unique:users,username',
             'nip'      => 'nullable|string|max:18|unique:users,nip',
             'email'    => 'required|email|max:150|unique:users,email',
-            // Pembatasan Server-side: Hanya boleh memilih pegawai atau pimpinan
             'role'     => 'required|in:pegawai,pimpinan', 
             'password' => 'required|min:6',
         ], [
@@ -479,23 +470,20 @@ class AppController extends Controller
     {
         $query = Kegiatan::with(['lokasi', 'koordinator', 'jenis']);
 
-        // 1. Pencarian Database (Server-side Search by Name)
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where('nama_keg', 'LIKE', '%' . $search . '%');
         }
 
-        // 2. Pengurutan Database (Server-side Sorting)
         $sort = $request->input('sort', 'terbaru');
         if ($sort === 'az') {
             $query->orderBy('nama_keg', 'asc');
         } elseif ($sort === 'terlama') {
             $query->orderBy('tanggal_mulai', 'asc');
         } else {
-            $query->orderBy('tanggal_mulai', 'desc'); // terbaru (default)
+            $query->orderBy('tanggal_mulai', 'desc');
         }
 
-        // Pagination 5 item per halaman
         $kegiatan = $query->paginate(5);
 
         return view('riwayat-kegiatan', compact('kegiatan', 'sort'));
