@@ -15,10 +15,29 @@ use Carbon\Carbon;
 
 class AppController extends Controller
 {
+    /**
+     * Fungsi Helper untuk memperbarui status kegiatan yang telah lewat menjadi 'Selesai'
+     */
+    private function autoUpdateStatusSelesai()
+    {
+        $today = Carbon::today()->toDateString();
+
+        // Update kegiatan yang berstatus 'Terkonfirmasi' atau 'Belum Konfirmasi' 
+        // tetapi tanggal_selesai (atau tanggal_mulai) sudah < HARI INI
+        Kegiatan::whereNotIn('status', ['Selesai', 'Dibatalkan'])
+            ->where(function ($query) use ($today) {
+                $query->whereRaw("IFNULL(tanggal_selesai, tanggal_mulai) < ?", [$today]);
+            })
+            ->update(['status' => 'Selesai']);
+    }
+
     // 1. Dashboard Utama dengan Banner Pengingat Koordinator
     public function dashboard()
     {
-        $today = \Carbon\Carbon::today()->toDateString();
+        // 1. Jalankan auto update status terlebih dahulu
+        $this->autoUpdateStatusSelesai();
+        
+        $today = Carbon::today()->toDateString();
         $user = Auth::user();
 
         // Ambil Notifikasi Tugas Koordinator Hari Ini
