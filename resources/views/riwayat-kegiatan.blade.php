@@ -127,7 +127,7 @@
                             </svg>
                         </button>
 
-                        <!-- Popover Pilihan: Terbaru, Terlama, A - Z (Server-side Sorting Query) -->
+                        <!-- Popover Pilihan: Terbaru, Terlama, A - Z -->
                         <div id="sortMenu" class="hidden absolute right-0 top-full mt-1 w-32 border-2 border-black bg-white shadow-md z-30">
                             <a href="{{ request()->fullUrlWithQuery(['sort' => 'terbaru', 'page' => 1]) }}" 
                                class="block text-center py-1.5 text-xs sm:text-sm font-medium text-gray-900 border-b-2 border-black hover:bg-gray-100 {{ ($sort ?? 'terbaru') === 'terbaru' ? 'bg-gray-200 font-bold' : '' }}">
@@ -148,13 +148,14 @@
 
             <!-- Tabel Rekaman Riwayat Kegiatan -->
             <div class="mt-4 border-2 border-black overflow-x-auto">
-                <table class="w-full border-collapse border-black min-w-[650px] text-xs sm:text-sm">
+                <table class="w-full border-collapse border-black min-w-[700px] text-xs sm:text-sm">
                     <thead>
                         <tr class="border-b-2 border-black bg-gray-100 text-center font-bold text-gray-900">
                             <th class="border-r-2 border-black py-3 px-3 w-12">No</th>
-                            <th class="border-r-2 border-black py-3 px-3 w-28 sm:w-36">Log ID</th>
+                            <th class="border-r-2 border-black py-3 px-3 w-28 sm:w-32">Log ID</th>
                             <th class="border-r-2 border-black py-3 px-3">Nama & Rentang Tanggal</th>
-                            <th class="py-3 px-3 w-32 sm:w-40">Aksi</th>
+                            <th class="border-r-2 border-black py-3 px-3 w-32 sm:w-40">Status</th>
+                            <th class="py-3 px-3 w-32 sm:w-36">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="riwayatKegiatanBody" class="font-medium text-gray-900">
@@ -174,6 +175,20 @@
 
                                 $modalTitleText = "Daftar Kegiatan {$tglMulai}" . ($tglMulai !== $tglSelesai ? " ~ {$tglSelesai}" : "");
                                 $tglLengkap = \Carbon\Carbon::parse($item->tanggal_mulai)->translatedFormat('l, d F Y');
+
+                                // SINKRONISASI WARNA STATUS DENGAN LAMAN KEGIATAN
+                                $statusItem = $item->status ?? 'Belum Konfirmasi';
+                                if ($statusItem === 'Selesai') {
+                                    $badgeStyle = 'bg-emerald-100 text-emerald-800 border-emerald-600';
+                                } elseif ($statusItem === 'Terkonfirmasi') {
+                                    $badgeStyle = 'bg-blue-100 text-blue-800 border-blue-600';
+                                } elseif ($statusItem === 'Belum Konfirmasi') {
+                                    $badgeStyle = 'bg-amber-100 text-amber-800 border-amber-600';
+                                } elseif ($statusItem === 'Dibatalkan') {
+                                    $badgeStyle = 'bg-rose-100 text-rose-800 border-rose-600';
+                                } else {
+                                    $badgeStyle = 'bg-gray-100 text-gray-800 border-gray-600';
+                                }
                             @endphp
 
                             <tr class="kegiatan-row border-b-2 border-black last:border-b-0 bg-[#d1d5db] hover:bg-[#c4c8ce] transition">
@@ -187,6 +202,14 @@
                                     <span class="block font-bold text-gray-900 item-title">{{ $item->nama_keg }}</span>
                                     <span class="text-xs text-gray-700 font-medium">{{ $rentangDisplay }}</span>
                                 </td>
+
+                                <!-- KOLOM STATUS -->
+                                <td class="border-r-2 border-black py-3 px-3 text-center">
+                                    <span class="inline-block px-2.5 py-1 text-[11px] sm:text-xs font-bold border-2 rounded-md {{ $badgeStyle }}">
+                                        {{ $statusItem }}
+                                    </span>
+                                </td>
+
                                 <td class="py-3 px-3 text-center">
                                     <button type="button"
                                             onclick="handleOpenDaftarModal(this)" 
@@ -198,7 +221,7 @@
                                             data-koordinator="{{ $item->koordinator->nama_karyawan ?? '-' }}"
                                             data-jenis="{{ $item->jenis->nama_jeniskeg ?? '-' }}"
                                             data-peserta="{{ number_format($item->jmlh_peserta ?? 0) }}"
-                                            data-status="{{ $item->status ?? '-' }}"
+                                            data-status="{{ $statusItem }}"
                                             data-lampiran="{{ $item->lampiran ?? '-' }}"
                                             class="selengkapnya-btn border-2 border-black bg-gray-400 hover:bg-gray-500 text-gray-900 font-semibold px-4 py-1 text-xs sm:text-sm transition cursor-pointer shadow-xs">
                                         Selengkapnya
@@ -207,7 +230,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="py-8 text-center text-gray-500 font-semibold text-sm">
+                                <td colspan="5" class="py-8 text-center text-gray-500 font-semibold text-sm">
                                     @if(request('search'))
                                         Data riwayat kegiatan dengan nama "<span class="font-bold">{{ request('search') }}</span>" tidak ditemukan di database.
                                     @else
@@ -228,7 +251,6 @@
                     </p>
 
                     <div class="flex items-center space-x-1.5">
-                        <!-- Tombol Laman Sebelumnya (<) -->
                         @if ($kegiatan->onFirstPage())
                             <span class="border-2 border-black bg-gray-200 text-gray-400 px-3 py-1 font-bold text-xs sm:text-sm cursor-not-allowed">
                                 &laquo;
@@ -239,7 +261,6 @@
                             </a>
                         @endif
 
-                        <!-- Tombol Nomor Laman -->
                         @foreach ($kegiatan->appends(request()->query())->getUrlRange(1, $kegiatan->lastPage()) as $page => $url)
                             @if ($page == $kegiatan->currentPage())
                                 <span class="border-2 border-black bg-black text-white px-3 py-1 font-bold text-xs sm:text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]">
@@ -252,7 +273,6 @@
                             @endif
                         @endforeach
 
-                        <!-- Tombol Laman Berikutnya (>) -->
                         @if ($kegiatan->hasMorePages())
                             <a href="{{ $kegiatan->appends(request()->query())->nextPageUrl() }}" class="border-2 border-black bg-white hover:bg-gray-200 text-gray-900 px-3 py-1 font-bold text-xs sm:text-sm transition">
                                 &raquo;
@@ -335,7 +355,6 @@
         const sortMenu = document.getElementById('sortMenu');
         const searchInput = document.getElementById('searchInput');
 
-        // Toggle dropdown sorting
         sortDropdownBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             sortMenu.classList.toggle('hidden');
@@ -347,14 +366,12 @@
             }
         });
 
-        // Submit form otomatis jika pengguna menghapus teks pencarian sampai kosong
         searchInput.addEventListener('input', function() {
             if (this.value === '' && "{{ request('search') }}" !== '') {
                 document.getElementById('searchForm').submit();
             }
         });
 
-        // Logika Popup Modal
         const daftarModal = document.getElementById('daftarModal');
         const detailModal = document.getElementById('detailKegiatanModal');
 
