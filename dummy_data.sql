@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Sep 13, 2026 at 09:07 AM
+-- Generation Time: Sep 24, 2026 at 07:14 AM
 -- Server version: 8.0.40
 -- PHP Version: 8.3.28
 
@@ -139,7 +139,8 @@ INSERT INTO `karyawan` (`id_karyawan`, `nama_karyawan`, `catatan_kj`, `perjalana
 (9, 'Rahmat Hidayat, S.STP', 'Pengawas Ujian Kedinasan Regional', NULL, NULL, NULL, '2026-09-09 00:23:54', '2026-09-09 00:23:54'),
 (10, 'Rina Aprilia, S.Psi', 'Asesor Pemetaan Profil Kompetensi', NULL, NULL, NULL, '2026-09-09 00:23:54', '2026-09-09 00:23:54'),
 (11, 'Eko Prasetyo, S.T', 'Petugas Laboratorium & Infrastruktur CAT', NULL, NULL, NULL, '2026-09-09 00:23:54', '2026-09-09 00:23:54'),
-(12, 'Maya Kartika, S.E', 'Verifikator Berkas & Layanan Mutasi SIASN', NULL, NULL, NULL, '2026-09-09 00:23:54', '2026-09-09 00:23:54');
+(12, 'Maya Kartika, S.E', 'Verifikator Berkas & Layanan Mutasi SIASN', NULL, NULL, NULL, '2026-09-09 00:23:54', '2026-09-09 00:23:54'),
+(13, 'Administrator Utama BKN', 'Pengelola Sistem dan Hak Akses Aplikasi', NULL, NULL, NULL, '2026-09-24 07:10:58', '2026-09-24 07:10:58');
 
 -- --------------------------------------------------------
 
@@ -168,25 +169,25 @@ CREATE TABLE `kegiatan` (
 --
 
 INSERT INTO `kegiatan` (`id_keg`, `nama_keg`, `id_jeniskeg`, `id_tklokasi`, `id_instansi`, `id_karyawan_koor`, `jmlh_peserta`, `tanggal_mulai`, `tanggal_selesai`, `status`, `lampiran`, `created_at`, `updated_at`) VALUES
-(1, 'Ujian Dinas Tingkat I & II BKN', 3, 1, 1, 1, 100, '2026-06-03', '2026-06-04', 'Belum Konfirmasi', 'https://drive.google.com/sampleA', '2026-09-01 00:17:35', '2026-09-03 01:17:32'),
-(2, 'Bimtek Penilaian Kinerja ASN Pemprov', 2, 2, 2, 2, 120, '2026-06-04', '2026-06-05', 'Belum Konfirmasi', 'https://drive.google.com/sampleB', '2026-09-01 00:17:35', '2026-09-03 01:17:32'),
-(3, 'Simulasi CAT Mandiri BKN', 3, 3, 3, 3, 80, '2026-06-05', '2026-06-05', 'Belum Konfirmasi', 'https://drive.google.com/sampleC', '2026-09-01 00:17:35', '2026-09-03 01:17:32'),
-(4, 'Fasilitasi CAT Seleksi PPPK Tahap 1', 3, 4, 4, 4, 90, '2026-06-10', '2026-06-10', 'Belum Konfirmasi', 'https://drive.google.com/sampleD', '2026-09-01 00:17:35', '2026-09-03 01:17:32'),
+(1, 'Ujian Dinas Tingkat I & II BKN', 3, 1, 1, 1, 100, '2026-06-03', '2026-06-04', 'Selesai', 'https://drive.google.com/sampleA', '2026-09-01 00:17:35', '2026-09-22 16:19:52'),
+(2, 'Bimtek Penilaian Kinerja ASN Pemprov', 2, 2, 2, 2, 120, '2026-06-04', '2026-06-05', 'Selesai', 'https://drive.google.com/sampleB', '2026-09-01 00:17:35', '2026-09-22 16:19:52'),
+(3, 'Simulasi CAT Mandiri BKN', 3, 3, 3, 3, 80, '2026-06-05', '2026-06-05', 'Selesai', 'https://drive.google.com/sampleC', '2026-09-01 00:17:35', '2026-09-22 16:19:52'),
+(4, 'Fasilitasi CAT Seleksi PPPK Tahap 1', 3, 4, 4, 4, 90, '2026-06-10', '2026-06-10', 'Selesai', 'https://drive.google.com/sampleD', '2026-09-01 00:17:35', '2026-09-22 16:19:52'),
 (5, 'Asesmen Pemetaan Potensi Pegawai Daerah', 1, 2, 2, 4, 110, '2026-06-10', '2026-06-12', 'Selesai', NULL, '2026-09-03 01:17:32', '2026-09-03 01:17:32'),
 (6, 'Seleksi CAT Mahasiswa Poltekip/Poltekim', 2, 1, 4, 6, 320, '2026-06-12', '2026-06-13', 'Selesai', 'sk_poltekip.pdf', '2026-09-03 01:17:32', '2026-09-03 01:17:32'),
-(7, 'Uji Kompetensi Jabatan Fungsional Kepegawaian', 4, 3, 1, 5, 90, '2026-06-16', '2026-06-18', 'Terkonfirmasi', 'edaran_ujikom.pdf', '2026-09-03 01:17:32', '2026-09-03 01:17:32'),
-(8, 'Seleksi CASN Instansi Daerah Kalsel', 3, 4, 2, 2, 500, '2026-06-17', '2026-06-19', 'Terkonfirmasi', NULL, '2026-09-03 01:17:32', '2026-09-03 01:17:32'),
-(9, 'Workshop Implementasi SIASN Layanan Mutasi', 1, 2, 1, 4, 60, '2026-06-23', '2026-06-23', 'Belum Konfirmasi', NULL, '2026-09-03 01:17:32', '2026-09-03 01:17:32'),
-(10, 'Fasilitasi Ujian CAT Ikatan Dinas IPDN 2026', 2, 1, 5, 1, 600, '2026-06-24', '2026-06-26', 'Terkonfirmasi', 'panduan_cat_ipdn.pdf', '2026-09-03 01:17:32', '2026-09-03 01:17:32'),
-(11, 'Rakor Pengawasan dan Pengendalian ASN Regional VIII', 4, 2, 1, 3, 75, '2026-06-25', '2026-06-27', 'Belum Konfirmasi', NULL, '2026-09-03 01:17:32', '2026-09-03 01:17:32'),
+(7, 'Uji Kompetensi Jabatan Fungsional Kepegawaian', 4, 3, 1, 5, 90, '2026-06-16', '2026-06-18', 'Selesai', 'edaran_ujikom.pdf', '2026-09-03 01:17:32', '2026-09-22 16:19:52'),
+(8, 'Seleksi CASN Instansi Daerah Kalsel', 3, 4, 2, 2, 500, '2026-06-17', '2026-06-19', 'Selesai', NULL, '2026-09-03 01:17:32', '2026-09-22 16:19:52'),
+(9, 'Workshop Implementasi SIASN Layanan Mutasi', 1, 2, 1, 4, 60, '2026-06-23', '2026-06-23', 'Selesai', NULL, '2026-09-03 01:17:32', '2026-09-22 16:19:52'),
+(10, 'Fasilitasi Ujian CAT Ikatan Dinas IPDN 2026', 2, 1, 5, 1, 600, '2026-06-24', '2026-06-26', 'Selesai', 'panduan_cat_ipdn.pdf', '2026-09-03 01:17:32', '2026-09-22 16:19:52'),
+(11, 'Rakor Pengawasan dan Pengendalian ASN Regional VIII', 4, 2, 1, 3, 75, '2026-06-25', '2026-06-27', 'Selesai', NULL, '2026-09-03 01:17:32', '2026-09-22 16:19:52'),
 (21, 'Ujian Penyesuaian Ijazah ASN Kanreg VIII', 1, 1, 1, 1, 110, '2026-09-01', '2026-09-03', 'Selesai', 'lampiran_upkp.pdf', '2026-09-03 02:09:23', '2026-09-03 02:09:23'),
-(22, 'Bimtek Tata Kelola Manajemen Talenta ASN', 1, 2, 2, 2, 75, '2026-09-02', '2026-09-04', 'Terkonfirmasi', 'sk_talenta.pdf', '2026-09-03 02:09:23', '2026-09-03 02:09:23'),
-(23, 'Simulasi CAT Mandiri BKN Sesi September', 2, 1, 1, 3, 180, '2026-09-03', '2026-09-03', 'Terkonfirmasi', NULL, '2026-09-03 02:09:23', '2026-09-03 02:09:23'),
-(24, 'Fasilitasi CAT Seleksi Kompetensi Dasar CPNS Kalsel', 3, 1, 2, 1, 450, '2026-09-05', '2026-09-08', 'Terkonfirmasi', 'edaran_skd_cpns.pdf', '2026-09-03 02:09:23', '2026-09-03 02:09:23'),
-(25, 'Uji Kompetensi Kenaikan Pangkat Pilihan', 1, 3, 3, 4, 90, '2026-09-09', '2026-09-10', 'Terkonfirmasi', 'daftar_peserta.pdf', '2026-09-03 02:09:23', '2026-09-03 02:09:23'),
-(26, 'Seleksi CAT Tenaga Teknis Non-ASN BLUD', 4, 1, 3, 5, 230, '2026-09-12', '2026-09-13', 'Terkonfirmasi', NULL, '2026-09-03 02:09:23', '2026-09-03 02:09:23'),
-(27, 'Sosialisasi Disiplin Pegawai Sesuai PP 94/2021', 1, 2, 1, 2, 60, '2026-09-16', '2026-09-16', 'Belum Konfirmasi', NULL, '2026-09-03 02:09:23', '2026-09-03 02:09:23'),
-(28, 'Fasilitasi Ujian CAT Kedinasan Kemenkumham Kalsel', 2, 4, 4, 6, 320, '2026-09-18', '2026-09-20', 'Terkonfirmasi', 'surat_tugas.pdf', '2026-09-03 02:09:23', '2026-09-03 02:09:23'),
+(22, 'Bimtek Tata Kelola Manajemen Talenta ASN', 1, 2, 2, 2, 75, '2026-09-02', '2026-09-04', 'Selesai', 'sk_talenta.pdf', '2026-09-03 02:09:23', '2026-09-22 16:19:52'),
+(23, 'Simulasi CAT Mandiri BKN Sesi September', 2, 1, 1, 3, 180, '2026-09-03', '2026-09-03', 'Selesai', NULL, '2026-09-03 02:09:23', '2026-09-22 16:19:52'),
+(24, 'Fasilitasi CAT Seleksi Kompetensi Dasar CPNS Kalsel', 3, 1, 2, 1, 450, '2026-09-05', '2026-09-08', 'Selesai', 'edaran_skd_cpns.pdf', '2026-09-03 02:09:23', '2026-09-22 16:19:52'),
+(25, 'Uji Kompetensi Kenaikan Pangkat Pilihan', 1, 3, 3, 4, 90, '2026-09-09', '2026-09-10', 'Selesai', 'daftar_peserta.pdf', '2026-09-03 02:09:23', '2026-09-22 16:19:52'),
+(26, 'Seleksi CAT Tenaga Teknis Non-ASN BLUD', 4, 1, 3, 5, 230, '2026-09-12', '2026-09-13', 'Selesai', NULL, '2026-09-03 02:09:23', '2026-09-22 16:19:52'),
+(27, 'Sosialisasi Disiplin Pegawai Sesuai PP 94/2021', 1, 2, 1, 2, 60, '2026-09-16', '2026-09-16', 'Selesai', NULL, '2026-09-03 02:09:23', '2026-09-22 16:19:52'),
+(28, 'Fasilitasi Ujian CAT Kedinasan Kemenkumham Kalsel', 2, 4, 4, 6, 320, '2026-09-18', '2026-09-20', 'Selesai', 'surat_tugas.pdf', '2026-09-03 02:09:23', '2026-09-22 16:19:52'),
 (29, 'Asesmen Profil Kompetensi Pejabat Pengawas', 1, 2, 2, 4, 80, '2026-09-23', '2026-09-25', 'Belum Konfirmasi', NULL, '2026-09-03 02:09:23', '2026-09-03 02:09:23'),
 (30, 'Rapat Evaluasi Pengadaan ASN Se-Kalimantan', 4, 2, 1, 3, 100, '2026-09-28', '2026-09-30', 'Belum Konfirmasi', NULL, '2026-09-03 02:09:23', '2026-09-03 02:09:23'),
 (31, 'Uji Kompetensi Jabatan Fungsional BKN', 1, 1, 1, 1, 180, '2026-10-02', '2026-10-04', 'Terkonfirmasi', 'ujikom_2026.pdf', '2026-09-08 00:17:35', '2026-09-08 00:17:35'),
@@ -208,7 +209,17 @@ INSERT INTO `kegiatan` (`id_keg`, `nama_keg`, `id_jeniskeg`, `id_tklokasi`, `id_
 (47, 'Seleksi CASN Instansi Daerah Kalimantan Timur', 3, 6, 32, 1, 650, '2027-01-18', '2027-01-22', 'Belum Konfirmasi', NULL, '2026-09-09 00:25:47', '2026-09-09 00:25:47'),
 (48, 'Fasilitasi Ujian Penyesuaian Ijazah Pemkab Kotabaru', 1, 3, 15, 3, 90, '2027-01-25', '2027-01-26', 'Belum Konfirmasi', NULL, '2026-09-09 00:25:47', '2026-09-09 00:25:47'),
 (49, 'Sosialisasi Sistem Manajemen Kinerja Sesuai PermepanRB', 1, 2, 46, 12, 120, '2027-02-02', '2027-02-02', 'Belum Konfirmasi', NULL, '2026-09-09 00:25:47', '2026-09-09 00:25:47'),
-(50, 'Uji Kompetensi Kenaikan Pangkat Pilihan Periode April 2027', 1, 1, 1, 5, 210, '2027-02-10', '2027-02-12', 'Belum Konfirmasi', NULL, '2026-09-09 00:25:47', '2026-09-09 00:25:47');
+(50, 'Uji Kompetensi Kenaikan Pangkat Pilihan Periode April 2027', 1, 1, 1, 5, 210, '2027-02-10', '2027-02-12', 'Belum Konfirmasi', NULL, '2026-09-09 00:25:47', '2026-09-09 00:25:47'),
+(51, 'Pelaksanaan Seleksi Kompetensi Dasar (SKD) CASN 2026', 1, 1, 1, 1, 250, '2026-09-22', '2026-09-22', 'Selesai', 'https://bkn.go.id/lampiran/skd-casn-2026.pdf', '2026-09-22 01:28:32', '2026-09-22 16:19:52'),
+(52, 'Rapat Koordinasi Evaluasi Kepegawaian Se-Kalimantan', 2, 2, 2, 2, 80, '2026-09-22', '2026-09-23', 'Selesai', 'https://bkn.go.id/lampiran/rakor-evaluasi.pdf', '2026-09-22 01:28:32', '2026-09-23 16:43:23'),
+(53, 'Bimbingan Teknis Fasilitasi SIASN Instansi Daerah', 3, 3, 3, 3, 120, '2026-09-22', '2026-09-22', 'Selesai', '-', '2026-09-22 01:28:32', '2026-09-22 16:19:52'),
+(54, 'Ujian Dinas Elektronik (e-UDIN) Tingkat I & II', 1, 1, 4, 1, 150, '2026-09-25', '2026-09-25', 'Terkonfirmasi', 'https://bkn.go.id/lampiran/e-udin-2026.pdf', '2026-09-22 01:28:32', '2026-09-22 01:28:32'),
+(55, 'Sosialisasi Penerapan Sistem Merit dan Manajemen ASN', 3, 2, 5, 2, 200, '2026-09-27', '2026-09-28', 'Belum Konfirmasi', '-', '2026-09-22 01:28:32', '2026-09-22 01:28:32'),
+(56, 'Asesmen Penilaian Potensi dan Kompetensi Pegawai', 2, 3, 1, 3, 60, '2026-09-30', '2026-09-30', 'Terkonfirmasi', 'https://bkn.go.id/lampiran/asesmen-kompetensi.pdf', '2026-09-22 01:28:32', '2026-09-22 01:28:32'),
+(57, 'Pelatihan Teknis Tata Cara Usul Pensiun Pegawai', 3, 1, 2, 4, 90, '2026-10-04', '2026-10-05', 'Belum Konfirmasi', '-', '2026-09-22 01:28:32', '2026-09-22 01:28:32'),
+(58, 'Workshop Digitalisasi Dokumen Arsip Kepegawaian', 3, 2, 3, 4, 110, '2026-09-12', '2026-09-12', 'Selesai', 'https://bkn.go.id/lampiran/workshop-arsip.pdf', '2026-09-22 01:28:32', '2026-09-22 01:28:32'),
+(59, 'Seleksi Pasca Sanggah PPPK Tenaga Kesehatan', 1, 1, 5, 1, 300, '2026-09-02', '2026-09-04', 'Selesai', 'https://bkn.go.id/lampiran/pppk-nakes.pdf', '2026-09-22 01:28:32', '2026-09-22 01:28:32'),
+(60, 'Rapat Konsolidasi Program Kerja Triwulan III', 2, 3, 1, 2, 45, '2026-08-23', '2026-08-23', 'Dibatalkan', '-', '2026-09-22 01:28:32', '2026-09-22 01:28:32');
 
 -- --------------------------------------------------------
 
@@ -291,8 +302,11 @@ INSERT INTO `titik_lokasi` (`id_tklokasi`, `nm_lokasi`, `alamat`, `created_at`) 
 CREATE TABLE `users` (
   `id_user` int UNSIGNED NOT NULL,
   `username` varchar(50) NOT NULL,
+  `nip` varchar(18) DEFAULT NULL,
+  `email` varchar(150) DEFAULT NULL,
   `password` varchar(255) NOT NULL,
   `role` enum('admin','pegawai','pimpinan') NOT NULL DEFAULT 'pegawai',
+  `id_karyawan` int UNSIGNED DEFAULT NULL,
   `remember_token` varchar(100) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -302,11 +316,20 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id_user`, `username`, `password`, `role`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'admin_bkn', '$2y$12$zCZH0F4liwVRzeRZk3cQzO35OyHn5d3vpuRhfDIIgbJCP2EwarBE6', 'admin', NULL, '2026-09-01 17:37:19', '2026-09-03 01:14:01'),
-(2, 'budi_santoso', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai', NULL, '2026-09-03 01:14:01', '2026-09-03 01:14:01'),
-(3, 'siti_rahma', '$2y$12$azWdf4/Q8jWKkWVkEEWQp.Ic1W5D2tkOnuHsUMRYDwVzSC/oa9Bza', 'pegawai', NULL, '2026-09-03 01:14:01', '2026-09-09 17:37:07'),
-(4, 'kakanreg_viii', '$2y$12$8QEpJWSFi5KwPdHEMFGiauiWo/ZdNGr3Uo/WBHbdHesRbYNWK3mFS', 'pimpinan', NULL, '2026-09-03 01:14:01', '2026-09-09 17:36:30');
+INSERT INTO `users` (`id_user`, `username`, `nip`, `email`, `password`, `role`, `id_karyawan`, `remember_token`, `created_at`, `updated_at`) VALUES
+(1, 'admin_bkn', '199001012015011001', 'rafifadillah420@gmail.com', '$2y$12$hhOuPFTQOxM7Jdp8qXnJLuwkpEndJXb8ARMGXhTFAtO.LrTOFQaU.', 'admin', 13, NULL, '2026-09-01 17:37:19', '2026-09-24 07:10:58'),
+(2, 'budi_santoso', '199203042018021002', 'budi.santoso@bkn.go.id', '$2y$12$hKicAGqcuggCLStODtdohOVWnbCHXv.wv1hRtfoedAvzbWFRhsLlG', 'pegawai', 1, NULL, '2026-09-03 01:14:01', '2026-09-23 23:12:41'),
+(3, 'siti_rahma', '199505062020032001', 'siti.rahma@bkn.go.id', '$2y$12$azWdf4/Q8jWKkWVkEEWQp.Ic1W5D2tkOnuHsUMRYDwVzSC/oa9Bza', 'pegawai', 2, NULL, '2026-09-03 01:14:01', '2026-09-22 00:48:29'),
+(4, 'kakanreg_viii', '198507082010041003', 'kakanreg@bkn.go.id', '$2y$12$8QEpJWSFi5KwPdHEMFGiauiWo/ZdNGr3Uo/WBHbdHesRbYNWK3mFS', 'pimpinan', NULL, NULL, '2026-09-03 01:14:01', '2026-09-15 00:24:56'),
+(5, 'ahmad_dani', '199301152019031001', 'ahmad.dani@bkn.go.id', '$2y$12$okaDUSmKUh0zptVVzXkiXOGAkoeHKRMR26y.ks307F6OQu9ZQBnV.', 'pegawai', 3, NULL, '2026-09-22 02:41:28', '2026-09-21 18:42:22'),
+(6, 'hendra_pratama', '198804202012011002', 'hendra.pratama@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai', 4, NULL, '2026-09-22 02:41:28', '2026-09-22 02:41:28'),
+(7, 'nur_hidayah', '199408122020012003', 'nur.hidayah@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai', 5, NULL, '2026-09-22 02:41:28', '2026-09-22 02:41:28'),
+(8, 'fajar_ramadhan', '199602282021021001', 'fajar.ramadhan@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai', 6, NULL, '2026-09-22 02:41:28', '2026-09-22 02:41:28'),
+(9, 'dewi_lestari', '199111052016042002', 'dewi.lestari@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai', 8, NULL, '2026-09-22 02:41:28', '2026-09-22 02:41:28'),
+(10, 'rahmat_hidayat', '199009142014021003', 'rahmat.hidayat@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai', 9, NULL, '2026-09-22 02:41:28', '2026-09-22 02:41:28'),
+(11, 'rina_aprilia', '199504182020022001', 'rina.aprilia@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai', 10, NULL, '2026-09-22 02:41:28', '2026-09-22 02:41:28'),
+(12, 'eko_prasetyo', '199207222018011004', 'eko.prasetyo@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai', 11, NULL, '2026-09-22 02:41:28', '2026-09-22 02:41:28'),
+(13, 'maya_kartika', '199310102019022002', 'maya.kartika@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai', 12, NULL, '2026-09-22 02:41:28', '2026-09-22 02:41:28');
 
 --
 -- Indexes for dumped tables
@@ -359,7 +382,10 @@ ALTER TABLE `titik_lokasi`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id_user`),
-  ADD UNIQUE KEY `username` (`username`);
+  ADD UNIQUE KEY `username` (`username`),
+  ADD UNIQUE KEY `nip` (`nip`),
+  ADD UNIQUE KEY `email` (`email`),
+  ADD KEY `fk_users_karyawan` (`id_karyawan`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -381,13 +407,13 @@ ALTER TABLE `jenis_keg`
 -- AUTO_INCREMENT for table `karyawan`
 --
 ALTER TABLE `karyawan`
-  MODIFY `id_karyawan` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id_karyawan` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `kegiatan`
 --
 ALTER TABLE `kegiatan`
-  MODIFY `id_keg` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id_keg` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT for table `rekam_kj`
@@ -405,7 +431,7 @@ ALTER TABLE `titik_lokasi`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_user` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_user` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- Constraints for dumped tables
@@ -426,6 +452,12 @@ ALTER TABLE `kegiatan`
 ALTER TABLE `rekam_kj`
   ADD CONSTRAINT `fk_rekam_karyawan` FOREIGN KEY (`id_karyawan`) REFERENCES `karyawan` (`id_karyawan`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_rekam_kegiatan` FOREIGN KEY (`id_keg`) REFERENCES `kegiatan` (`id_keg`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `users`
+--
+ALTER TABLE `users`
+  ADD CONSTRAINT `fk_users_karyawan` FOREIGN KEY (`id_karyawan`) REFERENCES `karyawan` (`id_karyawan`) ON DELETE SET NULL ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
