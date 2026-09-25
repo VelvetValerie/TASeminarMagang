@@ -216,7 +216,7 @@
 
                 <div>
                     <h2 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">
-                        @if(request()->is('dashboard')) Dashboard Ikhtisar
+                        @if(request()->is('dashboard')) Dashboard
                         @elseif(request()->is('kalender')) Kalender Perencanaan Jadwal
                         @elseif(request()->is('kegiatan')) Manajemen Perencanaan Kegiatan
                         @elseif(request()->is('riwayat-kerja')) Rekapitulasi Riwayat Kerja Pegawai
