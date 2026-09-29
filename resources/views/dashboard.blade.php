@@ -115,11 +115,8 @@
                             'lokasi' => ($kegNotif->lokasi->nm_lokasi ?? '-') . ' (' . ($kegNotif->lokasi->alamat ?? '-') . ')',
                             'peserta' => number_format($kegNotif->jmlh_peserta ?? 0),
                             'status' => $kegNotif->status ?? '-',
-                            'lampiran' => $kegNotif->lampiran ?? '-',
-                            'surat_tugas' => $kegNotif->surat_tugas ?? '-'
+                            'lampiran' => $kegNotif->lampiran ?? '-'
                         ];
-
-                        $suratTugasUrl = $kegNotif->surat_tugas && $kegNotif->surat_tugas !== '-' ? $kegNotif->surat_tugas : null;
                     ?>
                     <div class="border-2 border-black bg-white p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div>
@@ -135,12 +132,12 @@
                             </p>
                         </div>
                         
-                        <!-- GRUP TOMBOL AKSI: SURAT TUGAS & DETAIL -->
+                        <!-- GRUP TOMBOL AKSI: LAMPIRAN & DETAIL -->
                         <div class="flex items-center gap-2 self-end sm:self-center shrink-0">
                             <?php if ($kegNotif->lampiran && $kegNotif->lampiran !== '-'): ?>
                                 <a href="<?php echo $kegNotif->lampiran; ?>" 
-                                target="_blank" 
-                                class="border-2 border-black bg-blue-500 hover:bg-blue-600 text-white font-bold px-3 py-1.5 text-xs transition inline-flex items-center gap-1 shadow-xs">
+                                   target="_blank" 
+                                   class="border-2 border-black bg-blue-500 hover:bg-blue-600 text-white font-bold px-3 py-1.5 text-xs transition inline-flex items-center gap-1 shadow-xs">
                                     📄 Lampiran / Surat Tugas
                                 </a>
                             <?php else: ?>
@@ -150,7 +147,8 @@
                             <?php endif; ?>
 
                             <button type="button" 
-                                    onclick="openDetailModal('<?php echo rawurlencode(json_encode($detailPayloadNotif)); ?>')" 
+                                    data-payload="<?php echo htmlspecialchars(json_encode($detailPayloadNotif), ENT_QUOTES, 'UTF-8'); ?>"
+                                    onclick="openDetailModalFromBtn(this)" 
                                     class="border-2 border-black bg-amber-500 hover:bg-amber-600 text-black font-bold px-4 py-1.5 text-xs transition cursor-pointer">
                                 Detail
                             </button>
@@ -282,20 +280,20 @@
             <!-- List Kegiatan SQL -->
             <div id="dashboardKegiatanList" class="mt-4 border-2 border-black p-3 md:p-4 max-h-[460px] overflow-y-auto space-y-3">
                 <?php if (isset($kegiatan) && count($kegiatan) > 0): ?>
-                    <?php foreach ($kegiatan as$item): ?>
+                    <?php foreach ($kegiatan as $item): ?>
                         <?php
                             $tglMulai = \Carbon\Carbon::parse($item->tanggal_mulai)->format('Y-m-d');
-                            $tglSelesai =$item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->format('Y-m-d') :$tglMulai;
+                            $tglSelesai = $item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->format('Y-m-d') : $tglMulai;
                             
-                            $isToday = ($todayDate >=$tglMulai && $todayDate <=$tglSelesai);
+                            $isToday = ($todayDate >= $tglMulai && $todayDate <= $tglSelesai);
 
                             $tglMulaiCard = \Carbon\Carbon::parse($item->tanggal_mulai)->translatedFormat('d M Y');
-                            $tglSelesaiCard =$item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->translatedFormat('d M Y') :$tglMulaiCard;
-                            $tglDisplayCard = ($tglMulaiCard === $tglSelesaiCard) ?$tglMulaiCard : "{$tglMulaiCard} - {$tglSelesaiCard}";
+                            $tglSelesaiCard = $item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->translatedFormat('d M Y') : $tglMulaiCard;
+                            $tglDisplayCard = ($tglMulaiCard === $tglSelesaiCard) ? $tglMulaiCard : "{$tglMulaiCard} - {$tglSelesaiCard}";
 
                             $tglMulaiFmt = \Carbon\Carbon::parse($item->tanggal_mulai)->translatedFormat('l, d F Y');
-                            $tglSelesaiFmt =$item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->translatedFormat('l, d F Y') :$tglMulaiFmt;
-                            $tglLengkap = ($tglMulaiFmt === $tglSelesaiFmt) ?$tglMulaiFmt : "{$tglMulaiFmt} ~ {$tglSelesaiFmt}";
+                            $tglSelesaiFmt = $item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->translatedFormat('l, d F Y') : $tglMulaiFmt;
+                            $tglLengkap = ($tglMulaiFmt === $tglSelesaiFmt) ? $tglMulaiFmt : "{$tglMulaiFmt} ~ {$tglSelesaiFmt}";
                             
                             $detailPayload = [
                                 'nama' => $item->nama_keg,
@@ -341,7 +339,8 @@
                                 </p>
                             </div>
                             <button type="button" 
-                                    onclick="openDetailModal('{{ rawurlencode(json_encode($detailPayload)) }}')" 
+                                    data-payload="<?php echo htmlspecialchars(json_encode($detailPayload), ENT_QUOTES, 'UTF-8'); ?>"
+                                    onclick="openDetailModalFromBtn(this)" 
                                     class="self-end sm:self-center border-2 border-black <?php echo $isToday ? 'bg-amber-600 hover:bg-amber-700' : 'bg-gray-500 hover:bg-gray-600'; ?> text-white font-semibold px-5 py-1 text-sm transition cursor-pointer">
                                 Detail
                             </button>
@@ -360,12 +359,12 @@
             </h2>
             <div class="mt-4 space-y-3">
                 <?php if (isset($jadwalTerdekat) && count($jadwalTerdekat) > 0): ?>
-                    <?php foreach ($jadwalTerdekat as$first): ?>
+                    <?php foreach ($jadwalTerdekat as $first): ?>
                         <?php
                             $tglMulaiF = \Carbon\Carbon::parse($first->tanggal_mulai)->format('Y-m-d');
-                            $tglSelesaiF =$first->tanggal_selesai ? \Carbon\Carbon::parse($first->tanggal_selesai)->format('Y-m-d') :$tglMulaiF;
+                            $tglSelesaiF = $first->tanggal_selesai ? \Carbon\Carbon::parse($first->tanggal_selesai)->format('Y-m-d') : $tglMulaiF;
                             
-                            $isUpcomingToday = ($todayDate >=$tglMulaiF && $todayDate <=$tglSelesaiF);
+                            $isUpcomingToday = ($todayDate >= $tglMulaiF && $todayDate <= $tglSelesaiF);
 
                             $tglMulaiFmt = \Carbon\Carbon::parse($first->tanggal_mulai)->translatedFormat('l, d F Y');
                             $tglSelesaiFmt =$first->tanggal_selesai ? \Carbon\Carbon::parse($first->tanggal_selesai)->translatedFormat('l, d F Y') :$tglMulaiFmt;
@@ -383,7 +382,8 @@
                             ];
                         ?>
                         
-                        <div onclick="openDetailModal('{{ rawurlencode(json_encode($detailUpcoming)) }}')" 
+                        <div data-payload="<?php echo htmlspecialchars(json_encode($detailUpcoming), ENT_QUOTES, 'UTF-8'); ?>"
+                             onclick="openDetailModalFromBtn(this)" 
                              class="border-2 border-black p-3 transition cursor-pointer <?php echo $isUpcomingToday ? 'bg-amber-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]' : 'bg-white hover:bg-gray-50'; ?>" 
                              title="Klik untuk melihat detail">
                             <div class="flex justify-between items-start">
@@ -438,6 +438,10 @@
                 <p><span class="font-semibold">Titik Lokasi :</span> <span id="dtTitikLokasi">-</span></p>
                 <p><span class="font-semibold">Jumlah peserta :</span> <span id="dtJumlahPeserta">-</span> Orang</p>
                 <p><span class="font-semibold">Status :</span> <span id="dtStatusKegiatan">-</span></p>
+                <p>
+                    <span class="font-semibold">Lampiran :</span> 
+                    <a id="dtLampiranUrl" href="#" target="_blank" class="text-blue-700 underline font-medium break-all">-</a>
+                </p>
             </div>
         </div>
     </div>
@@ -490,26 +494,44 @@
 
         const detailModal = document.getElementById('eventDetailModal');
 
+        function openDetailModalFromBtn(btn) {
+            const rawData = btn.getAttribute('data-payload');
+            if (rawData) {
+                try {
+                    const item = JSON.parse(rawData);
+                    renderAndShowModal(item);
+                } catch(e) {
+                    console.error("Gagal parse JSON dari data-payload:", e);
+                }
+            }
+        }
+
         function openDetailModal(encodedJson) {
             try {
                 const item = JSON.parse(decodeURIComponent(encodedJson));
-                document.getElementById('dtJudulModal').innerText = `Detail ${item.nama}`;
-                document.getElementById('dtNamaKeg').innerText = item.nama;
-                document.getElementById('dtKoordinator').innerText = item.koordinator;
-                document.getElementById('dtJenis').innerText = item.jenis;
-                document.getElementById('dtTanggalPelaksanaan').innerText = item.tanggal;
-                document.getElementById('dtTitikLokasi').innerText = item.lokasi;
-                document.getElementById('dtJumlahPeserta').innerText = item.peserta;
-                document.getElementById('dtStatusKegiatan').innerText = item.status;
-
-                const lampiranElem = document.getElementById('dtLampiranUrl');
-                lampiranElem.innerText = item.lampiran;
-                lampiranElem.href = (item.lampiran && item.lampiran !== '-') ? item.lampiran : '#';
-
-                detailModal.classList.remove('hidden');
+                renderAndShowModal(item);
             } catch(e) {
                 console.error("Gagal memuat detail kegiatan:", e);
             }
+        }
+
+        function renderAndShowModal(item) {
+            document.getElementById('dtJudulModal').innerText = `Detail ${item.nama || ''}`;
+            document.getElementById('dtNamaKeg').innerText = item.nama || '-';
+            document.getElementById('dtKoordinator').innerText = item.koordinator || '-';
+            document.getElementById('dtJenis').innerText = item.jenis || '-';
+            document.getElementById('dtTanggalPelaksanaan').innerText = item.tanggal || '-';
+            document.getElementById('dtTitikLokasi').innerText = item.lokasi || '-';
+            document.getElementById('dtJumlahPeserta').innerText = item.peserta || '0';
+            document.getElementById('dtStatusKegiatan').innerText = item.status || '-';
+
+            const lampiranElem = document.getElementById('dtLampiranUrl');
+            if (lampiranElem) {
+                lampiranElem.innerText = item.lampiran || '-';
+                lampiranElem.href = (item.lampiran && item.lampiran !== '-') ? item.lampiran : '#';
+            }
+
+            detailModal.classList.remove('hidden');
         }
 
         function closeDetailModal() {
