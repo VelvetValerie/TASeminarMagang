@@ -106,30 +106,43 @@
             </div>
 
             <!-- Group 2: Pelaksanaan -->
-            @if(in_array($userRole, ['pimpinan', 'admin']))
-                <div>
-                    <p class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">Pelaksanaan</p>
-                    <nav class="space-y-1">
-                        @if($userRole === 'admin')
-                            <a href="{{ url('/kegiatan') }}" 
-                               class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('kegiatan') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                                <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->is('kegiatan') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
-                                </svg>
-                                Kegiatan
-                            </a>
-                        @endif
+            <div>
+                <p class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">Pelaksanaan</p>
+                <nav class="space-y-1">
+                    
+                    <!-- 1. Menu Kegiatan (Khusus Role Admin) -->
+                    @if($userRole === 'admin')
+                        <a href="{{ url('/kegiatan') }}" 
+                        class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('kegiatan') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                            <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->is('kegiatan') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                            </svg>
+                            Kegiatan
+                        </a>
+                    @endif
 
+                    <!-- 2. Menu Riwayat Kerja (Khusus Role Admin & Pimpinan) -->
+                    @if(in_array($userRole, ['pimpinan', 'admin']))
                         <a href="{{ url('/riwayat-kerja') }}" 
-                           class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('riwayat-kerja') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                        class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('riwayat-kerja') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
                             <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->is('riwayat-kerja') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
                             </svg>
                             Riwayat Kerja
                         </a>
-                    </nav>
-                </div>
-            @endif
+                    @endif
+
+                    <!-- 3. Menu Laporan Kegiatan (EKSKLUSIF UNTUK SEMUA ROLE) -->
+                    <a href="{{ url('/laporan-kegiatan') }}" 
+                    class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('laporan-kegiatan') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                        <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->is('laporan-kegiatan') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Laporan Kegiatan
+                    </a>
+
+                </nav>
+            </div>
 
             <!-- Group 3: Dropdown Manajemen Data Kegiatan -->
             @if(in_array($userRole, ['pimpinan', 'admin']))
@@ -220,6 +233,7 @@
                         @elseif(request()->is('kalender')) Kalender Perencanaan Jadwal
                         @elseif(request()->is('kegiatan')) Manajemen Perencanaan Kegiatan
                         @elseif(request()->is('riwayat-kerja')) Rekapitulasi Riwayat Kerja Pegawai
+                        @elseif(request()->is('laporan-kegiatan')) Laporan Hasil & Evaluasi Kegiatan
                         @elseif(request()->is('jenis-kegiatan')) Master Kategori Jenis Kegiatan
                         @elseif(request()->is('titik-lokasi')) Master Data Titik Lokasi & Gedung
                         @elseif(request()->is('instansi')) Daftar Instansi Mitra Terdaftar

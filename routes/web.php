@@ -33,6 +33,10 @@ Route::middleware(['auth'])->group(function () {
     // Dilihat oleh SEMUA Role (Admin, Pimpinan, Pegawai)
     Route::get('/dashboard', [AppController::class, 'dashboard'])->name('dashboard');
     Route::get('/kalender', [AppController::class, 'kalender'])->name('kalender');
+    Route::get('/laporan-kegiatan', [AppController::class, 'laporanKegiatan'])->name('laporan-kegiatan');
+    Route::post('/laporan-kegiatan', [AppController::class, 'storeLaporanKegiatan'])->name('laporan-kegiatan.store');
+    Route::put('/laporan-kegiatan/{id}', [AppController::class, 'updateLaporanKegiatan'])->name('laporan-kegiatan.update');
+    Route::delete('/laporan-kegiatan/{id}', [AppController::class, 'destroyLaporanKegiatan'])->name('laporan-kegiatan.destroy');
 
     // Dilihat oleh Pimpinan dan Admin
     Route::middleware(['role:pimpinan,admin'])->group(function () {

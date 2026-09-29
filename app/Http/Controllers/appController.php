@@ -10,6 +10,7 @@ use App\Models\JenisKeg;
 use App\Models\Instansi;
 use App\Models\TitikLokasi;
 use App\Models\Karyawan;
+use App\Models\LaporanKegiatan;
 use App\Models\User;
 use Carbon\Carbon;
 
@@ -506,5 +507,123 @@ class AppController extends Controller
         $kegiatan = $query->paginate(5);
 
         return view('riwayat-kegiatan', compact('kegiatan', 'sort'));
+    }
+
+    /**
+     * Halaman Utama Laporan Kegiatan
+     */
+    public function laporanKegiatan(Request $request)
+    {
+        $search = $request->input('search');
+        $sort = $request->input('sort', 'terbaru');
+
+        // Query Laporan Kegiatan terhubung dengan Kegiatan beserta relasinya
+        $query = LaporanKegiatan::with(['kegiatan.jenis', 'kegiatan.lokasi', 'kegiatan.instansi', 'kegiatan.koordinator']);
+
+        if ($search) {
+            $query->whereHas('kegiatan', function ($q) use ($search) {
+                $q->where('nama_keg', 'like', "%{$search}%");
+            });
+        }
+
+        if ($sort === 'terlama') {
+            $query->orderBy('created_at', 'asc');
+        } elseif ($sort === 'az') {
+            $query->whereHas('kegiatan', function ($q) {
+                $q->orderBy('nama_keg', 'asc');
+            });
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        $laporan = $query->paginate(10);
+
+        // Ambil daftar kegiatan yang berstatus 'Selesai' dan belum memiliki laporan
+        $kegiatanSelesai = Kegiatan::where('status', 'Selesai')
+            ->whereDoesntHave('laporan')
+            ->orderBy('nama_keg', 'asc')
+            ->get();
+
+        return view('laporan-kegiatan', compact('laporan', 'kegiatanSelesai', 'sort'));
+    }
+
+    /**
+     * Simpan Laporan Kegiatan Baru
+     */
+    public function storeLaporanKegiatan(Request $request)
+    {
+        // Ambil data kegiatan untuk mendapatkan total peserta terdaftar
+        $kegiatan = Kegiatan::find($request->id_keg);
+        $totalPeserta = $kegiatan ? $kegiatan->jmlh_peserta : 0;
+
+        $validated = $request->validate([
+            'id_keg'              => 'required|exists:kegiatan,id_keg|unique:laporan_kegiatan,id_keg',
+            'peserta_hadir'       => 'required|integer|min:0',
+            'peserta_tidak_hadir' => [
+                'required',
+                'integer',
+                'min:0',
+                function ($attribute, $value, $fail) use ($request, $totalPeserta) {
+                    $hadir = (int) $request->peserta_hadir;
+                    $absen = (int) $value;
+                    if (($hadir + $absen) !== (int) $totalPeserta) {
+                        $fail("Total peserta hadir ({$hadir}) + absen ({$absen}) harus bernilai persis sama dengan Total Peserta Terdaftar ({$totalPeserta}).");
+                    }
+                },
+            ],
+            'nilai_tertinggi'     => 'nullable|numeric|min:0|max:1000',
+            'nilai_terendah'      => 'nullable|numeric|min:0|max:1000',
+            'lampiran_laporan'    => 'nullable|string|max:255',
+            'catatan_evaluasi'    => 'nullable|string',
+        ]);
+
+        LaporanKegiatan::create($validated);
+
+        return redirect()->back()->with('success', 'Laporan kegiatan berhasil disimpan!');
+    }
+
+    /**
+     * Update Laporan Kegiatan
+     */
+    public function updateLaporanKegiatan(Request $request, $id)
+    {
+        $laporan = LaporanKegiatan::findOrFail($id);
+        $kegiatan = Kegiatan::find($laporan->id_keg);
+        $totalPeserta = $kegiatan ? $kegiatan->jmlh_peserta : 0;
+
+        $validated = $request->validate([
+            'peserta_hadir'       => 'required|integer|min:0',
+            'peserta_tidak_hadir' => [
+                'required',
+                'integer',
+                'min:0',
+                function ($attribute, $value, $fail) use ($request, $totalPeserta) {
+                    $hadir = (int) $request->peserta_hadir;
+                    $absen = (int) $value;
+                    if (($hadir + $absen) !== (int) $totalPeserta) {
+                        $fail("Total peserta hadir ({$hadir}) + absen ({$absen}) harus bernilai persis sama dengan Total Peserta Terdaftar ({$totalPeserta}).");
+                    }
+                },
+            ],
+            'nilai_tertinggi'     => 'nullable|numeric|min:0|max:1000',
+            'nilai_terendah'      => 'nullable|numeric|min:0|max:1000',
+            'lampiran_laporan'    => 'nullable|string|max:255',
+            'catatan_evaluasi'    => 'nullable|string',
+        ]);
+
+        $laporan->update($validated);
+
+        return redirect()->back()->with('success', 'Laporan kegiatan berhasil diperbarui!');
+    }
+
+    /**
+     * Hapus Laporan Kegiatan
+     */
+    public function destroyLaporanKegiatan($id)
+    {
+        $laporan = LaporanKegiatan::findOrFail($id);
+        $laporan->delete();
+
+        return redirect()->back()->with('success', 'Laporan kegiatan berhasil dihapus!');
     }
 }

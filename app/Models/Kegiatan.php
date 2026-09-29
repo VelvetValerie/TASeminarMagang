@@ -29,4 +29,9 @@ class Kegiatan extends Model
     {
         return $this->belongsTo(Instansi::class, 'id_instansi', 'id_instansi');
     }
+    
+    public function laporan()
+    {
+        return $this->hasOne(LaporanKegiatan::class, 'id_keg', 'id_keg');
+    }
 }

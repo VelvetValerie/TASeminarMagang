@@ -85,7 +85,7 @@
 @section('content')
     <?php $todayDate = \Carbon\Carbon::today()->toDateString(); ?>
 
-    <!-- BANNER NOTIFIKASI KOORDINATOR HARI INI + TOMBOL DETAIL MODAL -->
+    <!-- BANNER NOTIFIKASI KOORDINATOR HARI INI + TOMBOL SURAT TUGAS & DETAIL -->
     <?php if (isset($notifTugas) && count($notifTugas) > 0): ?>
         <div class="mb-6 border-2 border-black bg-amber-100 p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <div class="flex items-center justify-between pb-2 border-b-2 border-black mb-3">
@@ -115,8 +115,11 @@
                             'lokasi' => ($kegNotif->lokasi->nm_lokasi ?? '-') . ' (' . ($kegNotif->lokasi->alamat ?? '-') . ')',
                             'peserta' => number_format($kegNotif->jmlh_peserta ?? 0),
                             'status' => $kegNotif->status ?? '-',
-                            'lampiran' => $kegNotif->lampiran ?? '-'
+                            'lampiran' => $kegNotif->lampiran ?? '-',
+                            'surat_tugas' => $kegNotif->surat_tugas ?? '-'
                         ];
+
+                        $suratTugasUrl = $kegNotif->surat_tugas && $kegNotif->surat_tugas !== '-' ? $kegNotif->surat_tugas : null;
                     ?>
                     <div class="border-2 border-black bg-white p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div>
@@ -132,12 +135,26 @@
                             </p>
                         </div>
                         
-                        <!-- TOMBOL DETAIL MEMANGGIL POPUP MODAL -->
-                        <button type="button" 
-                                onclick="openDetailModal('<?php echo rawurlencode(json_encode($detailPayloadNotif)); ?>')" 
-                                class="self-end sm:self-center border-2 border-black bg-amber-500 hover:bg-amber-600 text-black font-bold px-4 py-1.5 text-xs transition cursor-pointer shrink-0">
-                            Detail
-                        </button>
+                        <!-- GRUP TOMBOL AKSI: SURAT TUGAS & DETAIL -->
+                        <div class="flex items-center gap-2 self-end sm:self-center shrink-0">
+                            <?php if ($kegNotif->lampiran && $kegNotif->lampiran !== '-'): ?>
+                                <a href="<?php echo $kegNotif->lampiran; ?>" 
+                                target="_blank" 
+                                class="border-2 border-black bg-blue-500 hover:bg-blue-600 text-white font-bold px-3 py-1.5 text-xs transition inline-flex items-center gap-1 shadow-xs">
+                                    📄 Lampiran / Surat Tugas
+                                </a>
+                            <?php else: ?>
+                                <span class="border-2 border-black bg-gray-200 text-gray-500 font-bold px-3 py-1.5 text-xs cursor-not-allowed" title="Lampiran belum diunggah">
+                                    📄 Lampiran (-)
+                                </span>
+                            <?php endif; ?>
+
+                            <button type="button" 
+                                    onclick="openDetailModal('<?php echo rawurlencode(json_encode($detailPayloadNotif)); ?>')" 
+                                    class="border-2 border-black bg-amber-500 hover:bg-amber-600 text-black font-bold px-4 py-1.5 text-xs transition cursor-pointer">
+                                Detail
+                            </button>
+                        </div>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -421,10 +438,6 @@
                 <p><span class="font-semibold">Titik Lokasi :</span> <span id="dtTitikLokasi">-</span></p>
                 <p><span class="font-semibold">Jumlah peserta :</span> <span id="dtJumlahPeserta">-</span> Orang</p>
                 <p><span class="font-semibold">Status :</span> <span id="dtStatusKegiatan">-</span></p>
-                <p>
-                    <span class="font-semibold">Lampiran :</span> 
-                    <a id="dtLampiranUrl" href="#" target="_blank" class="text-blue-700 underline font-medium break-all">-</a>
-                </p>
             </div>
         </div>
     </div>
