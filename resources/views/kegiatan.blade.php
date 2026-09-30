@@ -8,67 +8,6 @@
     </div>
 @endsection
 
-@section('sidebar-menu')
-    <div class="space-y-4">
-        <!-- Grup 1: Menu Utama -->
-        <div class="space-y-2">
-            <a href="{{ url('/dashboard') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center hover:bg-gray-100 transition">
-                Menu Dasboard
-            </a>
-            <a href="{{ url('/kalender') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center hover:bg-gray-100 transition">
-                Kalender
-            </a>
-        </div>
-
-        <!-- Grup 2: Operasional -->
-        <div class="space-y-2 pt-2">
-            <a href="{{ url('/kegiatan') }}" class="block border-2 border-black bg-gray-500 text-white font-semibold py-2 px-4 text-center transition">
-                Kegiatan
-            </a>
-            <a href="{{ url('/riwayat-kerja') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center hover:bg-gray-100 transition">
-                Rekam Kerja
-            </a>
-        </div>
-
-        <!-- Grup 3: Master Data & Dropdown -->
-        <div class="space-y-2 pt-2">
-            <a href="{{ url('/jenis-kegiatan') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center text-sm hover:bg-gray-100 transition">
-                Jenis Kegiatan
-            </a>
-            <a href="{{ url('/titik-lokasi') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center text-sm hover:bg-gray-100 transition">
-                Titik Lokasi
-            </a>
-            <a href="{{ url('/instansi') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center text-sm hover:bg-gray-100 transition">
-                Instansi
-            </a>
-            <a href="{{ url('/riwayat-kegiatan') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center text-sm hover:bg-gray-100 transition">
-                Status
-            </a>
-
-            <!-- Dropdown Manajemen -->
-            <details class="group border-2 border-black bg-white">
-                <summary class="list-none py-2 px-4 font-semibold text-gray-900 flex items-center justify-between text-sm cursor-pointer hover:bg-gray-100 transition">
-                    <span>Manajemen</span>
-                    <svg class="w-4 h-4 transition-transform duration-200 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </summary>
-                <div class="border-t-2 border-black bg-white">
-                    <a href="{{ url('/master-user') }}" class="block py-2 px-4 text-center text-sm font-medium text-gray-800 border-b-2 border-black hover:bg-gray-100 transition">
-                        User
-                    </a>
-                    <a href="{{ url('/master-kegiatan') }}" class="block py-2 px-4 text-center text-sm font-medium text-gray-800 border-b-2 border-black hover:bg-gray-100 transition">
-                        Kegiatan
-                    </a>
-                    <a href="{{ url('/master-lokasi') }}" class="block py-2 px-4 text-center text-sm font-medium text-gray-800 hover:bg-gray-100 transition">
-                        Lokasi
-                    </a>
-                </div>
-            </details>
-        </div>
-    </div>
-@endsection
-
 @section('navbar-left')
     <div class="border-2 border-black bg-white px-6 py-1.5 font-bold text-gray-900">
         Perencanaan Kegiatan
@@ -82,6 +21,10 @@
 @endsection
 
 @section('content')
+    @php
+        $loggedUser = Auth::user();
+    @endphp
+
     <!-- NOTIFIKASI SUKSES -->
     @if(session('success'))
         <div class="mb-4 border-2 border-black bg-emerald-100 p-3 font-semibold text-sm text-emerald-900 shadow-sm flex items-center justify-between">
@@ -91,6 +34,13 @@
     @endif
 
     <!-- NOTIFIKASI ERROR -->
+    @if(session('error'))
+        <div class="mb-4 border-2 border-black bg-rose-100 p-3 font-semibold text-sm text-rose-900 shadow-sm flex items-center justify-between">
+            <span>⚠️ {{ session('error') }}</span>
+            <button onclick="this.parentElement.remove()" class="text-rose-900 font-bold ml-4">&times;</button>
+        </div>
+    @endif
+
     @if($errors->any())
         <div class="mb-4 border-2 border-black bg-rose-100 p-3 font-semibold text-xs text-rose-900 shadow-sm">
             <ul class="list-disc pl-5 space-y-1">
@@ -107,12 +57,12 @@
         <!-- Header Kotak: Judul + Search Database & Filter + Tombol Tambah -->
         <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b-2 border-black relative">
             <h2 class="text-base md:text-lg font-bold text-gray-900">
-                Daftar Perencanaan Kegiatan
+                Daftar Perencanaan Kegiatan {{ $loggedUser->role === 'pegawai' ? '(Yang Diampu)' : '' }}
             </h2>
 
             <!-- Kontrol Filter, Search, & Tambah -->
             <div class="flex items-center space-x-2">
-                <!-- Form Search Server-Side ke AppController -->
+                <!-- Form Search Server-Side -->
                 <form id="searchForm" method="GET" action="{{ url('/kegiatan') }}" class="m-0 p-0 flex items-center">
                     @if(request('sort'))
                         <input type="hidden" name="sort" value="{{ request('sort') }}">
@@ -162,16 +112,18 @@
                     </div>
                 </div>
 
-                <!-- Tombol Tambah Kegiatan -->
-                <button onclick="openAddModal()" class="border-2 border-black p-1.5 hover:bg-gray-100 block transition cursor-pointer" title="Tambah Kegiatan">
-                    <svg class="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
-                    </svg>
-                </button>
+                <!-- Tombol Tambah Kegiatan (HANYA KHUSUS ADMIN) -->
+                @if($loggedUser->role !== 'pegawai')
+                    <button onclick="openAddModal()" class="border-2 border-black p-1.5 hover:bg-gray-100 block transition cursor-pointer" title="Tambah Kegiatan">
+                        <svg class="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                    </button>
+                @endif
             </div>
         </div>
 
-        <!-- Tabel Perencanaan Kegiatan dengan Kolom Penomoran -->
+        <!-- Tabel Perencanaan Kegiatan -->
         <div class="mt-4 border-2 border-black overflow-x-auto">
             <table class="w-full border-collapse border-black min-w-[700px] text-xs sm:text-sm">
                 <thead>
@@ -186,6 +138,7 @@
                     @forelse($kegiatan as $idx => $item)
                         @php
                             $no = $kegiatan->firstItem() + $idx;
+                            $canEdit = ($loggedUser->role !== 'pegawai') || ($item->id_karyawan_koor == $loggedUser->id_karyawan);
                         @endphp
                         <tr class="kegiatan-row border-b-2 border-black last:border-b-0 bg-[#d1d5db] hover:bg-[#c5c9ce] transition"
                             data-id="{{ $item->id_keg }}"
@@ -232,30 +185,34 @@
                             <!-- Grup Tombol Aksi -->
                             <td class="py-3 px-3 text-center">
                                 <div class="flex items-center justify-center space-x-2">
-                                    <!-- Icon Detail -->
+                                    <!-- Icon Detail (Bisa diakses semua) -->
                                     <button type="button" onclick="openDetailModal(this)" class="p-1 text-gray-900 hover:text-blue-600 transition cursor-pointer leading-none flex items-center justify-center" title="Detail Kegiatan">
                                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
                                         </svg>
                                     </button>
 
-                                    <!-- Form Hapus -->
-                                    <form action="{{ url('/kegiatan/' . $item->id_keg) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data {{ $item->nama_keg }}?')" class="flex items-center justify-center m-0 p-0">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="p-1 text-gray-900 hover:text-red-600 transition cursor-pointer leading-none flex items-center justify-center" title="Hapus Kegiatan">
+                                    <!-- Form Hapus (Khusus Admin) -->
+                                    @if($loggedUser->role !== 'pegawai')
+                                        <form action="{{ url('/kegiatan/' . $item->id_keg) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data {{ $item->nama_keg }}?')" class="flex items-center justify-center m-0 p-0">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="p-1 text-gray-900 hover:text-red-600 transition cursor-pointer leading-none flex items-center justify-center" title="Hapus Kegiatan">
+                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    @endif
+
+                                    <!-- Icon Edit / Update Status (Bisa jika Koordinator / Admin) -->
+                                    @if($canEdit)
+                                        <button type="button" onclick="openEditModal(this)" class="p-1 text-gray-900 hover:text-yellow-600 transition cursor-pointer leading-none flex items-center justify-center" title="Edit Data / Status Kegiatan">
                                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
                                             </svg>
                                         </button>
-                                    </form>
-
-                                    <!-- Icon Edit -->
-                                    <button type="button" onclick="openEditModal(this)" class="p-1 text-gray-900 hover:text-yellow-600 transition cursor-pointer leading-none flex items-center justify-center" title="Edit Kegiatan">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
-                                        </svg>
-                                    </button>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
@@ -263,9 +220,9 @@
                         <tr>
                             <td colspan="4" class="py-8 text-center text-gray-500 font-semibold text-sm">
                                 @if(request('search'))
-                                    Data perencanaan kegiatan dengan nama "<span class="font-bold">{{ request('search') }}</span>" tidak ditemukan di database.
+                                    Data kegiatan dengan nama "<span class="font-bold">{{ request('search') }}</span>" tidak ditemukan.
                                 @else
-                                    Belum ada data perencanaan kegiatan yang tersimpan di database.
+                                    Belum ada data perencanaan kegiatan yang diampu.
                                 @endif
                             </td>
                         </tr>
@@ -318,7 +275,7 @@
             </button>
 
             <h3 id="formModalTitle" class="text-base sm:text-lg font-bold text-gray-900 pr-8 pb-4 border-b-2 border-black">
-                Tambah Perencanaan Kegiatan
+                Edit Perencanaan Kegiatan
             </h3>
 
             <form id="kegiatanForm" action="{{ url('/kegiatan') }}" method="POST" class="mt-4 space-y-3 text-xs sm:text-sm">
@@ -328,10 +285,12 @@
                 <!-- Nama Kegiatan -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-2">
                     <label class="font-semibold text-gray-800">Nama Kegiatan</label>
-                    <input type="text" id="inputNamaKeg" name="nama_keg" required placeholder="Masukkan Nama Kegiatan" class="sm:col-span-2 border-2 border-black bg-[#d1d5db] p-2 focus:outline-none focus:bg-white">
+                    <input type="text" id="inputNamaKeg" name="nama_keg" required placeholder="Masukkan Nama Kegiatan" 
+                           {{ $loggedUser->role === 'pegawai' ? 'readonly' : '' }}
+                           class="sm:col-span-2 border-2 border-black bg-[#d1d5db] p-2 focus:outline-none focus:bg-white {{ $loggedUser->role === 'pegawai' ? 'cursor-not-allowed opacity-80' : '' }}">
                 </div>
 
-                <!-- INSTANSI: INPUT TEXT AUTOCOMPLETE -->
+                <!-- INSTANSI -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 items-start gap-2 relative">
                     <label class="font-semibold text-gray-800 pt-2">Instansi</label>
                     <div class="sm:col-span-2 relative">
@@ -341,77 +300,101 @@
                                id="inputInstansiText" 
                                autocomplete="off"
                                placeholder="🔍 Ketik untuk mencari & memilih instansi..." 
-                               class="w-full border-2 border-black bg-[#d1d5db] p-2 focus:outline-none focus:bg-white text-gray-900 font-medium">
+                               {{ $loggedUser->role === 'pegawai' ? 'readonly' : '' }}
+                               class="w-full border-2 border-black bg-[#d1d5db] p-2 focus:outline-none focus:bg-white text-gray-900 font-medium {{ $loggedUser->role === 'pegawai' ? 'cursor-not-allowed opacity-80' : '' }}">
 
-                        <div id="instansiSuggestions" class="hidden absolute left-0 right-0 top-full mt-1 max-h-48 overflow-y-auto border-2 border-black bg-white shadow-xl z-50">
-                            @foreach($instansiList as $ins)
-                                <div class="instansi-item px-3 py-2 text-xs font-semibold text-gray-900 hover:bg-amber-100 cursor-pointer border-b border-gray-200 last:border-b-0"
-                                     data-id="{{ $ins->id_instansi }}"
-                                     data-nama="{{ $ins->nm_instansi }}">
-                                    {{ $ins->nm_instansi }}
+                        @if($loggedUser->role !== 'pegawai')
+                            <div id="instansiSuggestions" class="hidden absolute left-0 right-0 top-full mt-1 max-h-48 overflow-y-auto border-2 border-black bg-white shadow-xl z-50">
+                                @foreach($instansiList as $ins)
+                                    <div class="instansi-item px-3 py-2 text-xs font-semibold text-gray-900 hover:bg-amber-100 cursor-pointer border-b border-gray-200 last:border-b-0"
+                                         data-id="{{ $ins->id_instansi }}"
+                                         data-nama="{{ $ins->nm_instansi }}">
+                                        {{ $ins->nm_instansi }}
+                                    </div>
+                                @endforeach
+                                <div id="noInstansiFound" class="hidden px-3 py-2 text-xs font-semibold text-gray-400 text-center italic">
+                                    Instansi tidak ditemukan
                                 </div>
-                            @endforeach
-                            <div id="noInstansiFound" class="hidden px-3 py-2 text-xs font-semibold text-gray-400 text-center italic">
-                                Instansi tidak ditemukan
                             </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
 
                 <!-- Jenis Kegiatan -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-2">
                     <label class="font-semibold text-gray-800">Jenis Kegiatan</label>
-                    <select id="selectJenis" name="id_jeniskeg" required class="sm:col-span-2 border-2 border-black bg-[#d1d5db] p-2 focus:outline-none focus:bg-white">
+                    <select id="selectJenis" name="id_jeniskeg" required 
+                            {{ $loggedUser->role === 'pegawai' ? 'disabled' : '' }}
+                            class="sm:col-span-2 border-2 border-black bg-[#d1d5db] p-2 focus:outline-none focus:bg-white {{ $loggedUser->role === 'pegawai' ? 'cursor-not-allowed opacity-80' : '' }}">
                         <option value="" disabled selected>Selection Input</option>
                         @foreach($jenisList as $j)
                             <option value="{{ $j->id_jeniskeg }}">{{ $j->nama_jeniskeg }}</option>
                         @endforeach
                     </select>
+                    @if($loggedUser->role === 'pegawai')
+                        <input type="hidden" id="hiddenSelectJenis" name="id_jeniskeg">
+                    @endif
                 </div>
 
                 <!-- Koordinator -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-2">
                     <label class="font-semibold text-gray-800">Koordinator</label>
-                    <select id="selectKoordinator" name="id_karyawan_koor" required class="sm:col-span-2 border-2 border-black bg-[#d1d5db] p-2 focus:outline-none focus:bg-white">
+                    <select id="selectKoordinator" name="id_karyawan_koor" required 
+                            {{ $loggedUser->role === 'pegawai' ? 'disabled' : '' }}
+                            class="sm:col-span-2 border-2 border-black bg-[#d1d5db] p-2 focus:outline-none focus:bg-white {{ $loggedUser->role === 'pegawai' ? 'cursor-not-allowed opacity-80' : '' }}">
                         <option value="" disabled selected>Selection Input</option>
                         @foreach($karyawanList as $k)
                             <option value="{{ $k->id_karyawan }}">{{ $k->nama_karyawan }}</option>
                         @endforeach
                     </select>
+                    @if($loggedUser->role === 'pegawai')
+                        <input type="hidden" id="hiddenSelectKoordinator" name="id_karyawan_koor">
+                    @endif
                 </div>
 
                 <!-- Tanggal Mulai & Selesai -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-2">
                     <label class="font-semibold text-gray-800">Tanggal Mulai</label>
-                    <input type="date" id="inputTglMulai" name="tanggal_mulai" required class="sm:col-span-2 border-2 border-black bg-[#d1d5db] p-2 focus:outline-none focus:bg-white">
+                    <input type="date" id="inputTglMulai" name="tanggal_mulai" required 
+                           {{ $loggedUser->role === 'pegawai' ? 'readonly' : '' }}
+                           class="sm:col-span-2 border-2 border-black bg-[#d1d5db] p-2 focus:outline-none focus:bg-white {{ $loggedUser->role === 'pegawai' ? 'cursor-not-allowed opacity-80' : '' }}">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-2">
                     <label class="font-semibold text-gray-800">Tanggal Selesai</label>
-                    <input type="date" id="inputTglSelesai" name="tanggal_selesai" class="sm:col-span-2 border-2 border-black bg-[#d1d5db] p-2 focus:outline-none focus:bg-white">
+                    <input type="date" id="inputTglSelesai" name="tanggal_selesai" 
+                           {{ $loggedUser->role === 'pegawai' ? 'readonly' : '' }}
+                           class="sm:col-span-2 border-2 border-black bg-[#d1d5db] p-2 focus:outline-none focus:bg-white {{ $loggedUser->role === 'pegawai' ? 'cursor-not-allowed opacity-80' : '' }}">
                 </div>
 
                 <!-- Titik Lokasi -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-2">
                     <label class="font-semibold text-gray-800">Titik Lokasi</label>
-                    <select id="selectLokasi" name="id_tklokasi" required class="sm:col-span-2 border-2 border-black bg-[#d1d5db] p-2 focus:outline-none focus:bg-white">
+                    <select id="selectLokasi" name="id_tklokasi" required 
+                            {{ $loggedUser->role === 'pegawai' ? 'disabled' : '' }}
+                            class="sm:col-span-2 border-2 border-black bg-[#d1d5db] p-2 focus:outline-none focus:bg-white {{ $loggedUser->role === 'pegawai' ? 'cursor-not-allowed opacity-80' : '' }}">
                         <option value="" disabled selected>Selection Input</option>
                         @foreach($lokasiList as $l)
                             <option value="{{ $l->id_tklokasi }}">{{ $l->nm_lokasi }} ({{ $l->alamat }})</option>
                         @endforeach
                     </select>
+                    @if($loggedUser->role === 'pegawai')
+                        <input type="hidden" id="hiddenSelectLokasi" name="id_tklokasi">
+                    @endif
                 </div>
 
                 <!-- Jumlah Peserta -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-2">
                     <label class="font-semibold text-gray-800">Jumlah Peserta</label>
-                    <input type="number" id="inputPeserta" name="jmlh_peserta" required min="1" placeholder="Numeric Input" class="sm:col-span-2 border-2 border-black bg-[#d1d5db] p-2 focus:outline-none focus:bg-white">
+                    <input type="number" id="inputPeserta" name="jmlh_peserta" required min="1" placeholder="Numeric Input" 
+                           {{ $loggedUser->role === 'pegawai' ? 'readonly' : '' }}
+                           class="sm:col-span-2 border-2 border-black bg-[#d1d5db] p-2 focus:outline-none focus:bg-white {{ $loggedUser->role === 'pegawai' ? 'cursor-not-allowed opacity-80' : '' }}">
                 </div>
 
-                <!-- Status -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-2">
-                    <label class="font-semibold text-gray-800">Status</label>
-                    <select id="selectStatus" name="status" required class="sm:col-span-2 border-2 border-black bg-[#d1d5db] p-2 focus:outline-none focus:bg-white">
+                <!-- Status (DAPAT DIUBAH OLEH PEGAWAI KETIKA IA JADI KOORDINATOR) -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-2 bg-amber-100 p-2 border border-black">
+                    <label class="font-bold text-gray-900">Status Kegiatan</label>
+                    <select id="selectStatus" name="status" required class="sm:col-span-2 border-2 border-black bg-white p-2 font-bold focus:outline-none">
                         <option value="Belum Konfirmasi">Belum Konfirmasi</option>
                         <option value="Terkonfirmasi">Terkonfirmasi</option>
                         <option value="Selesai">Selesai</option>
@@ -427,8 +410,8 @@
 
                 <!-- Submit Button -->
                 <div class="pt-3 flex justify-center">
-                    <button type="submit" id="btnSubmitForm" class="border-2 border-black bg-gray-300 hover:bg-gray-400 font-bold px-10 py-1.5 text-sm transition cursor-pointer">
-                        Simpan Data
+                    <button type="submit" id="btnSubmitForm" class="border-2 border-black bg-amber-400 hover:bg-amber-500 font-bold px-10 py-2 text-sm transition cursor-pointer shadow-xs">
+                        Update Status / Data
                     </button>
                 </div>
             </form>
@@ -465,9 +448,8 @@
         </div>
     </div>
 
-    <!-- LOGIKA JAVASCRIPT: DROPDOWN, AUTOCOMPLETE, MODAL, & RESET SEARCH -->
+    <!-- LOGIKA JAVASCRIPT -->
     <script>
-        // 1. Filter Dropdown Header
         const filterBtn = document.getElementById('filterDropdownBtn');
         const filterMenu = document.getElementById('filterMenu');
         const searchInput = document.getElementById('searchInput');
@@ -477,32 +459,33 @@
             filterMenu.classList.toggle('hidden');
         });
 
-        // Submit form otomatis jika teks pencarian dikosongkan
         searchInput.addEventListener('input', function() {
             if (this.value === '' && "{{ request('search') }}" !== '') {
                 document.getElementById('searchForm').submit();
             }
         });
 
-        // 2. LOGIKA INPUT TEXT PENCARIAN REKOMENDASI INSTANSI
         const inputInstansiText = document.getElementById('inputInstansiText');
         const inputInstansiId = document.getElementById('inputInstansiId');
         const instansiSuggestions = document.getElementById('instansiSuggestions');
         const instansiItems = document.querySelectorAll('.instansi-item');
         const noInstansiFound = document.getElementById('noInstansiFound');
 
-        inputInstansiText.addEventListener('focus', () => {
-            filterInstansiSuggestions();
-            instansiSuggestions.classList.remove('hidden');
-        });
+        if (inputInstansiText && instansiSuggestions) {
+            inputInstansiText.addEventListener('focus', () => {
+                filterInstansiSuggestions();
+                instansiSuggestions.classList.remove('hidden');
+            });
 
-        inputInstansiText.addEventListener('input', () => {
-            inputInstansiId.value = "";
-            filterInstansiSuggestions();
-            instansiSuggestions.classList.remove('hidden');
-        });
+            inputInstansiText.addEventListener('input', () => {
+                inputInstansiId.value = "";
+                filterInstansiSuggestions();
+                instansiSuggestions.classList.remove('hidden');
+            });
+        }
 
         function filterInstansiSuggestions() {
+            if (!inputInstansiText) return;
             const query = inputInstansiText.value.toLowerCase().trim();
             let hasResult = false;
 
@@ -535,7 +518,6 @@
             });
         });
 
-        // 3. Logika Modal Form (Tambah & Edit)
         const addModal = document.getElementById('addModal');
         const kegiatanForm = document.getElementById('kegiatanForm');
 
@@ -547,7 +529,7 @@
             kegiatanForm.reset();
             inputInstansiId.value = "";
             inputInstansiText.value = "";
-            instansiSuggestions.classList.add('hidden');
+            if (instansiSuggestions) instansiSuggestions.classList.add('hidden');
             
             addModal.classList.remove('hidden');
         }
@@ -555,34 +537,42 @@
         function openEditModal(button) {
             const row = button.closest('.kegiatan-row');
 
-            document.getElementById('formModalTitle').innerText = 'Edit Perencanaan Kegiatan';
+            document.getElementById('formModalTitle').innerText = 'Edit / Update Status Kegiatan';
             document.getElementById('formMethod').value = 'PUT';
             kegiatanForm.action = "{{ url('/kegiatan') }}/" + row.getAttribute('data-id');
 
             document.getElementById('inputNamaKeg').value = row.getAttribute('data-nama') || '';
             
             inputInstansiId.value = row.getAttribute('data-id-instansi') || '';
-            inputInstansiText.value = row.getAttribute('data-instansi') || '';
+            if (inputInstansiText) inputInstansiText.value = row.getAttribute('data-instansi') || '';
 
-            document.getElementById('selectJenis').value = row.getAttribute('data-id-jenis') || '';
-            document.getElementById('selectLokasi').value = row.getAttribute('data-id-lokasi') || '';
-            document.getElementById('selectKoordinator').value = row.getAttribute('data-id-koordinator') || '';
+            const idJenis = row.getAttribute('data-id-jenis') || '';
+            document.getElementById('selectJenis').value = idJenis;
+            if (document.getElementById('hiddenSelectJenis')) document.getElementById('hiddenSelectJenis').value = idJenis;
+
+            const idLokasi = row.getAttribute('data-id-lokasi') || '';
+            document.getElementById('selectLokasi').value = idLokasi;
+            if (document.getElementById('hiddenSelectLokasi')) document.getElementById('hiddenSelectLokasi').value = idLokasi;
+
+            const idKoor = row.getAttribute('data-id-koordinator') || '';
+            document.getElementById('selectKoordinator').value = idKoor;
+            if (document.getElementById('hiddenSelectKoordinator')) document.getElementById('hiddenSelectKoordinator').value = idKoor;
+
             document.getElementById('inputTglMulai').value = row.getAttribute('data-tgl-mulai') || '';
             document.getElementById('inputTglSelesai').value = row.getAttribute('data-tgl-selesai') || '';
             document.getElementById('inputPeserta').value = row.getAttribute('data-peserta') || '';
             document.getElementById('selectStatus').value = row.getAttribute('data-status') || 'Belum Konfirmasi';
             document.getElementById('inputLampiran').value = row.getAttribute('data-lampiran') || '';
 
-            instansiSuggestions.classList.add('hidden');
+            if (instansiSuggestions) instansiSuggestions.classList.add('hidden');
             addModal.classList.remove('hidden');
         }
 
         function closeAddModal() {
             addModal.classList.add('hidden');
-            instansiSuggestions.classList.add('hidden');
+            if (instansiSuggestions) instansiSuggestions.classList.add('hidden');
         }
 
-        // 4. Logika Modal Detail
         const detailModal = document.getElementById('detailKegiatanModal');
 
         function openDetailModal(button) {
@@ -609,12 +599,11 @@
             detailModal.classList.add('hidden');
         }
 
-        // Tutup elemen saat area luar diklik
         document.addEventListener('click', (e) => {
             if (!filterMenu.classList.contains('hidden') && !filterBtn.contains(e.target)) {
                 filterMenu.classList.add('hidden');
             }
-            if (!inputInstansiText.contains(e.target) && !instansiSuggestions.contains(e.target)) {
+            if (inputInstansiText && instansiSuggestions && !inputInstansiText.contains(e.target) && !instansiSuggestions.contains(e.target)) {
                 instansiSuggestions.classList.add('hidden');
             }
             if (e.target === addModal) closeAddModal();

@@ -1,98 +1,10 @@
 @extends('layouts.app')
 
 <title>Kantor Regional BKN - Laporan Kegiatan</title>
-<!-- Select2 CSS & jQuery (Jika belum ada) -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-<style>
-    /* Styling Brutalism Kustom untuk Select2 agar Serasi dengan Tema */
-    .select2-container--default .select2-selection--single {
-        border: 2px solid #000000 !important;
-        border-radius: 0px !important;
-        height: 40px !important;
-        padding-top: 4px;
-        font-weight: 600;
-    }
-    .select2-dropdown {
-        border: 2px solid #000000 !important;
-        border-radius: 0px !important;
-        box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
-    }
-    .select2-search__field {
-        border: 2px solid #000000 !important;
-        outline: none !important;
-    }
-</style>
 
 @section('sidebar-header')
     <div class="border-2 border-black bg-white p-2.5 text-center font-bold text-gray-900">
         Kantor Regional BKN
-    </div>
-@endsection
-
-@section('sidebar-menu')
-    <div class="space-y-4">
-        <!-- Grup 1: Menu Utama -->
-        <div class="space-y-2">
-            <a href="{{ url('/dashboard') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center hover:bg-gray-100 transition">
-                Menu Dasboard
-            </a>
-            <a href="{{ url('/kalender') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center hover:bg-gray-100 transition">
-                Kalender
-            </a>
-        </div>
-
-        <!-- Grup 2: Operasional -->
-        <div class="space-y-2 pt-2">
-            <a href="{{ url('/kegiatan') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center hover:bg-gray-100 transition">
-                Kegiatan
-            </a>
-            <a href="{{ url('/riwayat-kerja') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center hover:bg-gray-100 transition">
-                Rekam Kerja
-            </a>
-            <a href="{{ url('/laporan-kegiatan') }}" class="block border-2 border-black bg-gray-500 text-white font-semibold py-2 px-4 text-center hover:bg-gray-600 transition">
-                Laporan Kegiatan
-            </a>
-        </div>
-
-        <!-- Grup 3: Master Data & Dropdown -->
-        <div class="space-y-2 pt-2">
-            <a href="{{ url('/jenis-kegiatan') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center text-sm hover:bg-gray-100 transition">
-                Jenis Kegiatan
-            </a>
-            <a href="{{ url('/titik-lokasi') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center text-sm hover:bg-gray-100 transition">
-                Titik Lokasi
-            </a>
-            <a href="{{ url('/instansi') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center text-sm hover:bg-gray-100 transition">
-                Instansi
-            </a>
-            <a href="{{ url('/riwayat-kegiatan') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center text-sm hover:bg-gray-100 transition">
-                Status
-            </a>
-
-            <!-- Dropdown Manajemen -->
-            <details class="group border-2 border-black bg-white">
-                <summary class="list-none py-2 px-4 font-semibold text-gray-900 flex items-center justify-between text-sm cursor-pointer hover:bg-gray-100 transition">
-                    <span>Manajemen</span>
-                    <svg class="w-4 h-4 transition-transform duration-200 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </summary>
-                <div class="border-t-2 border-black bg-white">
-                    <a href="{{ url('/master-user') }}" class="block py-2 px-4 text-center text-sm font-medium text-gray-800 border-b-2 border-black hover:bg-gray-100 transition">
-                        User
-                    </a>
-                    <a href="{{ url('/master-kegiatan') }}" class="block py-2 px-4 text-center text-sm font-medium text-gray-800 border-b-2 border-black hover:bg-gray-100 transition">
-                        Kegiatan
-                    </a>
-                    <a href="{{ url('/master-lokasi') }}" class="block py-2 px-4 text-center text-sm font-medium text-gray-800 hover:bg-gray-100 transition">
-                        Lokasi
-                    </a>
-                </div>
-            </details>
-        </div>
     </div>
 @endsection
 
@@ -109,10 +21,57 @@
 @endsection
 
 @section('content')
-    <!-- NOTIFIKASI SUKSES / ERROR -->
+    <!-- CDN SELECT2 UNTUK DROPDOWN SEARCH & SELECT -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <style>
+        /* CSS Brutalism Kustom untuk Select2 */
+        .select2-container--default .select2-selection--single {
+            border: 2px solid #000000 !important;
+            border-radius: 0px !important;
+            height: 42px !important;
+            padding-top: 5px;
+            font-weight: 600;
+        }
+        .select2-dropdown {
+            border: 2px solid #000000 !important;
+            border-radius: 0px !important;
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+            z-index: 9999 !important;
+        }
+        .select2-search__field {
+            border: 2px solid #000000 !important;
+            outline: none !important;
+        }
+    </style>
+
+    @php
+        $loggedUser = Auth::user();
+    @endphp
+
+    <!-- NOTIFIKASI PESAN SUKSES / ERROR -->
     <?php if (session('success')): ?>
         <div class="mb-4 border-2 border-black bg-emerald-100 p-3 font-bold text-emerald-900 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
             ✅ <?php echo session('success'); ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if (session('error')): ?>
+        <div class="mb-4 border-2 border-black bg-rose-100 p-3 font-bold text-rose-900 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+            ⚠️ <?php echo session('error'); ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($errors->any()): ?>
+        <div class="mb-4 border-2 border-black bg-rose-100 p-3 font-bold text-rose-900 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] text-xs sm:text-sm">
+            <p class="font-extrabold mb-1">Gagal Menyimpan Data Laporan:</p>
+            <ul class="list-disc pl-5 space-y-0.5">
+                <?php foreach ($errors->all() as$error): ?>
+                    <li><?php echo $error; ?></li>
+                <?php endforeach; ?>
+            </ul>
         </div>
     <?php endif; ?>
 
@@ -136,7 +95,7 @@
                 </form>
 
                 <!-- Tombol Tambah Laporan Baru -->
-                <button type="button" onclick="openTambahLaporanModal()" class="border-2 border-black bg-amber-400 hover:bg-amber-500 text-black font-extrabold px-3 py-1 text-xs sm:text-sm transition cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <button type="button" onclick="openTambahLaporanModal()" class="border-2 border-black bg-amber-400 hover:bg-amber-500 text-black font-extrabold px-3 py-1.5 text-xs sm:text-sm transition cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                     + Buat Laporan
                 </button>
             </div>
@@ -144,15 +103,15 @@
 
         <!-- Tabel Laporan Hasil Kegiatan -->
         <div class="mt-4 border-2 border-black overflow-x-auto">
-            <table class="w-full border-collapse border-black min-w-[850px] text-xs sm:text-sm">
+            <table class="w-full border-collapse border-black min-w-[900px] text-xs sm:text-sm">
                 <thead>
                     <tr class="border-b-2 border-black bg-gray-100 text-center font-bold text-gray-900">
                         <th class="border-r-2 border-black py-3 px-2 w-10">No</th>
-                        <th class="border-r-2 border-black py-3 px-3">Nama Kegiatan</th>
-                        <th class="border-r-2 border-black py-3 px-2 w-28">Peserta (Hadir / Absen)</th>
+                        <th class="border-r-2 border-black py-3 px-3">Nama Kegiatan & Koordinator</th>
+                        <th class="border-r-2 border-black py-3 px-2 w-32">Peserta (Hadir / Absen)</th>
                         <th class="border-r-2 border-black py-3 px-2 w-28">Nilai (Max / Min)</th>
-                        <th class="border-r-2 border-black py-3 px-3 w-28">Dokumen</th>
-                        <th class="py-3 px-2 w-28">Aksi</th>
+                        <th class="border-r-2 border-black py-3 px-3 w-32">Dokumen Laporan</th>
+                        <th class="py-3 px-2 w-36">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="font-medium text-gray-900">
@@ -161,6 +120,12 @@
                             <?php 
                                 $no = $laporan->firstItem() +$idx; 
                                 $keg =$item->kegiatan;
+                                
+                                // RESTRIKSI AKSES EDIT / HAPUS BKN KOORDINATOR
+                                $isKoordinator = ($loggedUser->role === 'pegawai') 
+                                    ? ($keg && $keg->id_karyawan_koor ==$loggedUser->id_karyawan) 
+                                    : true; // Admin & Pimpinan selalu mendapat akses
+
                                 $payloadEdit = [
                                     'id_laporan' => $item->id_laporan,
                                     'nama_keg' => $keg->nama_keg ?? '-',
@@ -176,7 +141,10 @@
                                 <td class="border-r-2 border-black py-3 px-2 text-center font-bold"><?php echo $no; ?></td>
                                 <td class="border-r-2 border-black py-3 px-3">
                                     <span class="block font-bold text-gray-900"><?php echo $keg->nama_keg ?? '-'; ?></span>
-                                    <span class="text-xs text-gray-700 font-semibold">
+                                    <span class="block text-xs text-gray-800 font-semibold mt-0.5">
+                                        👤 Koor: <span class="underline"><?php echo $keg->koordinator->nama_karyawan ?? '-'; ?></span>
+                                    </span>
+                                    <span class="text-[11px] text-gray-700 font-medium">
                                         📍 <?php echo $keg->lokasi->nm_lokasi ?? '-'; ?> | 🏢 <?php echo $keg->instansi->nm_instansi ?? '-'; ?>
                                     </span>
                                 </td>
@@ -194,24 +162,46 @@
                                 </td>
                                 <td class="border-r-2 border-black py-3 px-3 text-center">
                                     <?php if ($item->lampiran_laporan &&$item->lampiran_laporan !== '-'): ?>
-                                        <a href="<?php echo $item->lampiran_laporan; ?>" target="_blank" class="border border-black bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 text-xs font-bold transition inline-block">
+                                        <a href="<?php echo $item->lampiran_laporan; ?>" target="_blank" class="border-2 border-black bg-blue-500 hover:bg-blue-600 text-white px-2.5 py-1 text-xs font-bold transition inline-block shadow-xs">
                                             📄 Laporan
                                         </a>
                                     <?php else: ?>
                                         <span class="text-gray-500 text-xs">-</span>
                                     <?php endif; ?>
                                 </td>
-                                <td class="py-3 px-2 text-center space-x-1">
-                                    <button type="button" onclick="openEditLaporanModal('<?php echo rawurlencode(json_encode($payloadEdit)); ?>')" class="border-2 border-black bg-amber-300 hover:bg-amber-400 text-black font-bold px-2 py-1 text-xs transition cursor-pointer">
-                                        Edit
-                                    </button>
+                                <!-- KOLOM AKSI (DISUSUN SECARA VERTIKAL) -->
+                                <td class="py-3 px-2 text-center">
+                                    <?php if ($isKoordinator): ?>
+                                        <div class="flex flex-col items-center justify-center gap-1.5 w-full">
+                                            <!-- Tombol Edit (Vertikal Atas) -->
+                                            <button type="button" 
+                                                    onclick="openEditLaporanModal('<?php echo rawurlencode(json_encode($payloadEdit)); ?>')" 
+                                                    class="w-20 border-2 border-black bg-amber-300 hover:bg-amber-400 text-black font-bold px-2 py-1 text-xs transition cursor-pointer shadow-xs">
+                                                Edit
+                                            </button>
+                                            
+                                            <!-- Tombol Hapus (Vertikal Bawah) -->
+                                            <form action="{{ url('/laporan-kegiatan/'.$item->id_laporan) }}" method="POST" class="w-20" onsubmit="return confirm('Apakah Anda yakin ingin menghapus laporan kegiatan ini?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" 
+                                                        class="w-full border-2 border-black bg-rose-500 hover:bg-rose-600 text-white font-bold px-2 py-1 text-xs transition cursor-pointer shadow-xs">
+                                                    Hapus
+                                                </button>
+                                            </form>
+                                        </div>
+                                    <?php else: ?>
+                                        <span class="text-xs text-gray-500 font-bold italic inline-flex items-center gap-1" title="Hanya Koordinator Terpilih / Admin yang berhak mengedit">
+                                            🔒 Restriksi
+                                        </span>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
                             <td colspan="6" class="py-8 text-center text-gray-500 font-semibold text-sm">
-                                Belum ada data laporan hasil kegiatan.
+                                Belum ada data laporan hasil kegiatan yang terdaftar.
                             </td>
                         </tr>
                     <?php endif; ?>
@@ -221,7 +211,7 @@
 
         <!-- PAGINATION -->
         <?php if (isset($laporan) &&$laporan->hasPages()): ?>
-            <div class="mt-4 flex justify-between items-center pt-3 border-t-2 border-black text-xs font-bold">
+            <div class="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3 pt-3 border-t-2 border-black text-xs font-bold">
                 <span>Menampilkan <?php echo $laporan->firstItem(); ?> - <?php echo $laporan->lastItem(); ?> dari <?php echo$laporan->total(); ?> Laporan</span>
                 <div class="flex gap-1">
                     <?php echo $laporan->links(); ?>
@@ -240,18 +230,18 @@
                 @csrf
                 <div>
                     <label class="block font-bold mb-1">PILIH KEGIATAN (STATUS SELESAI):</label>
-                    <select name="id_keg" id="tambah_id_keg" required onchange="updateTotalPesertaTambah()" class="select2-kegiatan w-full border-2 border-black bg-white p-2 font-medium">
+                    <select name="id_keg" id="tambah_id_keg" required class="select2-kegiatan w-full border-2 border-black bg-white p-2 font-medium">
                         <option value="" data-peserta="0">-- Cari / Pilih Kegiatan --</option>
-                        <?php foreach ($kegiatanSelesai as $kS): ?>
+                        <?php foreach ($kegiatanSelesai as$kS): ?>
                             <option value="<?php echo $kS->id_keg; ?>" data-peserta="<?php echo $kS->jmlh_peserta; ?>">
-                                <?php echo $kS->nama_keg; ?> (Total Peserta: <?php echo $kS->jmlh_peserta; ?> orang)
+                                <?php echo $kS->nama_keg; ?> (Total Peserta: <?php echo$kS->jmlh_peserta; ?> Orang)
                             </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
 
-                <!-- Banner info total peserta terdaftar -->
-                <div id="infoPesertaBox" class="p-2 border border-black bg-sky-100 font-bold text-xs text-sky-900 hidden">
+                <!-- Banner Informasi Total Peserta -->
+                <div id="infoPesertaBox" class="p-2 border-2 border-black bg-sky-100 font-bold text-xs text-sky-950 hidden">
                     ℹ️ Total Peserta Terdaftar: <span id="textTotalPeserta">0</span> Orang
                 </div>
 
@@ -262,7 +252,7 @@
                     </div>
                     <div>
                         <label class="block font-bold mb-1">PESERTA ABSEN (OTOMATIS):</label>
-                        <input type="number" name="peserta_tidak_hadir" id="tambah_peserta_tidak_hadir" required min="0" value="0" readonly class="w-full border-2 border-black bg-gray-100 p-2 font-bold text-gray-700 cursor-not-allowed">
+                        <input type="number" name="peserta_tidak_hadir" id="tambah_peserta_tidak_hadir" required min="0" value="0" readonly class="w-full border-2 border-black bg-gray-200 p-2 font-bold text-gray-700 cursor-not-allowed">
                     </div>
                 </div>
 
@@ -305,14 +295,19 @@
                 @csrf
                 @method('PUT')
 
+                <!-- Banner Informasi Total Peserta Edit -->
+                <div id="infoPesertaBoxEdit" class="p-2 border-2 border-black bg-amber-100 font-bold text-xs text-amber-950">
+                    ℹ️ Total Peserta Terdaftar: <span id="textTotalPesertaEdit">0</span> Orang
+                </div>
+
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block font-bold mb-1">PESERTA HADIR:</label>
-                        <input type="number" name="peserta_hadir" id="edit_peserta_hadir" required min="0" class="w-full border-2 border-black p-2 font-medium">
+                        <input type="number" name="peserta_hadir" id="edit_peserta_hadir" required min="0" oninput="calcAbsenEdit()" class="w-full border-2 border-black p-2 font-medium">
                     </div>
                     <div>
-                        <label class="block font-bold mb-1">PESERTA ABSEN:</label>
-                        <input type="number" name="peserta_tidak_hadir" id="edit_peserta_tidak_hadir" required min="0" class="w-full border-2 border-black p-2 font-medium">
+                        <label class="block font-bold mb-1">PESERTA ABSEN (OTOMATIS):</label>
+                        <input type="number" name="peserta_tidak_hadir" id="edit_peserta_tidak_hadir" required min="0" readonly class="w-full border-2 border-black bg-gray-200 p-2 font-bold text-gray-700 cursor-not-allowed">
                     </div>
                 </div>
 
@@ -345,43 +340,35 @@
         </div>
     </div>
 
-    <!-- SCRIPT JAVASCRIPT POPUP MODAL -->
+    <!-- SCRIPT JAVASCRIPT: SELECT2 & OTOMATISASI FORM -->
     <script>
+        let currentTotalPesertaTambah = 0;
+        let currentTotalPesertaEdit = 0;
+
         const tambahModal = document.getElementById('tambahLaporanModal');
         const editModal = document.getElementById('editLaporanModal');
+
+        $(document).ready(function() {
+            // Inisialisasi Select2
+            $('.select2-kegiatan').select2({
+                dropdownParent: $('#tambahLaporanModal'),
+                placeholder: "-- Cari / Pilih Kegiatan --",
+                width: '100%'
+            });
+
+            // Hubungkan event change Select2 dengan kalkulasi peserta
+            $('.select2-kegiatan').on('change', function() {
+                updateTotalPesertaTambah();
+            });
+        });
 
         function openTambahLaporanModal() {
             tambahModal.classList.remove('hidden');
         }
+
         function closeTambahLaporanModal() {
             tambahModal.classList.add('hidden');
         }
-
-        function openEditLaporanModal(encodedJson) {
-            try {
-                const data = JSON.parse(decodeURIComponent(encodedJson));
-                document.getElementById('editModalJudul').innerText = `Edit Laporan - ${data.nama_keg}`;
-                document.getElementById('editLaporanForm').action = `/laporan-kegiatan/${data.id_laporan}`;
-
-                document.getElementById('edit_peserta_hadir').value = data.peserta_hadir;
-                document.getElementById('edit_peserta_tidak_hadir').value = data.peserta_tidak_hadir;
-                document.getElementById('edit_nilai_tertinggi').value = data.nilai_tertinggi || '';
-                document.getElementById('edit_nilai_terendah').value = data.nilai_terendah || '';
-                document.getElementById('edit_lampiran_laporan').value = data.lampiran_laporan || '';
-                document.getElementById('edit_catatan_evaluasi').value = data.catatan_evaluasi || '';
-
-                editModal.classList.remove('hidden');
-            } catch (e) {
-                console.error("Gagal membuka modal edit:", e);
-            }
-        }
-
-        function closeEditLaporanModal() {
-            editModal.classList.add('hidden');
-        }
-
-        let currentTotalPesertaTambah = 0;
-        let currentTotalPesertaEdit = 0;
 
         function updateTotalPesertaTambah() {
             const select = document.getElementById('tambah_id_keg');
@@ -417,8 +404,8 @@
                 document.getElementById('editModalJudul').innerText = `Edit Laporan - ${data.nama_keg}`;
                 document.getElementById('editLaporanForm').action = `/laporan-kegiatan/${data.id_laporan}`;
 
-                // Total peserta dari kegiatan
                 currentTotalPesertaEdit = data.peserta_hadir + data.peserta_tidak_hadir;
+                document.getElementById('textTotalPesertaEdit').innerText = currentTotalPesertaEdit;
 
                 document.getElementById('edit_peserta_hadir').max = currentTotalPesertaEdit;
                 document.getElementById('edit_peserta_hadir').value = data.peserta_hadir;
@@ -445,17 +432,8 @@
             document.getElementById('edit_peserta_tidak_hadir').value = absen;
         }
 
-        $(document).ready(function() {
-            $('.select2-kegiatan').select2({
-                dropdownParent: $('#tambahLaporanModal'),
-                placeholder: "-- Cari / Pilih Kegiatan --",
-                width: '100%'
-            });
-
-            // Menghubungkan Event Change Select2 dengan Fungsi Auto-Calculate Peserta
-            $('.select2-kegiatan').on('change', function() {
-                updateTotalPesertaTambah();
-            });
-        });
+        function closeEditLaporanModal() {
+            editModal.classList.add('hidden');
+        }
     </script>
 @endsection

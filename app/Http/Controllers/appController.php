@@ -23,8 +23,6 @@ class AppController extends Controller
     {
         $today = Carbon::today()->toDateString();
 
-        // Update kegiatan yang berstatus 'Terkonfirmasi' atau 'Belum Konfirmasi' 
-        // tetapi tanggal_selesai (atau tanggal_mulai) sudah < HARI INI
         Kegiatan::whereNotIn('status', ['Selesai', 'Dibatalkan'])
             ->where(function ($query) use ($today) {
                 $query->whereRaw("IFNULL(tanggal_selesai, tanggal_mulai) < ?", [$today]);
@@ -32,16 +30,14 @@ class AppController extends Controller
             ->update(['status' => 'Selesai']);
     }
 
-    // 1. Dashboard Utama dengan Banner Pengingat Koordinator
+    // 1. Dashboard Utama
     public function dashboard()
     {
-        // 1. Jalankan auto update status terlebih dahulu
         $this->autoUpdateStatusSelesai();
         
         $today = Carbon::today()->toDateString();
         $user = Auth::user();
 
-        // Ambil Notifikasi Tugas Koordinator Hari Ini
         $notifTugas = collect();
 
         if ($user) {
@@ -53,12 +49,10 @@ class AppController extends Controller
                 ->whereRaw("IFNULL(tanggal_selesai, tanggal_mulai) >= ?", [$today])
                 ->get()
                 ->filter(function($keg) use ($user, $username) {
-                    // A. Cek berdasarkan id_karyawan jika tersambung
                     if (!empty($user->id_karyawan) && $keg->id_karyawan_koor == $user->id_karyawan) {
                         return true;
                     }
 
-                    // B. Cek pencocokan kata (username vs nama_karyawan)
                     $namaKoor = strtolower($keg->koordinator->nama_karyawan ?? '');
                     if (!empty($username) && !empty($namaKoor)) {
                         return str_contains($namaKoor, $username) || str_contains($username, $namaKoor);
@@ -68,7 +62,6 @@ class AppController extends Controller
                 })->values();
         }
 
-        // Data Pelaksanaan Berjalan
         $kegiatan = Kegiatan::with(['jenis', 'lokasi', 'instansi', 'koordinator'])
             ->whereNotIn('status', ['Selesai', 'Dibatalkan'])
             ->whereRaw("IFNULL(tanggal_selesai, tanggal_mulai) >= ?", [$today])
@@ -82,7 +75,6 @@ class AppController extends Controller
             ->take(7)
             ->get();
 
-        // Jadwal Terdekat
         $jadwalTerdekat = Kegiatan::with(['jenis', 'lokasi', 'koordinator'])
             ->whereNotIn('status', ['Selesai', 'Dibatalkan'])
             ->where('tanggal_mulai', '>', $today)
@@ -99,7 +91,6 @@ class AppController extends Controller
                 ->get();
         }
 
-        // Statistik
         $stats = [
             'instansi' => Instansi::count(),
             'peserta'  => Kegiatan::sum('jmlh_peserta'),
@@ -109,10 +100,16 @@ class AppController extends Controller
         return view('dashboard', compact('kegiatan', 'jadwalTerdekat', 'stats', 'notifTugas'));
     }
 
-    // 2. Halaman Daftar / Perencanaan Kegiatan
+    // 2. Halaman Daftar / Perencanaan Kegiatan (DENGAN RESTRIKSI PEGAWAI)
     public function kegiatan(Request $request)
     {
+        $user = Auth::user();
         $query = Kegiatan::with(['jenis', 'koordinator', 'lokasi', 'instansi']);
+
+        // RESTRIKSI PEGAWAI: Hanya tampilkan kegiatan yang diampu olehnya
+        if ($user && $user->role === 'pegawai') {
+            $query->where('id_karyawan_koor', $user->id_karyawan);
+        }
 
         if ($request->filled('search')) {
             $search = trim($request->input('search'));
@@ -151,9 +148,15 @@ class AppController extends Controller
         ));
     }
 
-    // Simpan Kegiatan Baru
+    // Simpan Kegiatan Baru (Khusus Admin)
     public function storeKegiatan(Request $request)
     {
+        $user = Auth::user();
+
+        if ($user->role === 'pegawai') {
+            return redirect()->back()->with('error', 'Akses ditolak! Pegawai tidak diizinkan menambahkan kegiatan baru.');
+        }
+
         $validated = $request->validate([
             'nama_keg'         => 'required|string|max:150',
             'id_jeniskeg'      => 'required|integer',
@@ -176,10 +179,16 @@ class AppController extends Controller
         return redirect()->back()->with('success', 'Kegiatan berhasil ditambahkan!');
     }
 
-    // Update / Edit Data Kegiatan
+    // Update / Edit Data Kegiatan (Admin & Koordinator Terpilih)
     public function updateKegiatan(Request $request, $id)
     {
+        $user = Auth::user();
         $kegiatan = Kegiatan::findOrFail($id);
+
+        // RESTRIKSI OTORISASI: Pegawai hanya boleh update kegiatan yang diampunya
+        if ($user->role === 'pegawai' && $kegiatan->id_karyawan_koor != $user->id_karyawan) {
+            return redirect()->back()->with('error', 'Akses ditolak! Anda bukan koordinator terpilih untuk kegiatan ini.');
+        }
 
         $validated = $request->validate([
             'nama_keg'         => 'required|string|max:150',
@@ -200,12 +209,18 @@ class AppController extends Controller
 
         $kegiatan->update($validated);
 
-        return redirect()->back()->with('success', 'Kegiatan berhasil diperbarui!');
+        return redirect()->back()->with('success', 'Data kegiatan berhasil diperbarui!');
     }
 
-    // Hapus Kegiatan dari Database
+    // Hapus Kegiatan dari Database (Khusus Admin)
     public function destroyKegiatan($id)
     {
+        $user = Auth::user();
+
+        if ($user->role === 'pegawai') {
+            return redirect()->back()->with('error', 'Akses ditolak! Pegawai tidak diizinkan menghapus data kegiatan.');
+        }
+
         $kegiatan = Kegiatan::findOrFail($id);
         $kegiatan->delete();
 
@@ -516,8 +531,8 @@ class AppController extends Controller
     {
         $search = $request->input('search');
         $sort = $request->input('sort', 'terbaru');
+        $user = Auth::user();
 
-        // Query Laporan Kegiatan terhubung dengan Kegiatan beserta relasinya
         $query = LaporanKegiatan::with(['kegiatan.jenis', 'kegiatan.lokasi', 'kegiatan.instansi', 'kegiatan.koordinator']);
 
         if ($search) {
@@ -538,11 +553,15 @@ class AppController extends Controller
 
         $laporan = $query->paginate(10);
 
-        // Ambil daftar kegiatan yang berstatus 'Selesai' dan belum memiliki laporan
-        $kegiatanSelesai = Kegiatan::where('status', 'Selesai')
+        $kegiatanSelesaiQuery = Kegiatan::where('status', 'Selesai')
             ->whereDoesntHave('laporan')
-            ->orderBy('nama_keg', 'asc')
-            ->get();
+            ->orderBy('nama_keg', 'asc');
+
+        if ($user->role === 'pegawai') {
+            $kegiatanSelesaiQuery->where('id_karyawan_koor', $user->id_karyawan);
+        }
+
+        $kegiatanSelesai = $kegiatanSelesaiQuery->get();
 
         return view('laporan-kegiatan', compact('laporan', 'kegiatanSelesai', 'sort'));
     }
@@ -552,9 +571,14 @@ class AppController extends Controller
      */
     public function storeLaporanKegiatan(Request $request)
     {
-        // Ambil data kegiatan untuk mendapatkan total peserta terdaftar
-        $kegiatan = Kegiatan::find($request->id_keg);
-        $totalPeserta = $kegiatan ? $kegiatan->jmlh_peserta : 0;
+        $user = Auth::user();
+        $kegiatan = Kegiatan::findOrFail($request->id_keg);
+
+        if ($user->role === 'pegawai' && $kegiatan->id_karyawan_koor != $user->id_karyawan) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki hak akses untuk menginput laporan kegiatan ini karena Anda bukan koordinator terpilih.');
+        }
+
+        $totalPeserta = $kegiatan->jmlh_peserta;
 
         $validated = $request->validate([
             'id_keg'              => 'required|exists:kegiatan,id_keg|unique:laporan_kegiatan,id_keg',
@@ -587,9 +611,15 @@ class AppController extends Controller
      */
     public function updateLaporanKegiatan(Request $request, $id)
     {
+        $user = Auth::user();
         $laporan = LaporanKegiatan::findOrFail($id);
-        $kegiatan = Kegiatan::find($laporan->id_keg);
-        $totalPeserta = $kegiatan ? $kegiatan->jmlh_peserta : 0;
+        $kegiatan = Kegiatan::findOrFail($laporan->id_keg);
+
+        if ($user->role === 'pegawai' && $kegiatan->id_karyawan_koor != $user->id_karyawan) {
+            return redirect()->back()->with('error', 'Anda tidak diizinkan mengubah laporan kegiatan ini.');
+        }
+
+        $totalPeserta = $kegiatan->jmlh_peserta;
 
         $validated = $request->validate([
             'peserta_hadir'       => 'required|integer|min:0',
@@ -621,7 +651,14 @@ class AppController extends Controller
      */
     public function destroyLaporanKegiatan($id)
     {
+        $user = Auth::user();
         $laporan = LaporanKegiatan::findOrFail($id);
+        $kegiatan = Kegiatan::findOrFail($laporan->id_keg);
+
+        if ($user->role === 'pegawai' && $kegiatan->id_karyawan_koor != $user->id_karyawan) {
+            return redirect()->back()->with('error', 'Anda tidak diizinkan menghapus laporan kegiatan ini.');
+        }
+
         $laporan->delete();
 
         return redirect()->back()->with('success', 'Laporan kegiatan berhasil dihapus!');

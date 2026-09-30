@@ -110,16 +110,14 @@
                 <p class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">Pelaksanaan</p>
                 <nav class="space-y-1">
                     
-                    <!-- 1. Menu Kegiatan (Khusus Role Admin) -->
-                    @if($userRole === 'admin')
-                        <a href="{{ url('/kegiatan') }}" 
-                        class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('kegiatan') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                            <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->is('kegiatan') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
-                            </svg>
-                            Kegiatan
-                        </a>
-                    @endif
+                    <!-- 1. Menu Kegiatan (TERBUKA UNTUK SEMUA ROLE) -->
+                    <a href="{{ url('/kegiatan') }}" 
+                    class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('kegiatan') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                        <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->is('kegiatan') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                        </svg>
+                        Kegiatan
+                    </a>
 
                     <!-- 2. Menu Riwayat Kerja (Khusus Role Admin & Pimpinan) -->
                     @if(in_array($userRole, ['pimpinan', 'admin']))
