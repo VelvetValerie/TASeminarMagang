@@ -1,23 +1,12 @@
 <style>
-    .custom-scrollbar::-webkit-scrollbar {
-        width: 6px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-track {
-        background: #f1f1f1; 
-        border-radius: 4px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: #cbd5e1; 
-        border-radius: 4px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-        background: #94a3b8; 
-    }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     
     .filter-dropdown-container:hover .filter-dropdown,
     .filter-dropdown-container:focus-within .filter-dropdown {
-        opacity: 1;
-        visibility: visible;
+        opacity: 1; visibility: visible;
     }
 </style>
 
@@ -70,9 +59,7 @@
         </button>
     </div>
 
-    <div id="calendarGridContainer" class="w-full relative">
-        <!-- Render dinamis 6 baris scrollable lewat JS -->
-    </div>
+    <div id="calendarGridContainer" class="w-full relative"></div>
 
     <div class="mt-6 flex justify-end">
         <button id="btnOpenModal" class="p-2.5 bg-white border border-gray-200 rounded-xl shadow-sm hover:bg-gray-50 hover:-translate-y-1 transition-all flex items-center justify-center group" title="Lihat selengkapnya">
@@ -106,9 +93,7 @@
             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
         <h3 id="dayModalTitle" class="text-lg font-bold text-gray-900 border-b-2 border-gray-100 pb-3 mb-4 pr-8">Daftar Kegiatan</h3>
-        <div id="dayModalListContainer" class="max-h-[350px] overflow-y-auto space-y-3 custom-scrollbar pr-2">
-            <!-- Diisi dinamis lewat script JS -->
-        </div>
+        <div id="dayModalListContainer" class="max-h-[350px] overflow-y-auto space-y-3 custom-scrollbar pr-2"></div>
     </div>
 </div>
 
@@ -133,23 +118,51 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const eventsData = [
-            { id: 1, title: 'Buka Pendaftaran', startDay: 1, endDay: 2, month: 8, year: 2026, category: 'pendaftaran', color: 'bg-[#D0E2FF] text-[#0043CE] border-2 border-black', lokasi: 'Portal SSCASN', status: 'Selesai' },
-            { id: 2, title: 'Hasil SKD CPNS', startDay: 7, endDay: 7, month: 8, year: 2026, category: 'pengumuman', color: 'bg-[#D9D9D9] text-black border-2 border-black', lokasi: 'Gedung Idham Chalid', status: 'Selesai' },
-            { id: 3, title: 'Ambil Kartu', startDay: 8, endDay: 8, month: 8, year: 2026, category: 'ujian', color: 'bg-[#FFD8B2] text-[#8A3B00] border-2 border-black', lokasi: 'Kantor Regional VIII BKN', status: 'Selesai' },
-            { id: 4, title: 'Hasil Ujian Dinas', startDay: 9, endDay: 9, month: 8, year: 2026, category: 'pengumuman', color: 'bg-[#008767] text-white border-2 border-black', lokasi: 'Website Resmi BKD', status: 'Selesai' },
-            { id: 5, title: 'Hasil Tahap 1', startDay: 12, endDay: 14, month: 8, year: 2026, category: 'pengumuman', color: 'bg-[#C1F1D2] text-[#00512C] border-2 border-black', lokasi: 'Portal SSCASN', status: 'Belum Mulai' },
-            { id: 6, title: 'Hasil Seleksi PPPK', startDay: 14, endDay: 14, month: 8, year: 2026, category: 'pengumuman', color: 'bg-[#0D1B2A] text-white border-2 border-black', lokasi: 'Poltekkes Kemenkes', status: 'Belum Mulai' },
-            { id: 7, title: 'Seminar Umum', startDay: 14, endDay: 16, month: 8, year: 2026, category: 'pendaftaran', color: 'bg-[#0077C0] text-white border-2 border-black', lokasi: 'BPSDM Provinsi Kalsel', status: 'Belum Mulai' }
-        ];
+        // Ambil data kegiatan dari $kegiatan (dikirim via controller ke view landing)
+        const rawKegiatan = @json($kegiatan ?? []);
+
+        // Mapping data dari Database ke format objek Kalender
+        const eventsData = rawKegiatan.map(item => {
+            const tglMulai = new Date(item.tanggal_mulai);
+            const tglSelesai = item.tanggal_selesai ? new Date(item.tanggal_selesai) : tglMulai;
+
+            const namaJenis = item.jenis ? item.jenis.nama_jeniskeg.toLowerCase() : 'umum';
+            let category = 'pendaftaran';
+            let badgeColor = 'bg-[#D0E2FF] text-[#0043CE] border-2 border-black';
+
+            if (namaJenis.includes('ujian') || namaJenis.includes('tes') || namaJenis.includes('cat') || namaJenis.includes('casn')) {
+                category = 'ujian';
+                badgeColor = 'bg-[#FFD8B2] text-[#8A3B00] border-2 border-black';
+            } else if (namaJenis.includes('pengumuman') || namaJenis.includes('hasil') || namaJenis.includes('karir')) {
+                category = 'pengumuman';
+                badgeColor = 'bg-[#C1F1D2] text-[#00512C] border-2 border-black';
+            } else if (namaJenis.includes('daftar') || namaJenis.includes('pendaftaran') || namaJenis.includes('bimtek')) {
+                category = 'pendaftaran';
+                badgeColor = 'bg-[#D0E2FF] text-[#0043CE] border-2 border-black';
+            }
+
+            return {
+                id: item.id_keg,
+                title: item.nama_keg,
+                startDay: tglMulai.getDate(),
+                endDay: tglSelesai.getDate(),
+                month: tglMulai.getMonth(),
+                year: tglMulai.getFullYear(),
+                category: category,
+                color: badgeColor,
+                lokasi: item.lokasi ? item.lokasi.nm_lokasi : '-',
+                status: item.status || 'Belum Konfirmasi'
+            };
+        });
 
         const colStartMap = { 1: 'col-start-1', 2: 'col-start-2', 3: 'col-start-3', 4: 'col-start-4', 5: 'col-start-5', 6: 'col-start-6', 7: 'col-start-7' };
         const colSpanMap = { 1: 'col-span-1', 2: 'col-span-2', 3: 'col-span-3', 4: 'col-span-4', 5: 'col-span-5', 6: 'col-span-6', 7: 'col-span-7' };
         
         const monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
         
-        let currentMonth = 8; 
-        let currentYear = 2026;
+        const todayDate = new Date();
+        let currentMonth = todayDate.getMonth();
+        let currentYear = todayDate.getFullYear();
 
         const getFilteredEvents = () => {
             const showPendaftaran = document.getElementById('chkPendaftaran').checked;
@@ -196,8 +209,8 @@
             }
             
             for (let i = 1; i <= daysInMonth; i++) {
-                const isSimulatedToday = (i === 7 && currentMonth === 8 && currentYear === 2026);
-                days.push({ date: i, isCurrent: true, isToday: isSimulatedToday, monthOffset: 0 });
+                const isRealToday = (i === todayDate.getDate() && currentMonth === todayDate.getMonth() && currentYear === todayDate.getFullYear());
+                days.push({ date: i, isCurrent: true, isToday: isRealToday, monthOffset: 0 });
             }
             
             const remainingCells = totalCells - days.length;

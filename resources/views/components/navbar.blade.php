@@ -54,7 +54,47 @@
         </div>
     </div>
 
-    <a class="px-7 py-2 border-2 border-white text-white text-lg font-medium rounded-lg transition-all duration-300 hover:text-[#fca855] hover:bg-white" href="/login">Login</a>
+    <!-- TAMPILAN AUTENTIKASI DINAMIS (AUTH / GUEST) -->
+    <div>
+        @auth
+            <!-- TAMPILAN SAAT USER SUDAH LOGIN -->
+            <div class="flex items-center gap-3">
+                <!-- Tombol ke Dashboard -->
+                <a href="{{ url('/dashboard') }}" 
+                   class="px-5 py-2 border-2 border-white bg-white text-[#fca855] text-lg font-bold rounded-lg shadow-md transition-all duration-300 hover:bg-orange-50 hover:border-orange-100 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 00-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                    Dashboard
+                </a>
+
+                <!-- Badge Nama User & Tombol Logout -->
+                <div class="flex items-center bg-black/20 backdrop-blur-sm border border-white/30 rounded-lg p-1">
+                    <span class="px-3 text-white font-semibold text-sm hidden md:inline">
+                        👤 {{ Auth::user()->username }}
+                    </span>
+                    <form action="{{ route('logout') }}" method="POST" class="inline m-0">
+                        @csrf
+                        <button type="submit" 
+                                title="Keluar" 
+                                class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm font-bold transition-all flex items-center">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        @endauth
+
+        @guest
+            <!-- TAMPILAN SAAT PENGGUNA BELUM LOGIN -->
+            <a class="px-7 py-2 border-2 border-white text-white text-lg font-medium rounded-lg transition-all duration-300 hover:text-[#fca855] hover:bg-white" 
+               href="{{ route('login') }}">
+                Login
+            </a>
+        @endguest
+    </div>
 </nav>
 
 <script>
@@ -90,18 +130,13 @@
             let isActive = false;
             
             if (href.includes('#')) {
-                // Jangan nyalakan link yang memiliki target '#', 
-                // KECUALI tombol Publikasi saat pengguna berada di path /berita
                 if (linkId === 'nav-publikasi' && currentPath.startsWith('/berita')) {
                     isActive = true;
                 }
             } else {
-                // Aturan untuk link normal tanpa '#'
                 if (href === '/' && isHomePage) {
-                    // Khusus Beranda, hanya menyala jika benar-benar di root
                     isActive = true; 
                 } else if (href !== '/' && currentPath.startsWith(href)) {
-                    // Menyala untuk path yang sesuai (misal: /informasi/timeline menyalakan /informasi)
                     isActive = true;
                 }
             }

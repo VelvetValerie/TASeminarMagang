@@ -84,7 +84,7 @@
     <!-- SECTION AGENDA & KALENDER -->
     <section class="mb-16 w-[calc(100%-2rem)] max-w-[1400px] mx-auto scroll-mt-28" id="kalender" data-aos="unfold-paper">
         <h2 class="text-3xl font-bold text-gray-900 mb-6 pb-2 text-center">Kalender Umum</h2>
-        <x-kalender />
+        <x-kalender :kegiatan="$kegiatan" />
     </section>
 
     <!-- SECTION PUSAT INFORMASI -->

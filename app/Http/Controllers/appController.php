@@ -419,13 +419,13 @@ class AppController extends Controller
 
     public function landing()
     {
+        // Ambil data kegiatan aktif/terjadwal beserta relasi jenis dan lokasi
         $kegiatan = Kegiatan::with(['jenis', 'lokasi', 'koordinator'])
-            ->orderBy('tanggal_mulai', 'asc')
+            ->whereNotIn('status', ['Dibatalkan'])
             ->get();
 
         return view('landing', compact('kegiatan'));
     }
-
     public function masterUser(Request $request)
     {
         $users = User::orderBy('created_at', 'desc')->get();
