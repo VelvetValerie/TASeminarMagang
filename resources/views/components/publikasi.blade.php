@@ -28,7 +28,7 @@
 <div class="flex flex-col md:flex-row gap-6 w-full items-stretch">
 
     <!-- Kolom Kiri: Pengumuman Terbaru -->
-    <div class="md:w-[28%] bg-white p-6 flex flex-col shrink-0 overflow-hidden rounded-3xl shadow-xl border border-gray-100">
+    <div data-aos="fade-right" data-aos-anchor="#publikasi" class="md:w-[28%] bg-white p-6 flex flex-col shrink-0 overflow-hidden rounded-3xl shadow-xl border border-gray-100">
         <h3 class="text-lg font-bold border-b-2 border-gray-100 pb-3 text-center bg-white z-10">Pengumuman Terbaru</h3>
         <div class="flex flex-col gap-4 mt-5 overflow-y-auto pr-1">
             <div class="border-l-4 border-orange-500 pl-3">
@@ -48,10 +48,10 @@
     </div>
 
     <!-- Kolom Kanan: Carousel Berita -->
-    <div class="md:w-[72%] aspect-video relative group/news bg-black overflow-hidden rounded-3xl shadow-xl border border-gray-100" id="newsFadeContainer">
+    <div data-aos="fade-left" data-aos-delay="200" data-aos-anchor="#publikasi" class="md:w-[72%] aspect-video relative group/news bg-black overflow-hidden rounded-3xl shadow-xl border border-gray-100" id="newsFadeContainer">
         
         <div class="news-slide absolute inset-0 transition-opacity duration-700 ease-in-out opacity-100 z-10 pointer-events-auto">
-            <img src="assets/images/sample-carousel1.jpg" alt="Thumbnail" class="absolute inset-0 w-full h-full object-cover">
+            <img src="/images/samplegambar1.jpg" alt="Thumbnail" class="absolute inset-0 w-full h-full object-cover">
             
             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none"></div>
 
@@ -81,7 +81,7 @@
         </div>
 
         <div class="news-slide absolute inset-0 transition-opacity duration-700 ease-in-out opacity-0 z-0 pointer-events-none">
-            <img src="assets/images/sample-carousel2.jpg" alt="Thumbnail" class="absolute inset-0 w-full h-full object-cover">
+            <img src="/images/samplegambar2.jpg" alt="Thumbnail" class="absolute inset-0 w-full h-full object-cover">
             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none"></div>
             
             <div class="absolute bottom-0 inset-x-0 p-6 flex flex-col justify-end">

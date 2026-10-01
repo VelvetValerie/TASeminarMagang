@@ -1,5 +1,5 @@
 <footer class="w-full bg-gray-700 py-6 px-12 flex justify-between items-center mt-auto text-white">
-    <div class="text-xl">© Copyright ...</div>
+    <div class="text-xl">© Copyright Pokja V Sistem Informasi dan Digitalisasi</div>
 
     <div class="flex items-center gap-6">
 
