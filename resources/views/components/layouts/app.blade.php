@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'Landing Page' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <!-- FAVICON LOGO BKN -->
+    <link rel="icon" type="image/png" href="{{ asset('images/Logo_BKN.png') }}?v=1">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/Logo_BKN.png') }}?v=1">
+    <link rel="apple-touch-icon" href="{{ asset('images/Logo_BKN.png') }}?v=1">
     
     <!-- AOS CSS -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
