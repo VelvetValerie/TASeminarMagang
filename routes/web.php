@@ -13,6 +13,22 @@ Route::get('/', function () {
     return view('landing', compact('kegiatan'));
 })->name('landing');
 
+Route::get('/berita', function () {
+    return view('news');
+});
+
+Route::get('/berita/detail', function () {
+    return view('news_detail');
+});
+
+Route::get('/informasi', function () {
+    return view('information');
+});
+
+Route::get('/informasi/timeline', function () {
+    return view('timeline_detail');
+});
+
 // 2. Rute Tamu / Belum Login (Guest)
 Route::middleware(['guest'])->group(function () {
     Route::get('/login', [AppController::class, 'showLoginForm'])->name('login');
