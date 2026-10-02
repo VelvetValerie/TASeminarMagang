@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Sep 30, 2026 at 01:05 AM
+-- Generation Time: Oct 02, 2026 at 03:24 AM
 -- Server version: 8.0.40
 -- PHP Version: 8.3.28
 
@@ -188,8 +188,8 @@ INSERT INTO `kegiatan` (`id_keg`, `nama_keg`, `id_jeniskeg`, `id_tklokasi`, `id_
 (27, 'Sosialisasi Disiplin Pegawai Sesuai PP 94/2021', 1, 2, 1, 2, 60, '2026-09-16', '2026-09-16', 'Selesai', 'https://drive.google.com/file/d/1BKN_2026_KEG_027_ST/view', '2026-09-03 02:09:23', '2026-09-29 01:39:35'),
 (28, 'Fasilitasi Ujian CAT Kedinasan Kemenkumham Kalsel', 2, 4, 4, 6, 320, '2026-09-18', '2026-09-20', 'Selesai', 'surat_tugas.pdf', '2026-09-03 02:09:23', '2026-09-29 00:18:04'),
 (29, 'Asesmen Profil Kompetensi Pejabat Pengawas', 1, 2, 2, 4, 80, '2026-09-23', '2026-09-25', 'Selesai', 'https://drive.google.com/file/d/1BKN_2026_KEG_029_ST/view', '2026-09-03 02:09:23', '2026-09-29 01:39:35'),
-(30, 'Rapat Evaluasi Pengadaan ASN Se-Kalimantan', 4, 2, 1, 3, 100, '2026-09-28', '2026-09-30', 'Terkonfirmasi', 'https://drive.google.com/file/d/1BKN_2026_KEG_030_ST/view', '2026-09-03 02:09:23', '2026-09-28 23:02:49'),
-(31, 'Uji Kompetensi Jabatan Fungsional BKN', 1, 1, 1, 1, 180, '2026-10-02', '2026-10-04', 'Terkonfirmasi', 'ujikom_2026.pdf', '2026-09-08 00:17:35', '2026-09-29 00:18:04'),
+(30, 'Rapat Evaluasi Pengadaan ASN Se-Kalimantan', 4, 2, 1, 3, 100, '2026-09-28', '2026-09-30', 'Selesai', 'https://drive.google.com/file/d/1BKN_2026_KEG_030_ST/view', '2026-09-03 02:09:23', '2026-09-29 17:50:39'),
+(31, 'Uji Kompetensi Jabatan Fungsional BKN', 1, 1, 1, 1, 180, '2026-10-02', '2026-10-04', 'Selesai', 'ujikom_2026.pdf', '2026-09-08 00:17:35', '2026-10-01 19:20:35'),
 (32, 'Seleksi CAT Tenaga Kesehatan Pemkab Banjar', 2, 3, 6, 2, 450, '2026-10-10', '2026-10-12', 'Terkonfirmasi', 'nakes_banjar.pdf', '2026-09-08 00:17:35', '2026-09-29 00:18:04'),
 (33, 'Workshop Digitalisasi Layanan Kepegawaian', 1, 2, 2, 3, 80, '2026-10-15', '2026-10-15', 'Belum Konfirmasi', 'https://drive.google.com/file/d/1BKN_2026_KEG_033_ST/view', '2026-09-08 00:17:35', '2026-09-29 01:39:35'),
 (34, 'Bimtek Sasaran Kinerja Pegawai (SKP) Kalteng', 1, 5, 17, 4, 200, '2026-10-20', '2026-10-22', 'Terkonfirmasi', 'https://drive.google.com/file/d/1BKN_2026_KEG_034_ST/view', '2026-09-08 00:17:35', '2026-09-29 01:39:35'),
@@ -214,7 +214,7 @@ INSERT INTO `kegiatan` (`id_keg`, `nama_keg`, `id_jeniskeg`, `id_tklokasi`, `id_
 (53, 'Bimbingan Teknis Fasilitasi SIASN Instansi Daerah', 3, 3, 3, 3, 120, '2026-09-22', '2026-09-22', 'Selesai', 'https://drive.google.com/file/d/1BKN_2026_KEG_053_ST/view', '2026-09-22 01:28:32', '2026-09-29 01:39:35'),
 (54, 'Ujian Dinas Elektronik (e-UDIN) Tingkat I & II', 1, 1, 4, 1, 150, '2026-09-25', '2026-09-25', 'Selesai', 'https://drive.google.com/file/d/1BKN_2026_KEG_054_ST/view', '2026-09-22 01:28:32', '2026-09-29 01:39:35'),
 (55, 'Sosialisasi Penerapan Sistem Merit dan Manajemen ASN', 3, 2, 5, 2, 200, '2026-09-27', '2026-09-28', 'Selesai', 'https://drive.google.com/file/d/1BKN_2026_KEG_055_ST/view', '2026-09-22 01:28:32', '2026-09-29 01:39:35'),
-(56, 'Asesmen Penilaian Potensi dan Kompetensi Pegawai', 2, 3, 1, 3, 60, '2026-09-30', '2026-09-30', 'Terkonfirmasi', 'https://drive.google.com/file/d/1BKN_2026_KEG_056_ST/view', '2026-09-22 01:28:32', '2026-09-29 01:39:35'),
+(56, 'Asesmen Penilaian Potensi dan Kompetensi Pegawai', 2, 3, 1, 3, 60, '2026-09-30', '2026-09-30', 'Selesai', 'https://drive.google.com/file/d/1BKN_2026_KEG_056_ST/view', '2026-09-22 01:28:32', '2026-09-29 17:50:49'),
 (57, 'Pelatihan Teknis Tata Cara Usul Pensiun Pegawai', 3, 1, 2, 4, 90, '2026-10-04', '2026-10-05', 'Belum Konfirmasi', 'https://drive.google.com/file/d/1BKN_2026_KEG_057_ST/view', '2026-09-22 01:28:32', '2026-09-29 01:39:35'),
 (58, 'Workshop Digitalisasi Dokumen Arsip Kepegawaian', 3, 2, 3, 4, 110, '2026-09-12', '2026-09-12', 'Selesai', 'https://drive.google.com/file/d/1BKN_2026_KEG_058_ST/view', '2026-09-22 01:28:32', '2026-09-29 01:39:35'),
 (59, 'Seleksi Pasca Sanggah PPPK Tenaga Kesehatan', 1, 1, 5, 1, 300, '2026-09-02', '2026-09-04', 'Selesai', 'https://drive.google.com/file/d/1BKN_2026_KEG_059_ST/view', '2026-09-22 01:28:32', '2026-09-29 01:39:35'),
