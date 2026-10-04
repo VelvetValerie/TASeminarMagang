@@ -27,7 +27,6 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <style>
-        /* CSS Brutalism Kustom untuk Select2 */
         .select2-container--default .select2-selection--single {
             border: 2px solid #000000 !important;
             border-radius: 0px !important;
@@ -52,28 +51,28 @@
     @endphp
 
     <!-- NOTIFIKASI PESAN SUKSES / ERROR -->
-    <?php if (session('success')): ?>
+    @if (session('success'))
         <div class="mb-4 border-2 border-black bg-emerald-100 p-3 font-bold text-emerald-900 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-            ✅ <?php echo session('success'); ?>
+            ✅ {{ session('success') }}
         </div>
-    <?php endif; ?>
+    @endif
 
-    <?php if (session('error')): ?>
+    @if (session('error'))
         <div class="mb-4 border-2 border-black bg-rose-100 p-3 font-bold text-rose-900 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-            ⚠️ <?php echo session('error'); ?>
+            ⚠️ {{ session('error') }}
         </div>
-    <?php endif; ?>
+    @endif
 
-    <?php if ($errors->any()): ?>
+    @if ($errors->any())
         <div class="mb-4 border-2 border-black bg-rose-100 p-3 font-bold text-rose-900 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] text-xs sm:text-sm">
             <p class="font-extrabold mb-1">Gagal Menyimpan Data Laporan:</p>
             <ul class="list-disc pl-5 space-y-0.5">
-                <?php foreach ($errors->all() as$error): ?>
-                    <li><?php echo $error; ?></li>
-                <?php endforeach; ?>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
             </ul>
         </div>
-    <?php endif; ?>
+    @endif
 
     <div class="border-2 border-black bg-white p-4 md:p-6 flex flex-col space-y-4 shadow-sm">
         
@@ -86,6 +85,9 @@
             <div class="flex items-center space-x-2">
                 <!-- Search Form -->
                 <form id="searchForm" method="GET" action="{{ url('/laporan-kegiatan') }}" class="m-0 p-0 flex items-center">
+                    @if(request('range')) <input type="hidden" name="range" value="{{ request('range') }}"> @endif
+                    @if(request('tgl_mulai')) <input type="hidden" name="tgl_mulai" value="{{ request('tgl_mulai') }}"> @endif
+                    @if(request('tgl_selesai')) <input type="hidden" name="tgl_selesai" value="{{ request('tgl_selesai') }}"> @endif
                     <div class="flex items-center border-2 border-black bg-gray-100 px-2 py-1 relative">
                         <svg class="w-4 h-4 text-gray-700 mr-2 shrink-0 cursor-pointer" onclick="document.getElementById('searchForm').submit()" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -101,8 +103,54 @@
             </div>
         </div>
 
+        <!-- BARIS FILTER TANGGAL & PERIODE -->
+        <div class="border-2 border-black bg-gray-50 p-3">
+            <form method="GET" action="{{ url('/laporan-kegiatan') }}" class="flex flex-wrap items-end gap-3 text-xs">
+                @if(request('search'))
+                    <input type="hidden" name="search" value="{{ request('search') }}">
+                @endif
+
+                <!-- Periode Cepat -->
+                <div>
+                    <label class="block font-bold text-gray-800 mb-1">PERIODE CEPAT:</label>
+                    <select name="range" onchange="this.form.submit()" class="border-2 border-black bg-white p-1.5 font-bold">
+                        <option value="">-- Semua Waktu --</option>
+                        <option value="7_days" {{ request('range') == '7_days' ? 'selected' : '' }}>7 Hari Terakhir</option>
+                        <option value="1_month" {{ request('range') == '1_month' ? 'selected' : '' }}>1 Bulan Terakhir</option>
+                        <option value="3_months" {{ request('range') == '3_months' ? 'selected' : '' }}>3 Bulan Terakhir</option>
+                    </select>
+                </div>
+
+                <span class="font-bold self-center pt-3 text-gray-500">ATAU</span>
+
+                <!-- Tanggal Mulai -->
+                <div>
+                    <label class="block font-bold text-gray-800 mb-1">DARI TANGGAL:</label>
+                    <input type="date" name="tgl_mulai" value="{{ request('tgl_mulai') }}" class="border-2 border-black bg-white p-1.5 font-bold">
+                </div>
+
+                <!-- Tanggal Selesai -->
+                <div>
+                    <label class="block font-bold text-gray-800 mb-1">SAMPAI TANGGAL:</label>
+                    <input type="date" name="tgl_selesai" value="{{ request('tgl_selesai') }}" class="border-2 border-black bg-white p-1.5 font-bold">
+                </div>
+
+                <!-- Tombol Submit Filter & Reset -->
+                <div class="flex items-center gap-1.5">
+                    <button type="submit" class="border-2 border-black bg-blue-500 hover:bg-blue-600 text-white font-bold px-3 py-1.5 shadow-xs">
+                        Filter
+                    </button>
+                    @if(request()->hasAny(['range', 'tgl_mulai', 'tgl_selesai']))
+                        <a href="{{ url('/laporan-kegiatan') }}" class="border-2 border-black bg-gray-200 hover:bg-gray-300 text-black font-bold px-3 py-1.5">
+                            Reset
+                        </a>
+                    @endif
+                </div>
+            </form>
+        </div>
+
         <!-- Tabel Laporan Hasil Kegiatan -->
-        <div class="mt-4 border-2 border-black overflow-x-auto">
+        <div class="mt-2 border-2 border-black overflow-x-auto">
             <table class="w-full border-collapse border-black min-w-[900px] text-xs sm:text-sm">
                 <thead>
                     <tr class="border-b-2 border-black bg-gray-100 text-center font-bold text-gray-900">
@@ -115,16 +163,15 @@
                     </tr>
                 </thead>
                 <tbody class="font-medium text-gray-900">
-                    <?php if (isset($laporan) && count($laporan) > 0): ?>
-                        <?php foreach ($laporan as $idx =>$item): ?>
-                            <?php 
-                                $no = $laporan->firstItem() +$idx; 
-                                $keg =$item->kegiatan;
+                    @if (isset($laporan) && count($laporan) > 0)
+                        @foreach ($laporan as $idx => $item)
+                            @php 
+                                $no = $laporan->firstItem() + $idx; 
+                                $keg = $item->kegiatan;
                                 
-                                // RESTRIKSI AKSES EDIT / HAPUS BKN KOORDINATOR
                                 $isKoordinator = ($loggedUser->role === 'pegawai') 
-                                    ? ($keg && $keg->id_karyawan_koor ==$loggedUser->id_karyawan) 
-                                    : true; // Admin & Pimpinan selalu mendapat akses
+                                    ? ($keg && $keg->id_karyawan_koor == $loggedUser->id_karyawan) 
+                                    : true;
 
                                 $payloadEdit = [
                                     'id_laporan' => $item->id_laporan,
@@ -136,51 +183,51 @@
                                     'lampiran_laporan' => $item->lampiran_laporan,
                                     'catatan_evaluasi' => $item->catatan_evaluasi,
                                 ];
-                            ?>
+                            @endphp
                             <tr class="border-b-2 border-black last:border-b-0 bg-[#d1d5db] hover:bg-[#c4c8ce] transition">
-                                <td class="border-r-2 border-black py-3 px-2 text-center font-bold"><?php echo $no; ?></td>
+                                <td class="border-r-2 border-black py-3 px-2 text-center font-bold">{{ $no }}</td>
                                 <td class="border-r-2 border-black py-3 px-3">
-                                    <span class="block font-bold text-gray-900"><?php echo $keg->nama_keg ?? '-'; ?></span>
+                                    <span class="block font-bold text-gray-900">{{ $keg->nama_keg ?? '-' }}</span>
                                     <span class="block text-xs text-gray-800 font-semibold mt-0.5">
-                                        👤 Koor: <span class="underline"><?php echo $keg->koordinator->nama_karyawan ?? '-'; ?></span>
+                                        👤 Koor: <span class="underline">{{ $keg->koordinator->nama_karyawan ?? '-' }}</span>
                                     </span>
                                     <span class="text-[11px] text-gray-700 font-medium">
-                                        📍 <?php echo $keg->lokasi->nm_lokasi ?? '-'; ?> | 🏢 <?php echo $keg->instansi->nm_instansi ?? '-'; ?>
+                                        📍 {{ $keg->lokasi->nm_lokasi ?? '-' }} | 🏢 {{ $keg->instansi->nm_instansi ?? '-' }}
                                     </span>
                                 </td>
                                 <td class="border-r-2 border-black py-3 px-2 text-center">
                                     <span class="inline-block px-2 py-0.5 bg-emerald-200 border border-black font-extrabold text-emerald-950 text-xs rounded">
-                                        <?php echo number_format($item->peserta_hadir); ?> Hadir
+                                        {{ number_format($item->peserta_hadir) }} Hadir
                                     </span>
                                     <span class="inline-block px-2 py-0.5 bg-rose-200 border border-black font-extrabold text-rose-950 text-xs rounded mt-1">
-                                        <?php echo number_format($item->peserta_tidak_hadir); ?> Absen
+                                        {{ number_format($item->peserta_tidak_hadir) }} Absen
                                     </span>
                                 </td>
                                 <td class="border-r-2 border-black py-3 px-2 text-center font-bold">
-                                    <p class="text-emerald-900">Max: <?php echo $item->nilai_tertinggi ?? '-'; ?></p>
-                                    <p class="text-rose-900">Min: <?php echo $item->nilai_terendah ?? '-'; ?></p>
+                                    <p class="text-emerald-900">Max: {{ $item->nilai_tertinggi ?? '-' }}</p>
+                                    <p class="text-rose-900">Min: {{ $item->nilai_terendah ?? '-' }}</p>
                                 </td>
                                 <td class="border-r-2 border-black py-3 px-3 text-center">
-                                    <?php if ($item->lampiran_laporan &&$item->lampiran_laporan !== '-'): ?>
-                                        <a href="<?php echo $item->lampiran_laporan; ?>" target="_blank" class="border-2 border-black bg-blue-500 hover:bg-blue-600 text-white px-2.5 py-1 text-xs font-bold transition inline-block shadow-xs">
+                                    @if ($item->lampiran_laporan && $item->lampiran_laporan !== '-')
+                                        <a href="{{ $item->lampiran_laporan }}" target="_blank" class="border-2 border-black bg-blue-500 hover:bg-blue-600 text-white px-2.5 py-1 text-xs font-bold transition inline-block shadow-xs">
                                             📄 Laporan
                                         </a>
-                                    <?php else: ?>
+                                    @else
                                         <span class="text-gray-500 text-xs">-</span>
-                                    <?php endif; ?>
+                                    @endif
                                 </td>
-                                <!-- KOLOM AKSI (DISUSUN SECARA VERTIKAL) -->
+                                <!-- KOLOM AKSI (EDIT, HAPUS, CETAK PDF) -->
                                 <td class="py-3 px-2 text-center">
-                                    <?php if ($isKoordinator): ?>
-                                        <div class="flex flex-col items-center justify-center gap-1.5 w-full">
-                                            <!-- Tombol Edit (Vertikal Atas) -->
+                                    <div class="flex flex-col items-center justify-center gap-1.5 w-full">
+                                        @if ($isKoordinator)
+                                            <!-- Tombol Edit -->
                                             <button type="button" 
-                                                    onclick="openEditLaporanModal('<?php echo rawurlencode(json_encode($payloadEdit)); ?>')" 
+                                                    onclick="openEditLaporanModal('{{ rawurlencode(json_encode($payloadEdit)) }}')" 
                                                     class="w-20 border-2 border-black bg-amber-300 hover:bg-amber-400 text-black font-bold px-2 py-1 text-xs transition cursor-pointer shadow-xs">
                                                 Edit
                                             </button>
                                             
-                                            <!-- Tombol Hapus (Vertikal Bawah) -->
+                                            <!-- Tombol Hapus -->
                                             <form action="{{ url('/laporan-kegiatan/'.$item->id_laporan) }}" method="POST" class="w-20" onsubmit="return confirm('Apakah Anda yakin ingin menghapus laporan kegiatan ini?')">
                                                 @csrf
                                                 @method('DELETE')
@@ -189,35 +236,36 @@
                                                     Hapus
                                                 </button>
                                             </form>
-                                        </div>
-                                    <?php else: ?>
-                                        <span class="text-xs text-gray-500 font-bold italic inline-flex items-center gap-1" title="Hanya Koordinator Terpilih / Admin yang berhak mengedit">
-                                            🔒 Restriksi
-                                        </span>
-                                    <?php endif; ?>
+                                        @endif
+
+                                        <!-- TOMBOL CETAK PDF (Dapat diakses seluruh user) -->
+                                        <a href="{{ url('/laporan-kegiatan/'.$item->id_laporan.'/cetak') }}" target="_blank" class="w-20 border-2 border-black bg-emerald-400 hover:bg-emerald-500 text-black font-bold px-2 py-1 text-xs transition inline-block text-center shadow-xs">
+                                            🖨️ Cetak
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
+                        @endforeach
+                    @else
                         <tr>
                             <td colspan="6" class="py-8 text-center text-gray-500 font-semibold text-sm">
                                 Belum ada data laporan hasil kegiatan yang terdaftar.
                             </td>
                         </tr>
-                    <?php endif; ?>
+                    @endif
                 </tbody>
             </table>
         </div>
 
         <!-- PAGINATION -->
-        <?php if (isset($laporan) &&$laporan->hasPages()): ?>
+        @if (isset($laporan) && $laporan->hasPages())
             <div class="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3 pt-3 border-t-2 border-black text-xs font-bold">
-                <span>Menampilkan <?php echo $laporan->firstItem(); ?> - <?php echo $laporan->lastItem(); ?> dari <?php echo$laporan->total(); ?> Laporan</span>
+                <span>Menampilkan {{ $laporan->firstItem() }} - {{ $laporan->lastItem() }} dari {{ $laporan->total() }} Laporan</span>
                 <div class="flex gap-1">
-                    <?php echo $laporan->links(); ?>
+                    {{ $laporan->links() }}
                 </div>
             </div>
-        <?php endif; ?>
+        @endif
     </div>
 
     <!-- MODAL 1: FORM TAMBAH LAPORAN KEGIATAN -->
@@ -232,11 +280,11 @@
                     <label class="block font-bold mb-1">PILIH KEGIATAN (STATUS SELESAI):</label>
                     <select name="id_keg" id="tambah_id_keg" required class="select2-kegiatan w-full border-2 border-black bg-white p-2 font-medium">
                         <option value="" data-peserta="0">-- Cari / Pilih Kegiatan --</option>
-                        <?php foreach ($kegiatanSelesai as$kS): ?>
-                            <option value="<?php echo $kS->id_keg; ?>" data-peserta="<?php echo $kS->jmlh_peserta; ?>">
-                                <?php echo $kS->nama_keg; ?> (Total Peserta: <?php echo$kS->jmlh_peserta; ?> Orang)
+                        @foreach ($kegiatanSelesai as $kS)
+                            <option value="{{ $kS->id_keg }}" data-peserta="{{ $kS->jmlh_peserta }}">
+                                {{ $kS->nama_keg }} (Total Peserta: {{ $kS->jmlh_peserta }} Orang)
                             </option>
-                        <?php endforeach; ?>
+                        @endforeach
                     </select>
                 </div>
 
@@ -349,14 +397,12 @@
         const editModal = document.getElementById('editLaporanModal');
 
         $(document).ready(function() {
-            // Inisialisasi Select2
             $('.select2-kegiatan').select2({
                 dropdownParent: $('#tambahLaporanModal'),
                 placeholder: "-- Cari / Pilih Kegiatan --",
                 width: '100%'
             });
 
-            // Hubungkan event change Select2 dengan kalkulasi peserta
             $('.select2-kegiatan').on('change', function() {
                 updateTotalPesertaTambah();
             });

@@ -60,6 +60,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/laporan-kegiatan', [AppController::class, 'storeLaporanKegiatan'])->name('laporan-kegiatan.store');
     Route::put('/laporan-kegiatan/{id}', [AppController::class, 'updateLaporanKegiatan'])->name('laporan-kegiatan.update');
     Route::delete('/laporan-kegiatan/{id}', [AppController::class, 'destroyLaporanKegiatan'])->name('laporan-kegiatan.destroy');
+    Route::get('/laporan-kegiatan/{id}/cetak', [AppController::class, 'cetakPdfLaporan'])->middleware('auth');
 
     // Dilihat oleh Pimpinan dan Admin
     Route::middleware(['role:pimpinan,admin'])->group(function () {

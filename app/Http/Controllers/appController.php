@@ -531,28 +531,63 @@ class AppController extends Controller
     {
         $search = $request->input('search');
         $sort = $request->input('sort', 'terbaru');
+        $range = $request->input('range');
+        $tglMulai = $request->input('tgl_mulai');
+        $tglSelesai = $request->input('tgl_selesai');
         $user = Auth::user();
 
         $query = LaporanKegiatan::with(['kegiatan.jenis', 'kegiatan.lokasi', 'kegiatan.instansi', 'kegiatan.koordinator']);
 
+        // 1. FILTER BERDASARKAN ROLE (PEGAWAI)
+        // Pegawai hanya dapat melihat laporan dari kegiatan yang mereka koordinatori
+        if ($user->role === 'pegawai') {
+            $query->whereHas('kegiatan', function ($q) use ($user) {
+                $q->where('id_karyawan_koor', $user->id_karyawan);
+            });
+        }
+
+        // 2. FILTER PENCARIAN
         if ($search) {
             $query->whereHas('kegiatan', function ($q) use ($search) {
                 $q->where('nama_keg', 'like', "%{$search}%");
             });
         }
 
+        // 3. FILTER TANGGAL (PERIODE CEPAT ATAU RENTANG KUSTOM)
+        if ($range) {
+            switch ($range) {
+                case '7_days':
+                    $query->where('created_at', '>=', \Carbon\Carbon::now()->subDays(7));
+                    break;
+                case '1_month':
+                    $query->where('created_at', '>=', \Carbon\Carbon::now()->subMonth());
+                    break;
+                case '3_months':
+                    $query->where('created_at', '>=', \Carbon\Carbon::now()->subMonths(3));
+                    break;
+            }
+        } elseif ($tglMulai && $tglSelesai) {
+            $query->whereBetween('created_at', [
+                $tglMulai . ' 00:00:00',
+                $tglSelesai . ' 23:59:59'
+            ]);
+        }
+
+        // 4. PENGURUTAN (SORTING)
         if ($sort === 'terlama') {
             $query->orderBy('created_at', 'asc');
         } elseif ($sort === 'az') {
-            $query->whereHas('kegiatan', function ($q) {
-                $q->orderBy('nama_keg', 'asc');
-            });
+            $query->join('kegiatan', 'laporan_kegiatan.id_kegiatan', '=', 'kegiatan.id_keg')
+                ->orderBy('kegiatan.nama_keg', 'asc')
+                ->select('laporan_kegiatan.*');
         } else {
             $query->orderBy('created_at', 'desc');
         }
 
-        $laporan = $query->paginate(10);
+        // Mengamankan parameter query string di pagination (search, sort, range, dll)
+        $laporan = $query->paginate(10)->withQueryString();
 
+        // 5. QUERY KEGIATAN SELESAI YANG BELUM ADA LAPORAN
         $kegiatanSelesaiQuery = Kegiatan::where('status', 'Selesai')
             ->whereDoesntHave('laporan')
             ->orderBy('nama_keg', 'asc');
@@ -563,7 +598,16 @@ class AppController extends Controller
 
         $kegiatanSelesai = $kegiatanSelesaiQuery->get();
 
-        return view('laporan-kegiatan', compact('laporan', 'kegiatanSelesai', 'sort'));
+        return view('laporan-kegiatan', compact('laporan', 'kegiatanSelesai', 'sort', 'range', 'tglMulai', 'tglSelesai'));
+    }
+
+    // METHOD BARU UNTUK CETAK PDF INDIVIDUAL LAPORAN
+    public function cetakPdfLaporan($id)
+    {
+        $laporan = LaporanKegiatan::with(['kegiatan.jenis', 'kegiatan.lokasi', 'kegiatan.instansi', 'kegiatan.koordinator'])
+            ->findOrFail($id);
+
+        return view('pdf.laporan-detail', compact('laporan'));
     }
 
     /**
