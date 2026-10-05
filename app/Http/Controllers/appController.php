@@ -553,7 +553,14 @@ class AppController extends Controller
             });
         }
 
-        // 3. FILTER TANGGAL (PERIODE CEPAT ATAU RENTANG KUSTOM)
+        // 3. Filter berdasarkan Jenis Kegiatan (BARU)
+        if ($request->filled('id_jeniskeg')) {
+            $query->whereHas('kegiatan', function($q) use ($request) {
+                $q->where('id_jeniskeg', $request->id_jeniskeg);
+            });
+        }
+
+        // 4. FILTER TANGGAL (PERIODE CEPAT ATAU RENTANG KUSTOM)
         if ($range) {
             switch ($range) {
                 case '7_days':
@@ -573,7 +580,7 @@ class AppController extends Controller
             ]);
         }
 
-        // 4. PENGURUTAN (SORTING)
+        // 5. PENGURUTAN (SORTING)
         if ($sort === 'terlama') {
             $query->orderBy('created_at', 'asc');
         } elseif ($sort === 'az') {
@@ -587,7 +594,7 @@ class AppController extends Controller
         // Mengamankan parameter query string di pagination (search, sort, range, dll)
         $laporan = $query->paginate(10)->withQueryString();
 
-        // 5. QUERY KEGIATAN SELESAI YANG BELUM ADA LAPORAN
+        // 6. QUERY KEGIATAN SELESAI YANG BELUM ADA LAPORAN
         $kegiatanSelesaiQuery = Kegiatan::where('status', 'Selesai')
             ->whereDoesntHave('laporan')
             ->orderBy('nama_keg', 'asc');
@@ -598,7 +605,10 @@ class AppController extends Controller
 
         $kegiatanSelesai = $kegiatanSelesaiQuery->get();
 
-        return view('laporan-kegiatan', compact('laporan', 'kegiatanSelesai', 'sort', 'range', 'tglMulai', 'tglSelesai'));
+        // Ambil master data jenis kegiatan untuk dropdown filter
+        $jenisKegiatan = JenisKeg::all();
+
+        return view('laporan-kegiatan', compact('laporan', 'kegiatanSelesai', 'jenisKegiatan', 'sort', 'range', 'tglMulai', 'tglSelesai'));
     }
 
     // METHOD BARU UNTUK CETAK PDF INDIVIDUAL LAPORAN
