@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 06, 2026 at 06:08 AM
+-- Generation Time: Oct 06, 2026 at 06:50 AM
 -- Server version: 8.0.40
 -- PHP Version: 8.3.28
 
@@ -142,7 +142,6 @@ INSERT INTO `karyawan` (`id_karyawan`, `nama_karyawan`, `catatan_kj`, `perjalana
 (4, 'Drs. Hendra Pratama', 'Petugas Teknis Jaringan', NULL, NULL, NULL, '2026-09-01 00:17:35', '2026-09-03 01:14:01'),
 (5, 'Nur Hidayah, M.Si', NULL, NULL, NULL, NULL, '2026-09-03 01:11:55', '2026-09-03 01:14:01'),
 (6, 'Fajar Ramadhan, S.Kom', NULL, NULL, NULL, NULL, '2026-09-03 01:11:55', '2026-09-03 01:14:01'),
-(8, 'Dewi Lestari, S.E', NULL, NULL, NULL, NULL, '2026-09-03 01:11:55', '2026-09-03 01:11:55'),
 (9, 'Rahmat Hidayat, S.STP', 'Pengawas Ujian Kedinasan Regional', NULL, NULL, NULL, '2026-09-09 00:23:54', '2026-09-09 00:23:54'),
 (10, 'Rina Aprilia, S.Psi', 'Asesor Pemetaan Profil Kompetensi', NULL, NULL, NULL, '2026-09-09 00:23:54', '2026-09-09 00:23:54'),
 (11, 'Eko Prasetyo, S.T', 'Petugas Laboratorium & Infrastruktur CAT', NULL, NULL, NULL, '2026-09-09 00:23:54', '2026-09-09 00:23:54'),
@@ -724,7 +723,6 @@ INSERT INTO `users` (`id_user`, `username`, `nip`, `email`, `password`, `role`, 
 (6, 'hendra_pratama', '198804202012011002', 'hendra.pratama@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai', 4, NULL, '2026-09-22 02:41:28', '2026-09-22 02:41:28'),
 (7, 'nur_hidayah', '199408122020012003', 'nur.hidayah@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai', 5, NULL, '2026-09-22 02:41:28', '2026-09-22 02:41:28'),
 (8, 'fajar_ramadhan', '199602282021021001', 'fajar.ramadhan@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai', 6, NULL, '2026-09-22 02:41:28', '2026-09-22 02:41:28'),
-(9, 'dewi_lestari', '199111052016042002', 'dewi.lestari@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai', 8, NULL, '2026-09-22 02:41:28', '2026-09-22 02:41:28'),
 (10, 'rahmat_hidayat', '199009142014021003', 'rahmat.hidayat@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai', 9, NULL, '2026-09-22 02:41:28', '2026-09-22 02:41:28'),
 (11, 'rina_aprilia', '199504182020022001', 'rina.aprilia@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai', 10, NULL, '2026-09-22 02:41:28', '2026-09-22 02:41:28'),
 (12, 'eko_prasetyo', '199207222018011004', 'eko.prasetyo@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai', 11, NULL, '2026-09-22 02:41:28', '2026-09-22 02:41:28'),

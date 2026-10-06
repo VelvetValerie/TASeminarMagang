@@ -462,17 +462,27 @@ class AppController extends Controller
         return back()->with('success', 'Data user '.$user->username.' berhasil diperbarui.');
     }
 
-    public function destroyUser($id)
+    public function destroy($id)
     {
         $user = User::findOrFail($id);
 
-        if ($user->role === 'admin') {
-            return back()->withErrors(['admin' => 'Akun dengan Role Admin tidak dapat dihapus.']);
+        // Jika user terhubung dengan data karyawan
+        if ($user->id_karyawan) {
+            $idKaryawan = $user->id_karyawan;
+
+            // 1. Hapus seluruh rekam kerja karyawan tersebut
+            \App\Models\RekamKj::where('id_karyawan', $idKaryawan)->delete();
+
+            // 2. Hapus data user terlebih dahulu
+            $user->delete();
+
+            // 3. Hapus data profil karyawan
+            \App\Models\Karyawan::where('id_karyawan', $idKaryawan)->delete();
+        } else {
+            $user->delete();
         }
 
-        $user->delete();
-
-        return back()->with('success', 'User berhasil dihapus dari sistem.');
+        return redirect()->back()->with('success', 'User beserta seluruh riwayat rekam kerjanya berhasil dihapus.');
     }
 
     public function storeUser(Request $request)
