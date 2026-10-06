@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 05, 2026 at 06:07 AM
+-- Generation Time: Oct 06, 2026 at 06:08 AM
 -- Server version: 8.0.40
 -- PHP Version: 8.3.28
 
@@ -279,7 +279,77 @@ INSERT INTO `kegiatan` (`id_keg`, `nama_keg`, `id_jeniskeg`, `id_tklokasi`, `id_
 (102, 'Ujian UPKP Penyesuaian S1/S2 Pegawai Pemko Banjarbaru', 1, 3, 16, 1, 85, '2026-12-24', '2026-12-24', 'Belum Konfirmasi', 'https://drive.google.com/sample_des_102', '2026-10-05 05:58:48', '2026-10-05 05:58:48'),
 (103, 'Pelaksanaan SKD CPNS Kabupaten Mahakam Ulu', 2, 6, 41, 12, 280, '2026-12-28', '2026-12-29', 'Belum Konfirmasi', 'https://drive.google.com/sample_des_103', '2026-10-05 05:58:48', '2026-10-05 05:58:48'),
 (104, 'Seleksi PPPK Tenaga Teknis Kabupaten Katingan', 4, 5, 25, 9, 150, '2026-12-30', '2026-12-30', 'Belum Konfirmasi', 'https://drive.google.com/sample_des_104', '2026-10-05 05:58:48', '2026-10-05 05:58:48'),
-(105, 'Seleksi Pegawai Non-ASN Pengelola Sistem SIASN', 7, 1, 1, 6, 90, '2026-12-30', '2026-12-30', 'Belum Konfirmasi', 'https://drive.google.com/sample_des_105', '2026-10-05 05:58:48', '2026-10-05 05:58:48');
+(105, 'Seleksi Pegawai Non-ASN Pengelola Sistem SIASN', 7, 1, 1, 6, 90, '2026-12-30', '2026-12-30', 'Belum Konfirmasi', 'https://drive.google.com/sample_des_105', '2026-10-05 05:58:48', '2026-10-05 05:58:48'),
+(106, 'Uji Kompetensi Manajerial Pegawai Pemko Banjarmasin', 8, 1, 3, 1, 80, '2026-06-04', '2026-06-05', 'Selesai', 'https://drive.google.com/sample_juni_106', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(107, 'Fasilitasi CAT PPPK Tenaga Teknis Kabupaten Banjar', 4, 3, 6, 2, 210, '2026-06-07', '2026-06-08', 'Selesai', 'https://drive.google.com/sample_juni_107', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(108, 'Sosialisasi Sistem Informasi SIASN Kanreg VIII', 11, 2, 1, 3, 95, '2026-06-09', '2026-06-09', 'Selesai', 'https://drive.google.com/sample_juni_108', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(109, 'Simulasi CAT Mandiri SMA/SMK Banjarmasin', 10, 1, 3, 11, 320, '2026-06-13', '2026-06-14', 'Selesai', 'https://drive.google.com/sample_juni_109', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(110, 'Seleksi Non-ASN Pegawai RSUD Ansari Saleh', 7, 4, 2, 5, 150, '2026-06-15', '2026-06-16', 'Selesai', 'https://drive.google.com/sample_juni_110', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(111, 'Asesmen Profil Pegawai Dinas Pendidikan Kalsel', 8, 2, 2, 10, 65, '2026-06-18', '2026-06-18', 'Selesai', 'https://drive.google.com/sample_juni_111', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(112, 'Sertifikasi CAT Petugas Pengawas Ujian Sub-Regional', 9, 1, 1, 12, 40, '2026-06-21', '2026-06-21', 'Selesai', 'https://drive.google.com/sample_juni_112', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(113, 'Ujian Penyesuaian Ijazah ASN Kabupaten Tapin', 1, 1, 9, 4, 85, '2026-06-23', '2026-06-24', 'Selesai', 'https://drive.google.com/sample_juni_113', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(114, 'Seleksi SKD Sekolah Kedinasan STTD / STIP', 5, 1, 5, 6, 280, '2026-06-26', '2026-06-27', 'Selesai', 'https://drive.google.com/sample_juni_114', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(115, 'Evaluasi Kinerja Fasilitator CAT Triwulan I', 11, 2, 1, 1, 50, '2026-06-29', '2026-06-29', 'Selesai', 'https://drive.google.com/sample_juni_115', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(116, 'Ujian Dinas Tingkat II ASN Pemkab Tanah Laut', 1, 1, 7, 1, 100, '2026-07-04', '2026-07-05', 'Selesai', 'https://drive.google.com/sample_juli_116', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(117, 'Seleksi SKD CPNS Kabupaten Barito Kuala', 2, 3, 8, 2, 450, '2026-07-06', '2026-07-08', 'Selesai', 'https://drive.google.com/sample_juli_117', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(118, 'Fasilitasi PPPK Kesehatan Pemko Banjarbaru', 4, 1, 16, 4, 180, '2026-07-10', '2026-07-11', 'Selesai', 'https://drive.google.com/sample_juli_118', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(119, 'Simulasi CAT Mandiri Persiapan Sekolah Kedinasan', 10, 1, 1, 3, 400, '2026-07-12', '2026-07-13', 'Selesai', 'https://drive.google.com/sample_juli_119', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(120, 'Seleksi Pamong Desa Kabupaten Tanah Bumbu', 7, 1, 14, 5, 120, '2026-07-15', '2026-07-15', 'Selesai', 'https://drive.google.com/sample_juli_120', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(121, 'Uji Kompetensi Mutasi ASN Antar-Instansi Kalsel', 8, 2, 2, 12, 70, '2026-07-18', '2026-07-18', 'Selesai', 'https://drive.google.com/sample_juli_121', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(122, 'Seleksi Lanjutan Tes Psikotes Kedinasan STIN', 6, 2, 1, 10, 95, '2026-07-20', '2026-07-21', 'Selesai', 'https://drive.google.com/sample_juli_122', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(123, 'Sertifikasi Operator Server CAT Regional VIII', 9, 1, 1, 11, 30, '2026-07-23', '2026-07-23', 'Selesai', 'https://drive.google.com/sample_juli_23', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(124, 'Lokakarya Implementasi KDKMP Pemkab Kotabaru', 11, 2, 15, 4, 75, '2026-07-26', '2026-07-26', 'Selesai', 'https://drive.google.com/sample_juli_124', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(125, 'Ujian UPKP Penyesuaian S1/S2 BKN Regional', 1, 1, 1, 3, 55, '2026-07-29', '2026-07-29', 'Selesai', 'https://drive.google.com/sample_juli_125', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(126, 'Ujian Dinas Tingkat I & II Pemkab Tabalong', 1, 1, 13, 1, 110, '2026-08-02', '2026-08-03', 'Selesai', 'https://drive.google.com/sample_agust_126', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(127, 'Pelaksanaan SKD CPNS Kabupaten Hulu Sungai Tengah', 2, 1, 11, 2, 420, '2026-08-06', '2026-08-08', 'Selesai', 'https://drive.google.com/sample_agust_127', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(128, 'Seleksi SKB CPNS Psikotes & Wawancara Pemkalteng', 3, 5, 17, 9, 160, '2026-08-10', '2026-08-11', 'Selesai', 'https://drive.google.com/sample_agust_128', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(129, 'Fasilitasi PPPK Tenaga Guru Pemkab Hulu Sungai Utara', 4, 1, 12, 3, 230, '2026-08-13', '2026-08-14', 'Selesai', 'https://drive.google.com/sample_agust_129', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(130, 'Seleksi SKD Sekolah Kedinasan Poltekip/Poltekim Kalsel', 5, 4, 4, 6, 260, '2026-08-16', '2026-08-17', 'Selesai', 'https://drive.google.com/sample_agust_130', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(131, 'Seleksi Non-ASN Petugas Kebersihan & Keamanan BKN', 7, 1, 1, 5, 80, '2026-08-19', '2026-08-19', 'Selesai', 'https://drive.google.com/sample_agust_131', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(132, 'Uji Kompetensi Asesor Pemetaan Profil Kalimantan', 8, 2, 1, 10, 45, '2026-08-22', '2026-08-22', 'Selesai', 'https://drive.google.com/sample_agust_132', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(133, 'Sertifikasi Keahlian Pengelola Komputer CAT', 9, 1, 1, 11, 35, '2026-08-24', '2026-08-24', 'Selesai', 'https://drive.google.com/sample_agust_133', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(134, 'Simulasi CAT Massal Sambut Hari Kemerdekaan', 10, 3, 16, 4, 520, '2026-08-26', '2026-08-27', 'Selesai', 'https://drive.google.com/sample_agust_134', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(135, 'Bimtek Penerapan KNMP Aparatur Daerah', 11, 2, 2, 12, 90, '2026-08-29', '2026-08-30', 'Selesai', 'https://drive.google.com/sample_agust_135', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(136, 'Ujian e-UDIN Elektronik Pegawai Pemprov Kalsel', 1, 1, 2, 1, 140, '2026-09-02', '2026-09-03', 'Selesai', 'https://drive.google.com/sample_sept_136', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(137, 'Pelaksanaan SKD CPNS Kabupaten Paser', 2, 6, 36, 12, 380, '2026-09-05', '2026-09-07', 'Selesai', 'https://drive.google.com/sample_sept_137', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(138, 'Seleksi SKB CPNS Praktik Kerja Jabatan Komputer', 3, 2, 1, 6, 110, '2026-09-09', '2026-09-10', 'Selesai', 'https://drive.google.com/sample_sept_138', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(139, 'CAT PPPK Tenaga Teknis Pemkot Balikpapan', 4, 6, 34, 1, 300, '2026-09-12', '2026-09-14', 'Selesai', 'https://drive.google.com/sample_sept_139', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(140, 'Seleksi Lanjutan Kesamaptaan Kedinasan IPDN', 6, 3, 5, 2, 170, '2026-09-16', '2026-09-17', 'Selesai', 'https://drive.google.com/sample_sept_140', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(141, 'Fasilitasi CAT Non-ASN BLUD RSUD Pemkab Banjar', 7, 3, 6, 5, 190, '2026-09-18', '2026-09-19', 'Selesai', 'https://drive.google.com/sample_sept_141', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(142, 'Asesmen Talent Pool Pejabat Pengawas Regional', 8, 2, 1, 10, 80, '2026-09-21', '2026-09-22', 'Selesai', 'https://drive.google.com/sample_sept_142', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(143, 'Sertifikasi CAT Tim Fasilitator UPT Palangkaraya', 9, 5, 17, 9, 40, '2026-09-24', '2026-09-24', 'Selesai', 'https://drive.google.com/sample_sept_143', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(144, 'Simulasi CAT Persiapan Seleksi CASN Pemkab Tapin', 10, 1, 9, 3, 360, '2026-09-26', '2026-09-27', 'Selesai', 'https://drive.google.com/sample_sept_144', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(145, 'Monev Capaian KDKMP dan KNMP Triwulan III', 11, 2, 1, 4, 60, '2026-09-29', '2026-09-29', 'Selesai', 'https://drive.google.com/sample_sept_145', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(146, 'Ujian Dinas Tingkat I Pemkot Palangkaraya', 1, 5, 18, 9, 90, '2026-10-01', '2026-10-02', 'Selesai', 'https://drive.google.com/sample_okt_146', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(147, 'Pelaksanaan SKD CPNS Kabupaten Kutai Kartanegara', 2, 6, 35, 12, 550, '2026-10-03', '2026-10-05', 'Selesai', 'https://drive.google.com/sample_okt_147', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(148, 'Seleksi SKB CPNS CAT Jabatan Keuangan Kalsel', 3, 1, 2, 4, 130, '2026-10-07', '2026-10-08', 'Selesai', 'https://drive.google.com/sample_okt_148', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(149, 'Fasilitasi PPPK Guru Kabupaten Tanah Laut', 4, 1, 7, 2, 310, '2026-10-10', '2026-10-12', 'Selesai', 'https://drive.google.com/sample_okt_149', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(150, 'Seleksi SKD Sekolah Kedinasan STIS Regional', 5, 1, 1, 1, 240, '2026-10-13', '2026-10-14', 'Selesai', 'https://drive.google.com/sample_okt_150', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(151, 'Seleksi Tenaga Pendukung SIASN Kanreg VIII', 7, 2, 1, 5, 100, '2026-10-16', '2026-10-16', 'Selesai', 'https://drive.google.com/sample_okt_151', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(152, 'Uji Kompetensi Kenaikan Pangkat Utama Kalsel', 8, 2, 2, 10, 65, '2026-10-18', '2026-10-18', 'Selesai', 'https://drive.google.com/sample_okt_152', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(153, 'Sertifikasi Asesor Pemetaan Profil ASN Kalteng', 9, 5, 17, 9, 35, '2026-10-20', '2026-10-20', 'Selesai', 'https://drive.google.com/sample_okt_153', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(154, 'Simulasi CAT Terpadu Mahasiswa & Umum Banjarbaru', 10, 3, 16, 3, 480, '2026-10-22', '2026-10-23', 'Selesai', 'https://drive.google.com/sample_okt_154', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(155, 'Ujian UPKP Penyesuaian Ijazah Barito Utara', 1, 5, 21, 9, 70, '2026-10-25', '2026-10-25', 'Selesai', 'https://drive.google.com/sample_okt_155', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(156, 'Ujian Dinas Tingkat II Pemkab Barito Selatan', 1, 5, 20, 9, 85, '2026-11-01', '2026-11-02', 'Selesai', 'https://drive.google.com/sample_nov_156', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(157, 'Pelaksanaan SKD CPNS Kabupaten Nunukan', 2, 5, 45, 12, 340, '2026-11-03', '2026-11-05', 'Selesai', 'https://drive.google.com/sample_nov_157', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(158, 'Seleksi SKB CPNS Wawancara Pemkot Banjarmasin', 3, 1, 3, 4, 120, '2026-11-06', '2026-11-07', 'Selesai', 'https://drive.google.com/sample_nov_158', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(159, 'Fasilitasi PPPK Tenaga Teknis Kabupaten Kapuas', 4, 5, 19, 9, 290, '2026-11-09', '2026-11-11', 'Selesai', 'https://drive.google.com/sample_nov_159', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(160, 'Simulasi CAT Persiapan Seleksi CASN 2027 Kaltim', 10, 6, 32, 1, 500, '2026-11-12', '2026-11-13', 'Selesai', 'https://drive.google.com/sample_nov_160', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(161, 'Seleksi Lanjutan Pantukhir Kedinasan STTD', 6, 2, 5, 10, 75, '2026-11-15', '2026-11-15', 'Terkonfirmasi', 'https://drive.google.com/sample_nov_161', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(162, 'Seleksi Non-ASN Pengelola Data SIASN Daerah', 7, 1, 1, 5, 110, '2026-11-17', '2026-11-17', 'Terkonfirmasi', 'https://drive.google.com/sample_nov_162', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(163, 'Uji Kompetensi Mutasi Jabatan Fungsional BKN', 8, 2, 1, 12, 80, '2026-11-19', '2026-11-20', 'Terkonfirmasi', 'https://drive.google.com/sample_nov_163', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(164, 'Sertifikasi Operator Server CAT Kalimantan Utara', 9, 5, 42, 9, 30, '2026-11-22', '2026-11-22', 'Terkonfirmasi', 'https://drive.google.com/sample_nov_164', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(165, 'Rapat Evaluasi KDKMP Triwulan Akhir 2026', 11, 2, 1, 4, 90, '2026-11-25', '2026-11-25', 'Terkonfirmasi', 'https://drive.google.com/sample_nov_165', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(166, 'Ujian e-UDIN Akhir Tahun ASN Kanreg VIII BKN', 1, 1, 1, 1, 120, '2026-12-01', '2026-12-02', 'Selesai', 'https://drive.google.com/sample_des_166', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(167, 'Pelaksanaan SKD CPNS Kabupaten Kutai Timur', 2, 6, 37, 12, 410, '2026-12-03', '2026-12-05', 'Selesai', 'https://drive.google.com/sample_des_167', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(168, 'Seleksi SKB CPNS CAT Jabatan Analis Kepegawaian', 3, 2, 1, 4, 150, '2026-12-07', '2026-12-08', 'Selesai', 'https://drive.google.com/sample_des_168', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(169, 'Fasilitasi PPPK Tahap Akhir Pemko Banjarbaru', 4, 3, 16, 2, 380, '2026-12-09', '2026-12-11', 'Selesai', 'https://drive.google.com/sample_des_169', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(170, 'Simulasi CAT Akhir Tahun Bagi Masyarakat Umum', 10, 1, 1, 11, 650, '2026-12-12', '2026-12-14', 'Selesai', 'https://drive.google.com/sample_des_170', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(171, 'Asesmen Profil Kompetensi Pejabat Administrator Kaltim', 8, 6, 32, 10, 50, '2026-12-16', '2026-12-17', 'Terkonfirmasi', 'https://drive.google.com/sample_des_171', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(172, 'Seleksi Lanjutan Wawancara Pemetaan Karier Regional', 6, 2, 1, 3, 65, '2026-12-19', '2026-12-19', 'Terkonfirmasi', 'https://drive.google.com/sample_des_172', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(173, 'Seleksi Non-ASN Tenaga IT Helpdesk SIASN', 7, 1, 1, 6, 85, '2026-12-21', '2026-12-21', 'Terkonfirmasi', 'https://drive.google.com/sample_des_173', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(174, 'Sertifikasi Tim Pengawas Ujian CAT 2027', 9, 2, 1, 12, 45, '2026-12-23', '2026-12-23', 'Terkonfirmasi', 'https://drive.google.com/sample_des_174', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(175, 'Ujian UPKP Penyesuaian Ijazah Pemkab Banjar', 1, 3, 6, 1, 90, '2026-12-27', '2026-12-28', 'Terkonfirmasi', 'https://drive.google.com/sample_des_175', '2026-10-06 03:20:33', '2026-10-06 03:20:33');
 
 -- --------------------------------------------------------
 
@@ -379,7 +449,67 @@ INSERT INTO `laporan_kegiatan` (`id_laporan`, `id_keg`, `peserta_hadir`, `pesert
 (72, 77, 468, 12, 489.00, 281.00, 'https://drive.google.com/file/d/1BKN_LAPORAN_KEG_077/view', 'SKD CPNS Kotabaru selesai tepat waktu.', '2026-11-06 09:00:00', '2026-10-05 06:06:24'),
 (73, 78, 156, 4, 486.00, 301.00, 'https://drive.google.com/file/d/1BKN_LAPORAN_KEG_078/view', 'SKB CPNS Nakes terlaksana baik.', '2026-11-08 09:00:00', '2026-10-05 06:06:24'),
 (74, 79, 322, 8, 478.00, 290.00, 'https://drive.google.com/file/d/1BKN_LAPORAN_KEG_079/view', 'PPPK Teknis Samarinda sukses.', '2026-11-11 09:00:00', '2026-10-05 06:06:24'),
-(75, 80, 538, 12, 492.00, 275.00, 'https://drive.google.com/file/d/1BKN_LAPORAN_KEG_080/view', 'Simulasi CAT 2027 terlaksana meriah.', '2026-11-13 09:00:00', '2026-10-05 06:06:24');
+(75, 80, 538, 12, 492.00, 275.00, 'https://drive.google.com/file/d/1BKN_LAPORAN_KEG_080/view', 'Simulasi CAT 2027 terlaksana meriah.', '2026-11-13 09:00:00', '2026-10-05 06:06:24'),
+(76, 106, 78, 2, 91.50, 72.00, 'https://drive.google.com/file/d/1BKN_LAP_106/view', 'Uji Kompetensi berjalan lancar dan tertib.', '2026-06-05 09:00:00', '2026-10-06 03:20:33'),
+(77, 107, 202, 8, 482.00, 290.00, 'https://drive.google.com/file/d/1BKN_LAP_107/view', 'Fasilitasi PPPK Teknis Banjar tepat waktu.', '2026-06-08 09:00:00', '2026-10-06 03:20:33'),
+(78, 108, 92, 3, 90.00, 75.00, 'https://drive.google.com/file/d/1BKN_LAP_108/view', 'Sosialisasi SIASN dihadiri antusias peserta.', '2026-06-09 09:00:00', '2026-10-06 03:20:33'),
+(79, 109, 310, 10, 488.00, 275.00, 'https://drive.google.com/file/d/1BKN_LAP_109/view', 'Simulasi CAT Banjarmasin berlangsung kondusif.', '2026-06-14 09:00:00', '2026-10-06 03:20:33'),
+(80, 110, 145, 5, 460.00, 280.00, 'https://drive.google.com/file/d/1BKN_LAP_110/view', 'Seleksi Non-ASN RSUD Ansari Saleh tertib.', '2026-06-16 09:00:00', '2026-10-06 03:20:33'),
+(81, 111, 62, 3, 94.00, 80.00, 'https://drive.google.com/file/d/1BKN_LAP_111/view', 'Asesmen Profil Pegawai terlaksana dengan baik.', '2026-06-18 09:00:00', '2026-10-06 03:20:33'),
+(82, 112, 40, 0, 96.00, 82.00, 'https://drive.google.com/file/d/1BKN_LAP_112/view', 'Sertifikasi CAT Pengawas lulus 100%.', '2026-06-21 09:00:00', '2026-10-06 03:20:33'),
+(83, 113, 82, 3, 470.00, 305.00, 'https://drive.google.com/file/d/1BKN_LAP_113/view', 'Ujian Penyesuaian Ijazah Tapin lancar.', '2026-06-24 09:00:00', '2026-10-06 03:20:33'),
+(84, 114, 272, 8, 492.00, 298.00, 'https://drive.google.com/file/d/1BKN_LAP_114/view', 'SKD Kedinasan STTD selesai tepat waktu.', '2026-06-27 09:00:00', '2026-10-06 03:20:33'),
+(85, 115, 48, 2, 88.00, 76.00, 'https://drive.google.com/file/d/1BKN_LAP_115/view', 'Evaluasi Kinerja Fasilitator selesai aman.', '2026-06-29 09:00:00', '2026-10-06 03:20:33'),
+(86, 116, 96, 4, 475.00, 310.00, 'https://drive.google.com/file/d/1BKN_LAP_116/view', 'Ujian Dinas Tanah Laut tertib.', '2026-07-05 09:00:00', '2026-10-06 03:20:33'),
+(87, 117, 438, 12, 489.00, 282.00, 'https://drive.google.com/file/d/1BKN_LAP_117/view', 'SKD CPNS Barito Kuala lancar.', '2026-07-08 09:00:00', '2026-10-06 03:20:33'),
+(88, 118, 175, 5, 480.00, 295.00, 'https://drive.google.com/file/d/1BKN_LAP_118/view', 'PPPK Nakes Banjarbaru aman.', '2026-07-11 09:00:00', '2026-10-06 03:20:33'),
+(89, 119, 390, 10, 495.00, 270.00, 'https://drive.google.com/file/d/1BKN_LAP_119/view', 'Simulasi CAT Sekolah Kedinasan ramai.', '2026-07-13 09:00:00', '2026-10-06 03:20:33'),
+(90, 120, 115, 5, 458.00, 288.00, 'https://drive.google.com/file/d/1BKN_LAP_120/view', 'Seleksi Pamong Desa Tanah Bumbu selesai.', '2026-07-15 09:00:00', '2026-10-06 03:20:33'),
+(91, 121, 68, 2, 92.00, 78.00, 'https://drive.google.com/file/d/1BKN_LAP_121/view', 'Uji Kompetensi Mutasi terlaksana.', '2026-07-18 09:00:00', '2026-10-06 03:20:33'),
+(92, 122, 92, 3, 89.00, 74.00, 'https://drive.google.com/file/d/1BKN_LAP_122/view', 'Psikotes Kedinasan STIN lancar.', '2026-07-21 09:00:00', '2026-10-06 03:20:33'),
+(93, 123, 30, 0, 98.00, 85.00, 'https://drive.google.com/file/d/1BKN_LAP_123/view', 'Sertifikasi Operator Server lulus semua.', '2026-07-23 09:00:00', '2026-10-06 03:20:33'),
+(94, 124, 72, 3, 90.00, 77.00, 'https://drive.google.com/file/d/1BKN_LAP_124/view', 'Lokakarya KDKMP Kotabaru tertib.', '2026-07-26 09:00:00', '2026-10-06 03:20:33'),
+(95, 125, 53, 2, 468.00, 300.00, 'https://drive.google.com/file/d/1BKN_LAP_125/view', 'UPKP BKN Regional selesai aman.', '2026-07-29 09:00:00', '2026-10-06 03:20:33'),
+(96, 126, 106, 4, 472.00, 308.00, 'https://drive.google.com/file/d/1BKN_LAP_126/view', 'Ujian Dinas Tabalong kondusif.', '2026-08-03 09:00:00', '2026-10-06 03:20:33'),
+(97, 127, 408, 12, 491.00, 280.00, 'https://drive.google.com/file/d/1BKN_LAP_127/view', 'SKD CPNS HST terlaksana lancar.', '2026-08-08 09:00:00', '2026-10-06 03:20:33'),
+(98, 128, 155, 5, 486.00, 302.00, 'https://drive.google.com/file/d/1BKN_LAP_128/view', 'SKB CPNS Pemkalteng aman.', '2026-08-11 09:00:00', '2026-10-06 03:20:33'),
+(99, 129, 222, 8, 476.00, 288.00, 'https://drive.google.com/file/d/1BKN_LAP_129/view', 'PPPK Guru HSU sukses.', '2026-08-14 09:00:00', '2026-10-06 03:20:33'),
+(100, 130, 252, 8, 490.00, 296.00, 'https://drive.google.com/file/d/1BKN_LAP_130/view', 'SKD Kedinasan Poltekip Kalsel selesai.', '2026-08-17 09:00:00', '2026-10-06 03:20:33'),
+(101, 131, 78, 2, 450.00, 282.00, 'https://drive.google.com/file/d/1BKN_LAP_131/view', 'Seleksi Non-ASN BKN tertib.', '2026-08-19 09:00:00', '2026-10-06 03:20:33'),
+(102, 132, 44, 1, 95.00, 81.00, 'https://drive.google.com/file/d/1BKN_LAP_132/view', 'Uji Kompetensi Asesor sukses.', '2026-08-22 09:00:00', '2026-10-06 03:20:33'),
+(103, 133, 35, 0, 97.00, 84.00, 'https://drive.google.com/file/d/1BKN_LAP_133/view', 'Sertifikasi Pengelola Komputer lulus 100%.', '2026-08-24 09:00:00', '2026-10-06 03:20:33'),
+(104, 134, 505, 15, 489.00, 272.00, 'https://drive.google.com/file/d/1BKN_LAP_134/view', 'Simulasi CAT Kemerdekaan meriah.', '2026-08-27 09:00:00', '2026-10-06 03:20:33'),
+(105, 135, 87, 3, 91.00, 79.00, 'https://drive.google.com/file/d/1BKN_LAP_135/view', 'Bimtek KNMP terlaksana.', '2026-08-30 09:00:00', '2026-10-06 03:20:33'),
+(106, 136, 135, 5, 482.00, 315.00, 'https://drive.google.com/file/d/1BKN_LAP_136/view', 'Ujian e-UDIN Pemprov Kalsel kondusif.', '2026-09-03 09:00:00', '2026-10-06 03:20:33'),
+(107, 137, 368, 12, 493.00, 285.00, 'https://drive.google.com/file/d/1BKN_LAP_137/view', 'SKD CPNS Paser tepat waktu.', '2026-09-07 09:00:00', '2026-10-06 03:20:33'),
+(108, 138, 106, 4, 488.00, 305.00, 'https://drive.google.com/file/d/1BKN_LAP_138/view', 'SKB CPNS Komputer lancar.', '2026-09-10 09:00:00', '2026-10-06 03:20:33'),
+(109, 139, 291, 9, 479.00, 288.00, 'https://drive.google.com/file/d/1BKN_LAP_139/view', 'PPPK Teknis Balikpapan sukses.', '2026-09-14 09:00:00', '2026-10-06 03:20:33'),
+(110, 140, 165, 5, 88.00, 75.00, 'https://drive.google.com/file/d/1BKN_LAP_140/view', 'Kesamaptaan IPDN aman.', '2026-09-17 09:00:00', '2026-10-06 03:20:33'),
+(111, 141, 182, 8, 465.00, 280.00, 'https://drive.google.com/file/d/1BKN_LAP_141/view', 'CAT BLUD RSUD Banjar selesai.', '2026-09-19 09:00:00', '2026-10-06 03:20:33'),
+(112, 142, 78, 2, 93.00, 80.00, 'https://drive.google.com/file/d/1BKN_LAP_142/view', 'Asesmen Talent Pool Pengawas lancar.', '2026-09-22 09:00:00', '2026-10-06 03:20:33'),
+(113, 143, 40, 0, 96.00, 82.00, 'https://drive.google.com/file/d/1BKN_LAP_143/view', 'Sertifikasi CAT UPT Palangkaraya lulus.', '2026-09-24 09:00:00', '2026-10-06 03:20:33'),
+(114, 144, 350, 10, 485.00, 276.00, 'https://drive.google.com/file/d/1BKN_LAP_144/view', 'Simulasi CAT Tapin lancar.', '2026-09-27 09:00:00', '2026-10-06 03:20:33'),
+(115, 145, 58, 2, 90.00, 78.00, 'https://drive.google.com/file/d/1BKN_LAP_145/view', 'Monev KDKMP Triwulan III selesai.', '2026-09-29 09:00:00', '2026-10-06 03:20:33'),
+(116, 146, 86, 4, 474.00, 308.00, 'https://drive.google.com/file/d/1BKN_LAP_146/view', 'Ujian Dinas Palangkaraya lancar.', '2026-10-02 09:00:00', '2026-10-06 03:20:33'),
+(117, 147, 535, 15, 496.00, 282.00, 'https://drive.google.com/file/d/1BKN_LAP_147/view', 'SKD CPNS Kukar terlaksana baik.', '2026-10-05 09:00:00', '2026-10-06 03:20:33'),
+(118, 148, 126, 4, 485.00, 300.00, 'https://drive.google.com/file/d/1BKN_LAP_148/view', 'SKB CPNS Keuangan aman.', '2026-10-08 09:00:00', '2026-10-06 03:20:33'),
+(119, 149, 301, 9, 478.00, 286.00, 'https://drive.google.com/file/d/1BKN_LAP_149/view', 'PPPK Guru Tanah Laut sukses.', '2026-10-12 09:00:00', '2026-10-06 03:20:33'),
+(120, 150, 232, 8, 491.00, 295.00, 'https://drive.google.com/file/d/1BKN_LAP_150/view', 'SKD Kedinasan STIS tepat waktu.', '2026-10-14 09:00:00', '2026-10-06 03:20:33'),
+(121, 151, 96, 4, 460.00, 282.00, 'https://drive.google.com/file/d/1BKN_LAP_151/view', 'Seleksi Tenaga SIASN tertib.', '2026-10-16 09:00:00', '2026-10-06 03:20:33'),
+(122, 152, 63, 2, 95.00, 82.00, 'https://drive.google.com/file/d/1BKN_LAP_152/view', 'Uji Kompetensi Kenaikan Pangkat selesai.', '2026-10-18 09:00:00', '2026-10-06 03:20:33'),
+(123, 153, 35, 0, 97.00, 84.00, 'https://drive.google.com/file/d/1BKN_LAP_153/view', 'Sertifikasi Asesor Kalteng lulus 100%.', '2026-10-20 09:00:00', '2026-10-06 03:20:33'),
+(124, 154, 468, 12, 488.00, 270.00, 'https://drive.google.com/file/d/1BKN_LAP_154/view', 'Simulasi CAT Banjarbaru ramai.', '2026-10-23 09:00:00', '2026-10-06 03:20:33'),
+(125, 155, 68, 2, 471.00, 302.00, 'https://drive.google.com/file/d/1BKN_LAP_155/view', 'UPKP Barito Utara terlaksana.', '2026-10-25 09:00:00', '2026-10-06 03:20:33'),
+(126, 156, 82, 3, 469.00, 305.00, 'https://drive.google.com/file/d/1BKN_LAP_156/view', 'Ujian Dinas Barito Selatan tertib.', '2026-11-02 09:00:00', '2026-10-06 03:20:33'),
+(127, 157, 330, 10, 488.00, 280.00, 'https://drive.google.com/file/d/1BKN_LAP_157/view', 'SKD CPNS Nunukan lancar.', '2026-11-05 09:00:00', '2026-10-06 03:20:33'),
+(128, 158, 116, 4, 485.00, 300.00, 'https://drive.google.com/file/d/1BKN_LAP_158/view', 'SKB CPNS Banjarmasin aman.', '2026-11-07 09:00:00', '2026-10-06 03:20:33'),
+(129, 159, 282, 8, 476.00, 288.00, 'https://drive.google.com/file/d/1BKN_LAP_159/view', 'PPPK Teknis Kapuas sukses.', '2026-11-11 09:00:00', '2026-10-06 03:20:33'),
+(130, 160, 488, 12, 492.00, 275.00, 'https://drive.google.com/file/d/1BKN_LAP_160/view', 'Simulasi CAT Kaltim meriah.', '2026-11-13 09:00:00', '2026-10-06 03:20:33'),
+(131, 166, 115, 5, 480.00, 310.00, 'https://drive.google.com/file/d/1BKN_LAP_166/view', 'Ujian e-UDIN Akhir Tahun kondusif.', '2026-12-02 09:00:00', '2026-10-06 03:20:33'),
+(132, 167, 398, 12, 490.00, 282.00, 'https://drive.google.com/file/d/1BKN_LAP_167/view', 'SKD CPNS Kutim terlaksana baik.', '2026-12-05 09:00:00', '2026-10-06 03:20:33'),
+(133, 168, 145, 5, 487.00, 302.00, 'https://drive.google.com/file/d/1BKN_LAP_168/view', 'SKB CPNS Analis Kepegawaian lancar.', '2026-12-08 09:00:00', '2026-10-06 03:20:33'),
+(134, 169, 368, 12, 480.00, 286.00, 'https://drive.google.com/file/d/1BKN_LAP_169/view', 'PPPK Akhir Tahun Banjarbaru sukses.', '2026-12-11 09:00:00', '2026-10-06 03:20:33'),
+(135, 170, 632, 18, 495.00, 270.00, 'https://drive.google.com/file/d/1BKN_LAP_170/view', 'Simulasi CAT Akhir Tahun ramai lancar.', '2026-12-14 09:00:00', '2026-10-06 03:20:33');
 
 -- --------------------------------------------------------
 
@@ -475,7 +605,67 @@ INSERT INTO `rekam_kj` (`id_kj`, `id_karyawan`, `id_keg`, `ket_rekam`, `tgl_reka
 (72, 2, 77, 'Penanggung jawab SKD CPNS Kotabaru', '2026-11-04', '2026-10-05 06:06:24'),
 (73, 4, 78, 'Pengawas SKB CPNS Nakes', '2026-11-07', '2026-10-05 06:06:24'),
 (74, 12, 79, 'Koordinator PPPK Teknis Samarinda', '2026-11-09', '2026-10-05 06:06:24'),
-(75, 3, 80, 'Pengawas Simulasi CAT 2027', '2026-11-12', '2026-10-05 06:06:24');
+(75, 3, 80, 'Pengawas Simulasi CAT 2027', '2026-11-12', '2026-10-05 06:06:24'),
+(76, 1, 106, 'Penanggung jawab Uji Kompetensi Pemko Banjarmasin', '2026-06-04', '2026-10-06 03:20:33'),
+(77, 2, 107, 'Koordinator CAT PPPK Teknis Banjar', '2026-06-07', '2026-10-06 03:20:33'),
+(78, 3, 108, 'Narasumber Sosialisasi SIASN Kanreg VIII', '2026-06-09', '2026-10-06 03:20:33'),
+(79, 11, 109, 'Petugas teknis Simulasi CAT Banjarmasin', '2026-06-13', '2026-10-06 03:20:33'),
+(80, 5, 110, 'Pengawas Seleksi Non-ASN RSUD Ansari Saleh', '2026-06-15', '2026-10-06 03:20:33'),
+(81, 10, 111, 'Tim Asesor Pemetaan Profil Pegawai', '2026-06-18', '2026-10-06 03:20:33'),
+(82, 12, 112, 'Instruktur Sertifikasi Pengawas Sub-Regional', '2026-06-21', '2026-10-06 03:20:33'),
+(83, 4, 113, 'Penanggung jawab UPKP Kabupaten Tapin', '2026-06-23', '2026-10-06 03:20:33'),
+(84, 6, 114, 'Koordinator teknis SKD Kedinasan STTD', '2026-06-26', '2026-10-06 03:20:33'),
+(85, 1, 115, 'Tim evaluasi Fasilitator CAT', '2026-06-29', '2026-10-06 03:20:33'),
+(86, 1, 116, 'Koordinator Ujian Dinas Tanah Laut', '2026-07-04', '2026-10-06 03:20:33'),
+(87, 2, 117, 'Penanggung jawab SKD CPNS Barito Kuala', '2026-07-06', '2026-10-06 03:20:33'),
+(88, 4, 118, 'Pengawas PPPK Nakes Banjarbaru', '2026-07-10', '2026-10-06 03:20:33'),
+(89, 3, 119, 'Koordinator Simulasi CAT Sekolah Kedinasan', '2026-07-12', '2026-10-06 03:20:33'),
+(90, 5, 120, 'Tim penguji Pamong Desa Tanah Bumbu', '2026-07-15', '2026-10-06 03:20:33'),
+(91, 12, 121, 'Verifikator berkas Uji Kompetensi Mutasi', '2026-07-18', '2026-10-06 03:20:33'),
+(92, 10, 122, 'Asesor Psikotes Kedinasan STIN', '2026-07-20', '2026-10-06 03:20:33'),
+(93, 11, 123, 'Instruktur Sertifikasi Operator Server', '2026-07-23', '2026-10-06 03:20:33'),
+(94, 4, 124, 'Narasumber Lokakarya KDKMP Kotabaru', '2026-07-26', '2026-10-06 03:20:33'),
+(95, 3, 125, 'Pengawas UPKP BKN Regional', '2026-07-29', '2026-10-06 03:20:33'),
+(96, 1, 126, 'Koordinator Ujian Dinas Tabalong', '2026-08-02', '2026-10-06 03:20:33'),
+(97, 2, 127, 'Penanggung jawab SKD CPNS HST', '2026-08-06', '2026-10-06 03:20:33'),
+(98, 9, 128, 'Pengawas SKB CPNS Pemkalteng', '2026-08-10', '2026-10-06 03:20:33'),
+(99, 3, 129, 'Koordinator PPPK Guru HSU', '2026-08-13', '2026-10-06 03:20:33'),
+(100, 6, 130, 'Penanggung jawab SKD Kedinasan Poltekip', '2026-08-16', '2026-10-06 03:20:33'),
+(101, 5, 131, 'Pengawas Seleksi Non-ASN BKN', '2026-08-19', '2026-10-06 03:20:33'),
+(102, 10, 132, 'Tim penguji Uji Kompetensi Asesor', '2026-08-22', '2026-10-06 03:20:33'),
+(103, 11, 133, 'Instruktur Sertifikasi Pengelola Komputer', '2026-08-24', '2026-10-06 03:20:33'),
+(104, 4, 134, 'Koordinator Simulasi CAT Kemerdekaan', '2026-08-26', '2026-10-06 03:20:33'),
+(105, 12, 135, 'Narasumber Bimtek KNMP', '2026-08-29', '2026-10-06 03:20:33'),
+(106, 1, 136, 'Koordinator Ujian e-UDIN Pemprov Kalsel', '2026-09-02', '2026-10-06 03:20:33'),
+(107, 12, 137, 'Penanggung jawab SKD CPNS Paser', '2026-09-05', '2026-10-06 03:20:33'),
+(108, 6, 138, 'Pengawas SKB CPNS Komputer', '2026-09-09', '2026-10-06 03:20:33'),
+(109, 1, 139, 'Koordinator PPPK Teknis Balikpapan', '2026-09-12', '2026-10-06 03:20:33'),
+(110, 2, 140, 'Tim penguji Kesamaptaan IPDN', '2026-09-16', '2026-10-06 03:20:33'),
+(111, 5, 141, 'Pengawas CAT BLUD RSUD Banjar', '2026-09-18', '2026-10-06 03:20:33'),
+(112, 10, 142, 'Asesor Talent Pool Pejabat Pengawas', '2026-09-21', '2026-10-06 03:20:33'),
+(113, 9, 143, 'Instruktur Sertifikasi UPT Palangkaraya', '2026-09-24', '2026-10-06 03:20:33'),
+(114, 3, 144, 'Pengawas Simulasi CAT Tapin', '2026-09-26', '2026-10-06 03:20:33'),
+(115, 4, 145, 'Tim Monev KDKMP Triwulan III', '2026-09-29', '2026-10-06 03:20:33'),
+(116, 9, 146, 'Koordinator Ujian Dinas Palangkaraya', '2026-10-01', '2026-10-06 03:20:33'),
+(117, 12, 147, 'Penanggung jawab SKD CPNS Kukar', '2026-10-03', '2026-10-06 03:20:33'),
+(118, 4, 148, 'Pengawas SKB CPNS Keuangan', '2026-10-07', '2026-10-06 03:20:33'),
+(119, 2, 149, 'Koordinator PPPK Guru Tanah Laut', '2026-10-10', '2026-10-06 03:20:33'),
+(120, 1, 150, 'Penanggung jawab SKD Kedinasan STIS', '2026-10-13', '2026-10-06 03:20:33'),
+(121, 5, 151, 'Pengawas Seleksi Tenaga SIASN', '2026-10-16', '2026-10-06 03:20:33'),
+(122, 10, 152, 'Tim Asesor Uji Kompetensi Kenaikan Pangkat', '2026-10-18', '2026-10-06 03:20:33'),
+(123, 9, 153, 'Instruktur Sertifikasi Asesor Kalteng', '2026-10-20', '2026-10-06 03:20:33'),
+(124, 3, 154, 'Pengawas Simulasi CAT Banjarbaru', '2026-10-22', '2026-10-06 03:20:33'),
+(125, 9, 155, 'Tim penguji UPKP Barito Utara', '2026-10-25', '2026-10-06 03:20:33'),
+(126, 9, 156, 'Koordinator Ujian Dinas Barito Selatan', '2026-11-01', '2026-10-06 03:20:33'),
+(127, 12, 157, 'Penanggung jawab SKD CPNS Nunukan', '2026-11-03', '2026-10-06 03:20:33'),
+(128, 4, 158, 'Pengawas SKB CPNS Banjarmasin', '2026-11-06', '2026-10-06 03:20:33'),
+(129, 9, 159, 'Koordinator PPPK Teknis Kapuas', '2026-11-09', '2026-10-06 03:20:33'),
+(130, 1, 160, 'Pengawas Simulasi CAT Kaltim', '2026-11-12', '2026-10-06 03:20:33'),
+(131, 1, 166, 'Koordinator Ujian e-UDIN BKN', '2026-12-01', '2026-10-06 03:20:33'),
+(132, 12, 167, 'Penanggung jawab SKD CPNS Kutim', '2026-12-03', '2026-10-06 03:20:33'),
+(133, 4, 168, 'Pengawas SKB CPNS Analis Kepegawaian', '2026-12-07', '2026-10-06 03:20:33'),
+(134, 2, 169, 'Koordinator PPPK Banjarbaru', '2026-12-09', '2026-10-06 03:20:33'),
+(135, 11, 170, 'Petugas teknis Simulasi CAT Akhir Tahun', '2026-12-12', '2026-10-06 03:20:33');
 
 -- --------------------------------------------------------
 
@@ -629,19 +819,19 @@ ALTER TABLE `karyawan`
 -- AUTO_INCREMENT for table `kegiatan`
 --
 ALTER TABLE `kegiatan`
-  MODIFY `id_keg` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=106;
+  MODIFY `id_keg` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=176;
 
 --
 -- AUTO_INCREMENT for table `laporan_kegiatan`
 --
 ALTER TABLE `laporan_kegiatan`
-  MODIFY `id_laporan` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
+  MODIFY `id_laporan` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=136;
 
 --
 -- AUTO_INCREMENT for table `rekam_kj`
 --
 ALTER TABLE `rekam_kj`
-  MODIFY `id_kj` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
+  MODIFY `id_kj` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=136;
 
 --
 -- AUTO_INCREMENT for table `titik_lokasi`
