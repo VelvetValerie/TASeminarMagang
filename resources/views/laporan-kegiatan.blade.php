@@ -161,6 +161,10 @@
                         Reset
                     </a>
                 @endif
+                <a href="{{ url('/laporan-kegiatan/export-csv?' . http_build_query(request()->all())) }}" 
+                class="border-2 border-black bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-3 py-1.5 shadow-xs transition inline-block">
+                    📊 Export CSV / Excel
+                </a>
             </div>
         </form>
     </div>
