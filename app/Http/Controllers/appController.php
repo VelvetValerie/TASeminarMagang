@@ -535,17 +535,18 @@ class AppController extends Controller
         return view('riwayat-kegiatan', compact('kegiatan', 'sort'));
     }
 
-    public function exportCsv(Request $request): StreamedResponse
+    public function exportCsv(Request $request)
     {
+        $loggedUser = Auth::user();
         $fileName = 'Laporan_Kegiatan_BKN_' . date('Y-m-d_H-i') . '.csv';
 
-        return response()->streamDownload(function () use ($request) {
+        return response()->streamDownload(function () use ($request, $loggedUser) {
             $file = fopen('php://output', 'w');
 
-            // Menambahkan BOM agar karakter UTF-8 / Bahasa Indonesia terbaca rapi di Microsoft Excel
-            fputs($file, $bom = chr(0xEF) . chr(0xBB) . chr(0xBF));
+            // Menambahkan UTF-8 BOM agar tulisan rapi saat dibuka di Microsoft Excel
+            fputs($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
 
-            // 1. Header Kolom Spreadsheet
+            // Header Kolom CSV
             fputcsv($file, [
                 'No Laporan',
                 'Nama Kegiatan',
@@ -561,48 +562,64 @@ class AppController extends Controller
                 'Tanggal Pelaporan',
             ]);
 
-            // 2. Query Data Berdasarkan Filter Aktif
-            $query = LaporanKegiatan::with(['kegiatan.jenis', 'kegiatan.lokasi', 'kegiatan.instansi', 'kegiatan.koordinator']);
+            // Query Dasar Laporan
+            $query = LaporanKegiatan::query();
 
+            // 1. FILTER KHUSUS ROLE PEGAWAI: Hanya ambil data yang diampu pegawai login
+            if ($loggedUser && $loggedUser->role === 'pegawai' && $loggedUser->id_karyawan) {
+                $query->whereHas('kegiatan', function ($q) use ($loggedUser) {
+                    $q->where('id_karyawan_koor', $loggedUser->id_karyawan);
+                });
+            }
+
+            // 2. Filter dari Form UI (Jenis Kegiatan, Search, Range Tanggal)
             if ($request->filled('id_jeniskeg')) {
-                $query->whereHas('kegiatan', fn($q) => $q->where('id_jeniskeg', $request->id_jeniskeg));
+                $query->whereHas('kegiatan', function ($q) use ($request) {
+                    $q->where('id_jeniskeg', $request->id_jeniskeg);
+                });
             }
 
             if ($request->filled('search')) {
-                $query->whereHas('kegiatan', fn($q) => $q->where('nama_keg', 'like', '%' . $request->search . '%'));
+                $query->whereHas('kegiatan', function ($q) use ($request) {
+                    $q->where('nama_keg', 'like', '%' . $request->search . '%');
+                });
             }
 
             if ($request->filled('range')) {
-                if ($request->range == '7_days') {
+                if ($request->range === '7_days') {
                     $query->whereHas('kegiatan', fn($q) => $q->where('tanggal_mulai', '>=', now()->subDays(7)));
-                } elseif ($request->range == '1_month') {
+                } elseif ($request->range === '1_month') {
                     $query->whereHas('kegiatan', fn($q) => $q->where('tanggal_mulai', '>=', now()->subMonth()));
-                } elseif ($request->range == '3_months') {
+                } elseif ($request->range === '3_months') {
                     $query->whereHas('kegiatan', fn($q) => $q->where('tanggal_mulai', '>=', now()->subMonths(3)));
                 }
             } elseif ($request->filled('tgl_mulai') && $request->filled('tgl_selesai')) {
-                $query->whereHas('kegiatan', fn($q) => $q->whereBetween('tanggal_mulai', [$request->tgl_mulai, $request->tgl_selesai]));
+                $query->whereHas('kegiatan', function ($q) use ($request) {
+                    $q->whereBetween('tanggal_mulai', [$request->tgl_mulai, $request->tgl_selesai]);
+                });
             }
 
-            // 3. Tulis Baris Data ke Berkas
-            $query->orderBy('created_at', 'desc')->chunk(100, function ($laporans) use ($file) {
-                foreach ($laporans as $item) {
-                    fputcsv($file, [
-                        $item->id_laporan,
-                        $item->kegiatan->nama_keg ?? '-',
-                        $item->kegiatan->jenis->nama_jeniskeg ?? '-',
-                        $item->kegiatan->koordinator->nama_karyawan ?? '-',
-                        $item->kegiatan->lokasi->nm_lokasi ?? '-',
-                        $item->kegiatan->instansi->nm_instansi ?? '-',
-                        $item->peserta_hadir,
-                        $item->peserta_tidak_hadir,
-                        $item->nilai_tertinggi ?? '-',
-                        $item->nilai_terendah ?? '-',
-                        $item->catatan_evaluasi ?? '-',
-                        $item->created_at ? $item->created_at->format('d-m-Y H:i') : '-',
-                    ]);
-                }
-            });
+            // 3. Tulis Data ke File (Aman dari null pointer & crash)
+            $laporans = $query->orderBy('id_laporan', 'desc')->get();
+
+            foreach ($laporans as $item) {
+                $keg = $item->kegiatan;
+
+                fputcsv($file, [
+                    $item->id_laporan,
+                    $keg->nama_keg ?? '-',
+                    optional($keg)->jenisKegiatan->nama_jeniskeg ?? optional($keg)->jenisKeg->nama_jeniskeg ?? '-',
+                    optional($keg)->koordinator->nama_karyawan ?? '-',
+                    optional($keg)->lokasi->nm_lokasi ?? '-',
+                    optional($keg)->instansi->nm_instansi ?? '-',
+                    $item->peserta_hadir ?? 0,
+                    $item->peserta_tidak_hadir ?? 0,
+                    $item->nilai_tertinggi ?? '-',
+                    $item->nilai_terendah ?? '-',
+                    $item->catatan_evaluasi ?? '-',
+                    $item->created_at ? date('d-m-Y H:i', strtotime($item->created_at)) : '-',
+                ]);
+            }
 
             fclose($file);
         }, $fileName, [
