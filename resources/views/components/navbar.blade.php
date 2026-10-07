@@ -103,11 +103,9 @@
         const logo = document.getElementById('logo-container');
         const links = document.querySelectorAll('.nav-link');
         
-        // Dapatkan URL saat ini
         const currentPath = window.location.pathname;
         const isHomePage = currentPath === '/' || currentPath === '/index.html';
         
-        // 1. PENGATURAN MODE TRANSPARAN (Hanya di Beranda & Scroll di atas)
         if (isHomePage && window.scrollY < 50) { 
             navbar.classList.remove('bg-[#fca855]/80', 'shadow-md', 'py-2');
             navbar.classList.add('bg-transparent', 'py-4');
@@ -123,7 +121,6 @@
             });
         }
 
-        // 2. SISTEM URL-BASED ACTIVE LINK
         links.forEach(link => {
             const href = link.getAttribute('href');
             const linkId = link.getAttribute('id');
@@ -141,14 +138,12 @@
                 }
             }
 
-            // Terapkan class jika aktif
             if (isActive) {
                 link.classList.remove('after:scale-x-0');
                 link.classList.add('after:scale-x-100');
             }
         });
 
-        // 3. FADE-IN PEMUATAN HALAMAN
         setTimeout(() => {
             navbar.classList.remove('opacity-0');
             navbar.classList.add('opacity-100');

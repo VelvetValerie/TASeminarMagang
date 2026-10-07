@@ -107,7 +107,6 @@
 
         const container = document.getElementById('timeline-nodes-container');
         
-        // Transisi halus saat pergantian tab
         container.classList.add('opacity-0');
         
         setTimeout(() => {

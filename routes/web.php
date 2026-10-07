@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\AuthController;
 use App\Models\Kegiatan;
+use App\Http\Controllers\Api\Public\KalenderController;
 
 // 1. Rute Akar (Landing Page Utama Publik)
 Route::get('/', function () {
@@ -12,6 +13,8 @@ Route::get('/', function () {
 
     return view('landing', compact('kegiatan'));
 })->name('landing');
+
+Route::get('/kalender-kegiatan', [KalenderController::class, 'getKegiatan']);
 
 Route::get('/berita', function () {
     return view('news');

@@ -17,30 +17,69 @@
             <p class="text-sm text-gray-500 mt-1">Pantau seluruh rangkaian jadwal dan kegiatan terkini</p>
         </div>
         
-        <div class="relative filter-dropdown-container z-40">
+        <div class="relative filter-dropdown-container z-50">
             <button class="px-4 py-2.5 bg-white border border-gray-200 rounded-xl shadow-sm hover:bg-gray-50 transition-colors flex items-center gap-2 font-medium text-sm">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
                 Filter Kategori
             </button>
-            <div class="filter-dropdown absolute right-0 top-full mt-2 w-56 bg-white border border-gray-100 rounded-xl shadow-xl opacity-0 invisible transition-all duration-200 p-4">
-                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Tampilkan:</h4>
-                <label class="flex items-center gap-3 mb-3 cursor-pointer hover:bg-gray-50 p-1 -ml-1 rounded">
-                    <input type="checkbox" id="chkPendaftaran" checked class="category-filter w-4 h-4 text-black border-gray-400 rounded focus:ring-black">
-                    <span class="text-sm font-medium">Pendaftaran</span>
-                </label>
-                <label class="flex items-center gap-3 mb-3 cursor-pointer hover:bg-gray-50 p-1 -ml-1 rounded">
-                    <input type="checkbox" id="chkUjian" checked class="category-filter w-4 h-4 text-black border-gray-400 rounded focus:ring-black">
-                    <span class="text-sm font-medium">Ujian / Tes</span>
-                </label>
-                <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-1 -ml-1 rounded">
-                    <input type="checkbox" id="chkPengumuman" checked class="category-filter w-4 h-4 text-black border-gray-400 rounded focus:ring-black">
-                    <span class="text-sm font-medium">Pengumuman</span>
-                </label>
+            <div class="filter-dropdown absolute right-0 top-full mt-2 w-80 bg-white border border-gray-100 rounded-xl shadow-xl opacity-0 invisible transition-all duration-200 p-5">
+                <div class="flex justify-between items-center mb-4">
+                    <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Tampilkan Jenis Kegiatan:</h4>
+                    <button type="button" class="btn-reset-filter text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors">Reset</button>
+                </div>
+                
+                <!-- 11 Filter Jenis Kegiatan -->
+                <div class="space-y-3">
+                    <label class="flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-1 -ml-1 rounded">
+                        <input type="checkbox" value="Pengembangan Karier (UDIN/UPKP)" checked class="category-filter mt-0.5 w-4 h-4 text-black border-gray-400 rounded focus:ring-black">
+                        <span class="text-sm font-medium leading-tight">Pengembangan Karier (UDIN/UPKP)</span>
+                    </label>
+                    <label class="flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-1 -ml-1 rounded">
+                        <input type="checkbox" value="SKD CPNS" checked class="category-filter mt-0.5 w-4 h-4 text-black border-gray-400 rounded focus:ring-black">
+                        <span class="text-sm font-medium leading-tight">SKD CPNS</span>
+                    </label>
+                    <label class="flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-1 -ml-1 rounded">
+                        <input type="checkbox" value="SKB CPNS" checked class="category-filter mt-0.5 w-4 h-4 text-black border-gray-400 rounded focus:ring-black">
+                        <span class="text-sm font-medium leading-tight">SKB CPNS</span>
+                    </label>
+                    <label class="flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-1 -ml-1 rounded">
+                        <input type="checkbox" value="PPPK" checked class="category-filter mt-0.5 w-4 h-4 text-black border-gray-400 rounded focus:ring-black">
+                        <span class="text-sm font-medium leading-tight">PPPK</span>
+                    </label>
+                    <label class="flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-1 -ml-1 rounded">
+                        <input type="checkbox" value="SKD Sekolah Kedinasan" checked class="category-filter mt-0.5 w-4 h-4 text-black border-gray-400 rounded focus:ring-black">
+                        <span class="text-sm font-medium leading-tight">SKD Sekolah Kedinasan</span>
+                    </label>
+                    <label class="flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-1 -ml-1 rounded">
+                        <input type="checkbox" value="Seleksi Lanjutan Sekolah Kedinasan" checked class="category-filter mt-0.5 w-4 h-4 text-black border-gray-400 rounded focus:ring-black">
+                        <span class="text-sm font-medium leading-tight">Seleksi Lanjutan Sekolah Kedinasan</span>
+                    </label>
+                    <label class="flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-1 -ml-1 rounded">
+                        <input type="checkbox" value="Seleksi Selain ASN (BLUD, perangkat desa, dll)" checked class="category-filter mt-0.5 w-4 h-4 text-black border-gray-400 rounded focus:ring-black">
+                        <span class="text-sm font-medium leading-tight">Seleksi Selain ASN</span>
+                    </label>
+                    <label class="flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-1 -ml-1 rounded">
+                        <input type="checkbox" value="Seleksi Lainnya (uji kompetensi, beasiswa, dll)" checked class="category-filter mt-0.5 w-4 h-4 text-black border-gray-400 rounded focus:ring-black">
+                        <span class="text-sm font-medium leading-tight">Seleksi Lainnya</span>
+                    </label>
+                    <label class="flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-1 -ml-1 rounded">
+                        <input type="checkbox" value="Sertifikasi CAT" checked class="category-filter mt-0.5 w-4 h-4 text-black border-gray-400 rounded focus:ring-black">
+                        <span class="text-sm font-medium leading-tight">Sertifikasi CAT</span>
+                    </label>
+                    <label class="flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-1 -ml-1 rounded">
+                        <input type="checkbox" value="Simulasi CAT" checked class="category-filter mt-0.5 w-4 h-4 text-black border-gray-400 rounded focus:ring-black">
+                        <span class="text-sm font-medium leading-tight">Simulasi CAT</span>
+                    </label>
+                    <label class="flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-1 -ml-1 rounded">
+                        <input type="checkbox" value="KDKMP dan KNMP" checked class="category-filter mt-0.5 w-4 h-4 text-black border-gray-400 rounded focus:ring-black">
+                        <span class="text-sm font-medium leading-tight">KDKMP dan KNMP</span>
+                    </label>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="flex items-center justify-between mb-6 bg-gray-50 border border-gray-200 rounded-xl p-3">
+    <div class="flex items-center justify-between mb-6 bg-gray-50 border border-gray-200 rounded-xl p-3 relative z-40">
         <button id="btnPrevMonth" class="p-2 bg-white border border-gray-200 rounded-lg hover:border-gray-400 transition-colors shrink-0 shadow-sm">
             <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
         </button>
@@ -59,9 +98,9 @@
         </button>
     </div>
 
-    <div id="calendarGridContainer" class="w-full relative"></div>
+    <div id="calendarGridContainer" class="w-full relative z-30"></div>
 
-    <div class="mt-6 flex justify-end">
+    <div class="mt-6 flex justify-end relative z-30">
         <button id="btnOpenModal" class="p-2.5 bg-white border border-gray-200 rounded-xl shadow-sm hover:bg-gray-50 hover:-translate-y-1 transition-all flex items-center justify-center group" title="Lihat selengkapnya">
             <span class="mr-2 text-sm font-bold">Lihat Semua Jadwal</span>
             <svg class="w-5 h-5 text-gray-700 group-hover:text-blue-600 transition-colors" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -72,22 +111,89 @@
 </div>
 
 @push('modals')
-<div id="calendarModalOverlay" class="hidden fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 transition-opacity duration-300">
+<div id="calendarModalOverlay" class="hidden fixed inset-0 z-100 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 transition-opacity duration-300">
     <div class="bg-white w-full max-w-[95vw] md:max-w-7xl max-h-[95vh] rounded-2xl shadow-2xl flex flex-col relative overflow-hidden transform scale-100 transition-transform">
-        <div class="flex-shrink-0 p-6 border-b border-gray-200 flex justify-between items-center bg-white z-20">
-            <div><h2 class="text-2xl md:text-3xl font-bold text-gray-900">Agenda Jadwal Lengkap</h2></div>
-            <button id="btnCloseModal" class="p-2 bg-gray-100 border-2 border-transparent hover:border-black text-gray-700 rounded-lg transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
+        
+        <!-- Header Modal dengan Tambahan Filter -->
+        <div class="flex-shrink-0 p-6 border-b border-gray-200 flex justify-between items-center bg-white relative z-50">
+            <div><h2 class="text-xl md:text-3xl font-bold text-gray-900">Agenda Jadwal Lengkap</h2></div>
+            
+            <div class="flex items-center gap-3">
+                <div class="relative filter-dropdown-container">
+                    <button class="px-3 py-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition-colors flex items-center gap-2 font-medium text-sm">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                        <span class="hidden sm:inline">Filter</span>
+                    </button>
+                    <!-- Dropdown Filter Modal -->
+                    <div class="filter-dropdown absolute right-0 top-full mt-2 w-80 bg-white border border-gray-100 rounded-xl shadow-xl opacity-0 invisible transition-all duration-200 p-5 z-[60]">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Tampilkan Jenis Kegiatan:</h4>
+                            <button type="button" class="btn-reset-filter text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors">Reset</button>
+                        </div>
+                        <div class="space-y-3">
+                            <label class="flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-1 -ml-1 rounded">
+                                <input type="checkbox" value="Pengembangan Karier (UDIN/UPKP)" checked class="category-filter mt-0.5 w-4 h-4 text-black border-gray-400 rounded focus:ring-black">
+                                <span class="text-sm font-medium leading-tight">Pengembangan Karier (UDIN/UPKP)</span>
+                            </label>
+                            <label class="flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-1 -ml-1 rounded">
+                                <input type="checkbox" value="SKD CPNS" checked class="category-filter mt-0.5 w-4 h-4 text-black border-gray-400 rounded focus:ring-black">
+                                <span class="text-sm font-medium leading-tight">SKD CPNS</span>
+                            </label>
+                            <label class="flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-1 -ml-1 rounded">
+                                <input type="checkbox" value="SKB CPNS" checked class="category-filter mt-0.5 w-4 h-4 text-black border-gray-400 rounded focus:ring-black">
+                                <span class="text-sm font-medium leading-tight">SKB CPNS</span>
+                            </label>
+                            <label class="flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-1 -ml-1 rounded">
+                                <input type="checkbox" value="PPPK" checked class="category-filter mt-0.5 w-4 h-4 text-black border-gray-400 rounded focus:ring-black">
+                                <span class="text-sm font-medium leading-tight">PPPK</span>
+                            </label>
+                            <label class="flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-1 -ml-1 rounded">
+                                <input type="checkbox" value="SKD Sekolah Kedinasan" checked class="category-filter mt-0.5 w-4 h-4 text-black border-gray-400 rounded focus:ring-black">
+                                <span class="text-sm font-medium leading-tight">SKD Sekolah Kedinasan</span>
+                            </label>
+                            <label class="flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-1 -ml-1 rounded">
+                                <input type="checkbox" value="Seleksi Lanjutan Sekolah Kedinasan" checked class="category-filter mt-0.5 w-4 h-4 text-black border-gray-400 rounded focus:ring-black">
+                                <span class="text-sm font-medium leading-tight">Seleksi Lanjutan Sekolah Kedinasan</span>
+                            </label>
+                            <label class="flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-1 -ml-1 rounded">
+                                <input type="checkbox" value="Seleksi Selain ASN (BLUD, perangkat desa, dll)" checked class="category-filter mt-0.5 w-4 h-4 text-black border-gray-400 rounded focus:ring-black">
+                                <span class="text-sm font-medium leading-tight">Seleksi Selain ASN</span>
+                            </label>
+                            <label class="flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-1 -ml-1 rounded">
+                                <input type="checkbox" value="Seleksi Lainnya (uji kompetensi, beasiswa, dll)" checked class="category-filter mt-0.5 w-4 h-4 text-black border-gray-400 rounded focus:ring-black">
+                                <span class="text-sm font-medium leading-tight">Seleksi Lainnya</span>
+                            </label>
+                            <label class="flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-1 -ml-1 rounded">
+                                <input type="checkbox" value="Sertifikasi CAT" checked class="category-filter mt-0.5 w-4 h-4 text-black border-gray-400 rounded focus:ring-black">
+                                <span class="text-sm font-medium leading-tight">Sertifikasi CAT</span>
+                            </label>
+                            <label class="flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-1 -ml-1 rounded">
+                                <input type="checkbox" value="Simulasi CAT" checked class="category-filter mt-0.5 w-4 h-4 text-black border-gray-400 rounded focus:ring-black">
+                                <span class="text-sm font-medium leading-tight">Simulasi CAT</span>
+                            </label>
+                            <label class="flex items-start gap-3 cursor-pointer hover:bg-gray-50 p-1 -ml-1 rounded">
+                                <input type="checkbox" value="KDKMP dan KNMP" checked class="category-filter mt-0.5 w-4 h-4 text-black border-gray-400 rounded focus:ring-black">
+                                <span class="text-sm font-medium leading-tight">KDKMP dan KNMP</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="btnCloseModal" class="p-2 bg-gray-100 border-2 border-transparent hover:border-black text-gray-700 rounded-lg transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
         </div>
-        <div class="flex-grow overflow-y-auto bg-gray-50 p-4 md:p-8 custom-scrollbar relative">
+        
+        <div class="flex-grow overflow-y-auto bg-gray-50 p-4 md:p-8 custom-scrollbar relative z-30">
             <div class="max-w-6xl mx-auto"><div id="modalCalendarGridContainer" class="w-full"></div></div>
         </div>
     </div>
 </div>
 @endpush
 
-<div id="dayEventsModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity">
+@push('modals')
+<div id="dayEventsModal" class="hidden fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity">
     <div class="relative w-full max-w-lg bg-white rounded-xl p-5">
         <button id="btnCloseDayModal" class="absolute top-4 right-4 p-1 text-gray-400 hover:text-black transition-colors">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -96,8 +202,10 @@
         <div id="dayModalListContainer" class="max-h-[350px] overflow-y-auto space-y-3 custom-scrollbar pr-2"></div>
     </div>
 </div>
+@endpush
 
-<div id="eventDetailModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity">
+@push('modals')
+<div id="eventDetailModal" class="hidden fixed inset-0 z-200 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity">
     <div class="relative w-full max-w-md bg-white rounded-xl p-5">
         <button id="btnCloseDetailModal" class="absolute top-4 right-4 p-1 text-gray-400 hover:text-black transition-colors">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -105,75 +213,114 @@
         <h3 class="text-lg font-bold text-gray-900 border-b-2 border-gray-100 pb-3 mb-4 pr-8">Detail Kegiatan</h3>
         <div class="space-y-3 text-sm text-gray-800 bg-gray-50 p-4 border border-gray-200 rounded-lg">
             <p><span class="font-bold">Nama Kegiatan:</span> <span id="dtNama">-</span></p>
-            <p><span class="font-bold">Kategori:</span> <span id="dtKategori" class="capitalize">-</span></p>
-            <p><span class="font-bold">Tanggal:</span> <span id="dtTanggal">-</span></p>
+            <p><span class="font-bold">Jenis Kegiatan:</span> <span id="dtJenisKegiatan" class="capitalize">-</span></p>
+            <p><span class="font-bold">Koordinator:</span> <span id="dtKoordinator">-</span></p>
+            <p><span class="font-bold">Tanggal Mulai:</span> <span id="dtTanggalMulai">-</span></p>
+            <p><span class="font-bold">Tanggal Berakhir:</span> <span id="dtTanggalBerakhir">-</span></p>
             <p><span class="font-bold">Lokasi:</span> <span id="dtLokasi">-</span></p>
-            <p><span class="font-bold">Status:</span> <span id="dtStatus">-</span></p>
+            <p><span class="font-bold">Instansi:</span> <span id="dtInstansi">-</span></p>
+            <p><span class="font-bold">Jumlah Peserta:</span> <span id="dtPeserta">-</span></p>
         </div>
         <div class="mt-5 flex justify-end">
             <button id="btnBackToDayModal" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 border-2 border-black rounded-lg text-sm font-bold transition-colors">Tutup</button>
         </div>
     </div>
 </div>
+@endpush
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // Ambil data kegiatan dari $kegiatan (dikirim via controller ke view landing)
-        const rawKegiatan = @json($kegiatan ?? []);
+    document.addEventListener('DOMContentLoaded', async () => {
+        
+        let rawKegiatan = [];
+        
+        try {
+            const response = await fetch('/kalender-kegiatan');
+            const apiData = await response.json();
+            rawKegiatan = Array.isArray(apiData) ? apiData : (apiData.data || []);
+        } catch (error) {
+            console.error("Gagal mengambil data dari API, menggunakan data fallback:", error);
+            const fallbackData = @json($kegiatan ?? []);
+            rawKegiatan = Array.isArray(fallbackData) ? fallbackData : (fallbackData.data || Object.values(fallbackData || {}));
+        }
 
-        // Mapping data dari Database ke format objek Kalender
-        const eventsData = rawKegiatan.map(item => {
-            const tglMulai = new Date(item.tanggal_mulai);
-            const tglSelesai = item.tanggal_selesai ? new Date(item.tanggal_selesai) : tglMulai;
+        const categoryConfig = {
+            "SKD CPNS": { color: "bg-[#FFD8B2] text-[#8A3B00] border-2 border-black" },
+            "SKB CPNS": { color: "bg-[#FFD8B2] text-[#8A3B00] border-2 border-black" },
+            "PPPK": { color: "bg-[#FFD8B2] text-[#8A3B00] border-2 border-black" },
+            "SKD Sekolah Kedinasan": { color: "bg-[#FFD8B2] text-[#8A3B00] border-2 border-black" },
+            "Seleksi Lanjutan Sekolah Kedinasan": { color: "bg-[#FFD8B2] text-[#8A3B00] border-2 border-black" },
+            "Sertifikasi CAT": { color: "bg-[#D0E2FF] text-[#0043CE] border-2 border-black" },
+            "Simulasi CAT": { color: "bg-[#D0E2FF] text-[#0043CE] border-2 border-black" },
+            "Pengembangan Karier (UDIN/UPKP)": { color: "bg-[#C1F1D2] text-[#00512C] border-2 border-black" },
+            "Seleksi Selain ASN (BLUD, perangkat desa, dll)": { color: "bg-[#E8DAFF] text-[#491D8B] border-2 border-black" },
+            "Seleksi Lainnya (uji kompetensi, beasiswa, dll)": { color: "bg-[#E8DAFF] text-[#491D8B] border-2 border-black" },
+            "KDKMP dan KNMP": { color: "bg-[#F3F4F6] text-[#1F2937] border-2 border-black" }
+        };
 
-            const namaJenis = item.jenis ? item.jenis.nama_jeniskeg.toLowerCase() : 'umum';
-            let category = 'pendaftaran';
-            let badgeColor = 'bg-[#D0E2FF] text-[#0043CE] border-2 border-black';
+        const eventsData = rawKegiatan.reduce((acc, item) => {
+            const rawMulai = item.start || item['Tanggal Mulai'] || item.tanggal_mulai;
+            const rawSelesai = item.end || item['Tanggal Selesai'] || item.tanggal_selesai;
+            
+            if (!rawMulai) return acc; 
 
-            if (namaJenis.includes('ujian') || namaJenis.includes('tes') || namaJenis.includes('cat') || namaJenis.includes('casn')) {
-                category = 'ujian';
-                badgeColor = 'bg-[#FFD8B2] text-[#8A3B00] border-2 border-black';
-            } else if (namaJenis.includes('pengumuman') || namaJenis.includes('hasil') || namaJenis.includes('karir')) {
-                category = 'pengumuman';
-                badgeColor = 'bg-[#C1F1D2] text-[#00512C] border-2 border-black';
-            } else if (namaJenis.includes('daftar') || namaJenis.includes('pendaftaran') || namaJenis.includes('bimtek')) {
-                category = 'pendaftaran';
-                badgeColor = 'bg-[#D0E2FF] text-[#0043CE] border-2 border-black';
-            }
+            const safeMulai = String(rawMulai).replace(/ /g, 'T');
+            const safeSelesai = rawSelesai ? String(rawSelesai).replace(/ /g, 'T') : safeMulai;
 
-            return {
-                id: item.id_keg,
-                title: item.nama_keg,
+            const tglMulai = new Date(safeMulai);
+            const tglSelesai = new Date(safeSelesai);
+
+            if (isNaN(tglMulai.getTime())) return acc;
+
+            const namaJenisMentah = item.extendedProps?.jenis_kegiatan || item.jenis?.nama_jeniskeg || item['Jenis Kegiatan'] || 'Seleksi Lainnya (uji kompetensi, beasiswa, dll)';
+            const namaJenis = typeof namaJenisMentah === 'string' ? namaJenisMentah.trim() : namaJenisMentah;
+            
+            let badgeColor = categoryConfig[namaJenis] ? categoryConfig[namaJenis].color : 'bg-[#D0E2FF] text-[#0043CE] border-2 border-black';
+
+            acc.push({
+                id: item.id || item['ID Kegiatan'] || item.id_kegiatan || item.id_keg,
+                title: item.title || item['Nama Kegiatan'] || item.nama_keg || '-',
                 startDay: tglMulai.getDate(),
                 endDay: tglSelesai.getDate(),
                 month: tglMulai.getMonth(),
                 year: tglMulai.getFullYear(),
-                category: category,
+                category: namaJenis,
                 color: badgeColor,
-                lokasi: item.lokasi ? item.lokasi.nm_lokasi : '-',
-                status: item.status || 'Belum Konfirmasi'
-            };
-        });
+                
+                lokasi: item.extendedProps?.lokasi || item.lokasi?.nm_lokasi || item['Titik Lokasi'] || '-',
+                
+                instansi: item.extendedProps?.instansi || item.instansi?.nm_instansi || item.instansi?.nama_instansi || item['Instansi'] || '-',
+                
+                koordinator: item.extendedProps?.koordinator || item.koordinator?.nama_karyawan || item['Nama Karyawan Koordinator'] || '-',
+                
+                jumlah_peserta: item.extendedProps?.jumlah_peserta || item.jmlh_peserta || item['Jumlah Peserta'] || '-',
+                
+                status: item.status || 'Terkonfirmasi',
+                rawMulai: tglMulai,
+                rawSelesai: tglSelesai,
+                rawDataAsli: item
+            });
+
+            return acc;
+        }, []);
 
         const colStartMap = { 1: 'col-start-1', 2: 'col-start-2', 3: 'col-start-3', 4: 'col-start-4', 5: 'col-start-5', 6: 'col-start-6', 7: 'col-start-7' };
         const colSpanMap = { 1: 'col-span-1', 2: 'col-span-2', 3: 'col-span-3', 4: 'col-span-4', 5: 'col-span-5', 6: 'col-span-6', 7: 'col-span-7' };
         
         const monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
         
-        const todayDate = new Date();
-        let currentMonth = todayDate.getMonth();
-        let currentYear = todayDate.getFullYear();
+        const defaultTargetDate = new Date(2026, 9, 6); 
+        let currentMonth = defaultTargetDate.getMonth();
+        let currentYear = defaultTargetDate.getFullYear();
+        const realTodayDate = new Date(); 
 
         const getFilteredEvents = () => {
-            const showPendaftaran = document.getElementById('chkPendaftaran').checked;
-            const showUjian = document.getElementById('chkUjian').checked;
-            const showPengumuman = document.getElementById('chkPengumuman').checked;
+            const checkedCategories = Array.from(document.querySelectorAll('.category-filter:checked')).map(cb => cb.value);
+            const uniqueChecked = [...new Set(checkedCategories)];
             
             return eventsData.filter(e => {
                 if (e.month !== currentMonth || e.year !== currentYear) return false;
-                if (e.category === 'pendaftaran' && !showPendaftaran) return false;
-                if (e.category === 'ujian' && !showUjian) return false;
-                if (e.category === 'pengumuman' && !showPengumuman) return false;
+                if (uniqueChecked.length > 0 && !uniqueChecked.includes(e.category)) return false;
+                
                 return true;
             });
         };
@@ -185,6 +332,11 @@
 
             const header = document.createElement('div');
             header.className = "grid grid-cols-7 gap-px bg-gray-200 border border-gray-200 rounded-t-xl overflow-hidden";
+            
+            if (containerId === 'calendarGridContainer') {
+                header.style.paddingRight = '6px';
+            }
+
             header.innerHTML = `
                 <div class="bg-gray-50 py-3 text-center text-xs md:text-sm font-bold text-red-600 uppercase">Min</div>
                 <div class="bg-gray-50 py-3 text-center text-xs md:text-sm font-bold text-gray-600 uppercase">Sen</div>
@@ -209,8 +361,10 @@
             }
             
             for (let i = 1; i <= daysInMonth; i++) {
-                const isRealToday = (i === todayDate.getDate() && currentMonth === todayDate.getMonth() && currentYear === todayDate.getFullYear());
-                days.push({ date: i, isCurrent: true, isToday: isRealToday, monthOffset: 0 });
+                const isRealToday = (i === realTodayDate.getDate() && currentMonth === realTodayDate.getMonth() && currentYear === realTodayDate.getFullYear());
+                const isDefaultTarget = (i === 6 && currentMonth === 9 && currentYear === 2026); 
+
+                days.push({ date: i, isCurrent: true, isToday: isRealToday, isTarget: isDefaultTarget, monthOffset: 0 });
             }
             
             const remainingCells = totalCells - days.length;
@@ -234,9 +388,10 @@
                 weekRow.className = "grid grid-cols-1 grid-rows-1 bg-gray-200 border-b border-gray-300 min-h-[110px] md:min-h-[130px] relative";
 
                 const hasToday = weekDays.some(d => d.isToday);
+                const hasTarget = weekDays.some(d => d.isTarget);
                 const hasFirstDay = weekDays.some(d => d.isCurrent && d.date === 1);
 
-                if (hasToday) {
+                if (hasToday || hasTarget) {
                     weekRow.classList.add('scroll-target-row');
                 } else if (hasFirstDay) {
                     weekRow.classList.add('scroll-fallback-row');
@@ -248,11 +403,13 @@
                 daysLayer.innerHTML = weekDays.map((d) => {
                     const textClass = d.isCurrent ? 'text-gray-900 font-bold' : 'text-gray-400';
                     const todayBadge = d.isToday ? 'bg-[#F97316] text-white w-7 h-7 rounded-full flex items-center justify-center font-bold' : '';
-                    const todayBorder = d.isToday ? 'border-2 border-[#F97316] z-10' : '';
+                    const targetBadge = (d.isTarget && !d.isToday) ? 'bg-blue-600 text-white w-7 h-7 rounded-full flex items-center justify-center font-bold' : '';
+                    const combinedBadge = todayBadge || targetBadge;
+                    const todayBorder = (d.isToday || d.isTarget) ? 'border-2 border-blue-400 z-10' : '';
                     
                     return `
                         <div class="day-cell bg-white p-2.5 relative flex flex-col justify-start hover:bg-gray-50 cursor-pointer transition-colors ${todayBorder} h-full" data-date="${d.date}" data-month-offset="${d.monthOffset}">
-                            <div class="text-xs md:text-sm ${textClass} ${todayBadge}">${d.date}</div>
+                            <div class="text-xs md:text-sm ${textClass} ${combinedBadge}">${d.date}</div>
                         </div>
                     `;
                 }).join('');
@@ -325,7 +482,8 @@
             document.getElementById('nextMonthLabel').innerText = `${monthNames[nextMonthDate.getMonth()]} ${nextMonthDate.getFullYear()}`;
 
             renderOverlayCalendar('calendarGridContainer');
-            if (!document.getElementById('calendarModalOverlay').classList.contains('hidden')) {
+            const modalOverlay = document.getElementById('calendarModalOverlay');
+            if (modalOverlay && !modalOverlay.classList.contains('hidden')) {
                 renderOverlayCalendar('modalCalendarGridContainer');
             }
         };
@@ -342,27 +500,56 @@
             updateMonthUI();
         };
 
-        document.getElementById('btnPrevMonth').addEventListener('click', () => changeMonth(-1));
-        document.getElementById('prevMonthLabel').addEventListener('click', () => changeMonth(-1));
-        document.getElementById('btnNextMonth').addEventListener('click', () => changeMonth(1));
-        document.getElementById('nextMonthLabel').addEventListener('click', () => changeMonth(1));
+        const btnPrevMonth = document.getElementById('btnPrevMonth');
+        if(btnPrevMonth) btnPrevMonth.addEventListener('click', () => changeMonth(-1));
+        const prevMonthLabel = document.getElementById('prevMonthLabel');
+        if(prevMonthLabel) prevMonthLabel.addEventListener('click', () => changeMonth(-1));
+        
+        const btnNextMonth = document.getElementById('btnNextMonth');
+        if(btnNextMonth) btnNextMonth.addEventListener('click', () => changeMonth(1));
+        const nextMonthLabel = document.getElementById('nextMonthLabel');
+        if(nextMonthLabel) nextMonthLabel.addEventListener('click', () => changeMonth(1));
 
         document.querySelectorAll('.category-filter').forEach(chk => {
-            chk.addEventListener('change', updateMonthUI);
+            chk.addEventListener('change', (e) => {
+                const targetValue = e.target.value;
+                const isChecked = e.target.checked;
+                
+                document.querySelectorAll(`.category-filter[value="${targetValue}"]`).forEach(cb => {
+                    cb.checked = isChecked;
+                });
+                
+                updateMonthUI();
+            });
+        });
+
+        document.querySelectorAll('.btn-reset-filter').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.category-filter').forEach(cb => {
+                    cb.checked = true;
+                });
+                updateMonthUI();
+            });
         });
 
         window.openEventDetail = function(eventId) {
-            const item = eventsData.find(x => x.id === parseInt(eventId));
+            const item = eventsData.find(x => x.id === parseInt(eventId) || x.id === String(eventId));
             if (!item) return;
 
+            const formatTgl = (tgl) => {
+                if (!tgl || isNaN(tgl.getTime())) return '-';
+                return `${tgl.getDate()} ${monthNames[tgl.getMonth()]} ${tgl.getFullYear()}`;
+            };
+
             document.getElementById('dtNama').innerText = item.title;
-            document.getElementById('dtKategori').innerText = item.category.replace('-', ' ');
-            document.getElementById('dtTanggal').innerText = 
-                (item.startDay === item.endDay) 
-                ? `${item.startDay} ${monthNames[item.month]} ${item.year}` 
-                : `${item.startDay} - ${item.endDay} ${monthNames[item.month]} ${item.year}`;
-            document.getElementById('dtLokasi').innerText = item.lokasi || '-';
-            document.getElementById('dtStatus').innerText = item.status || '-';
+            document.getElementById('dtJenisKegiatan').innerText = item.category;
+            document.getElementById('dtKoordinator').innerText = item.koordinator;
+            document.getElementById('dtTanggalMulai').innerText = formatTgl(item.rawMulai);
+            document.getElementById('dtTanggalBerakhir').innerText = formatTgl(item.rawSelesai);
+            document.getElementById('dtLokasi').innerText = item.lokasi;
+            document.getElementById('dtInstansi').innerText = item.instansi;
+            
+            document.getElementById('dtPeserta').innerText = item.jumlah_peserta;
 
             document.getElementById('dayEventsModal').classList.add('hidden');
             document.getElementById('eventDetailModal').classList.remove('hidden');
@@ -402,7 +589,7 @@
                                     <p class="text-xs text-gray-500 capitalize truncate">${ev.category} • ${ev.lokasi || '-'}</p>
                                 </div>
                             </div>
-                            <button type="button" onclick="window.openEventDetail(${ev.id})" class="shrink-0 px-3 py-1.5 bg-white hover:bg-gray-100 border-2 border-black rounded-lg text-xs font-bold transition-colors">
+                            <button type="button" onclick="window.openEventDetail('${ev.id}')" class="shrink-0 px-3 py-1.5 bg-white hover:bg-gray-100 border-2 border-black rounded-lg text-xs font-bold transition-colors">
                                 Detail
                             </button>
                         </div>`;
@@ -430,25 +617,24 @@
             }
         });
 
-        document.getElementById('btnCloseDayModal').addEventListener('click', () => {
-            document.getElementById('dayEventsModal').classList.add('hidden');
-        });
+        const btnCloseDayModal = document.getElementById('btnCloseDayModal');
+        if(btnCloseDayModal) btnCloseDayModal.addEventListener('click', () => { document.getElementById('dayEventsModal').classList.add('hidden'); });
 
-        document.getElementById('btnCloseDetailModal').addEventListener('click', () => {
-            document.getElementById('eventDetailModal').classList.add('hidden');
-        });
+        const btnCloseDetailModal = document.getElementById('btnCloseDetailModal');
+        if(btnCloseDetailModal) btnCloseDetailModal.addEventListener('click', () => { document.getElementById('eventDetailModal').classList.add('hidden'); });
 
-        document.getElementById('btnBackToDayModal').addEventListener('click', () => {
-            document.getElementById('eventDetailModal').classList.add('hidden');
-        });
+        const btnBackToDayModal = document.getElementById('btnBackToDayModal');
+        if(btnBackToDayModal) btnBackToDayModal.addEventListener('click', () => { document.getElementById('eventDetailModal').classList.add('hidden'); });
 
-        document.getElementById('btnOpenModal').addEventListener('click', () => {
+        const btnOpenModal = document.getElementById('btnOpenModal');
+        if(btnOpenModal) btnOpenModal.addEventListener('click', () => {
             document.getElementById('calendarModalOverlay').classList.remove('hidden');
             document.body.style.overflow = 'hidden'; 
             renderOverlayCalendar('modalCalendarGridContainer');
         });
 
-        document.getElementById('btnCloseModal').addEventListener('click', () => {
+        const btnCloseModal = document.getElementById('btnCloseModal');
+        if(btnCloseModal) btnCloseModal.addEventListener('click', () => {
             document.getElementById('calendarModalOverlay').classList.add('hidden');
             document.body.style.overflow = '';
         });
