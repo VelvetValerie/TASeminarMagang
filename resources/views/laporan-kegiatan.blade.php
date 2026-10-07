@@ -46,9 +46,7 @@
         }
     </style>
 
-    @php
-        $loggedUser = Auth::user();
-    @endphp
+    <?php $loggedUser = Auth::user(); ?>
 
     <!-- NOTIFIKASI PESAN SUKSES / ERROR -->
     @if (session('success'))
@@ -67,9 +65,9 @@
         <div class="mb-4 border-2 border-black bg-rose-100 p-3 font-bold text-rose-900 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] text-xs sm:text-sm">
             <p class="font-extrabold mb-1">Gagal Menyimpan Data Laporan:</p>
             <ul class="list-disc pl-5 space-y-0.5">
-                @foreach ($errors->all() as $error)
+                <?php foreach ($errors->all() as$error): ?>
                     <li>{{ $error }}</li>
-                @endforeach
+                <?php endforeach; ?>
             </ul>
         </div>
     @endif
@@ -111,18 +109,18 @@
                 <input type="hidden" name="search" value="{{ request('search') }}">
             @endif
 
-            <!-- Filter Jenis Kegiatan (BARU) -->
+            <!-- Filter Jenis Kegiatan -->
             <div>
                 <label class="block font-bold text-gray-800 mb-1">JENIS KEGIATAN:</label>
                 <select name="id_jeniskeg" onchange="this.form.submit()" class="border-2 border-black bg-white p-1.5 font-bold">
                     <option value="">-- Semua Jenis --</option>
-                    @if (isset($jenisKegiatan))
-                        @foreach ($jenisKegiatan as $jk)
+                    <?php if (isset($jenisKegiatan) && count($jenisKegiatan) > 0): ?>
+                        <?php foreach ($jenisKegiatan as$jk): ?>
                             <option value="{{ $jk->id_jeniskeg }}" {{ request('id_jeniskeg') == $jk->id_jeniskeg ? 'selected' : '' }}>
                                 {{ $jk->nama_jeniskeg }}
                             </option>
-                        @endforeach
-                    @endif
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </select>
             </div>
 
@@ -171,26 +169,27 @@
 
         <!-- Tabel Laporan Hasil Kegiatan -->
         <div class="mt-2 border-2 border-black overflow-x-auto">
-            <table class="w-full border-collapse border-black min-w-[900px] text-xs sm:text-sm">
+            <table class="w-full border-collapse border-black min-w-[1000px] text-xs sm:text-sm">
                 <thead>
                     <tr class="border-b-2 border-black bg-gray-100 text-center font-bold text-gray-900">
                         <th class="border-r-2 border-black py-3 px-2 w-10">No</th>
                         <th class="border-r-2 border-black py-3 px-3">Nama Kegiatan & Koordinator</th>
                         <th class="border-r-2 border-black py-3 px-2 w-32">Peserta (Hadir / Absen)</th>
+                        <th class="border-r-2 border-black py-3 px-2 w-32">Status Kelulusan</th>
                         <th class="border-r-2 border-black py-3 px-2 w-28">Nilai (Max / Min)</th>
-                        <th class="border-r-2 border-black py-3 px-3 w-32">Dokumen Laporan</th>
+                        <th class="border-r-2 border-black py-3 px-3 w-28">Dokumen</th>
                         <th class="py-3 px-2 w-36">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="font-medium text-gray-900">
-                    @if (isset($laporan) && count($laporan) > 0)
-                        @foreach ($laporan as $idx => $item)
-                            @php 
-                                $no = $laporan->firstItem() + $idx; 
-                                $keg = $item->kegiatan;
+                    <?php if (isset($laporan) && count($laporan) > 0): ?>
+                        <?php foreach ($laporan as $idx =>$item): ?>
+                            <?php 
+                                $no = $laporan->firstItem() +$idx; 
+                                $keg =$item->kegiatan;
                                 
-                                $isKoordinator = ($loggedUser->role === 'pegawai') 
-                                    ? ($keg && $keg->id_karyawan_koor == $loggedUser->id_karyawan) 
+                                $isKoordinator = ($loggedUser &&$loggedUser->role === 'pegawai') 
+                                    ? ($keg && $keg->id_karyawan_koor ==$loggedUser->id_karyawan) 
                                     : true;
 
                                 $payloadEdit = [
@@ -198,12 +197,14 @@
                                     'nama_keg' => $keg->nama_keg ?? '-',
                                     'peserta_hadir' => $item->peserta_hadir,
                                     'peserta_tidak_hadir' => $item->peserta_tidak_hadir,
+                                    'peserta_lulus' => $item->peserta_lulus ?? 0,
+                                    'peserta_tidak_lulus' => $item->peserta_tidak_lulus ?? 0,
                                     'nilai_tertinggi' => $item->nilai_tertinggi,
                                     'nilai_terendah' => $item->nilai_terendah,
                                     'lampiran_laporan' => $item->lampiran_laporan,
                                     'catatan_evaluasi' => $item->catatan_evaluasi,
                                 ];
-                            @endphp
+                            ?>
                             <tr class="border-b-2 border-black last:border-b-0 bg-[#d1d5db] hover:bg-[#c4c8ce] transition">
                                 <td class="border-r-2 border-black py-3 px-2 text-center font-bold">{{ $no }}</td>
                                 <td class="border-r-2 border-black py-3 px-3">
@@ -223,12 +224,24 @@
                                         {{ number_format($item->peserta_tidak_hadir) }} Absen
                                     </span>
                                 </td>
+                                <td class="border-r-2 border-black py-3 px-2 text-center">
+                                    @if(($item->peserta_lulus ?? 0) > 0 || ($item->peserta_tidak_lulus ?? 0) > 0)
+                                        <span class="inline-block px-2 py-0.5 bg-blue-200 border border-black font-extrabold text-blue-950 text-xs rounded">
+                                            🎓 {{ number_format($item->peserta_lulus) }} Lulus
+                                        </span>
+                                        <span class="inline-block px-2 py-0.5 bg-amber-200 border border-black font-extrabold text-amber-950 text-xs rounded mt-1">
+                                            ❌ {{ number_format($item->peserta_tidak_lulus) }} Gagal
+                                        </span>
+                                    @else
+                                        <span class="text-gray-600 font-semibold text-xs">-</span>
+                                    @endif
+                                </td>
                                 <td class="border-r-2 border-black py-3 px-2 text-center font-bold">
                                     <p class="text-emerald-900">Max: {{ $item->nilai_tertinggi ?? '-' }}</p>
                                     <p class="text-rose-900">Min: {{ $item->nilai_terendah ?? '-' }}</p>
                                 </td>
                                 <td class="border-r-2 border-black py-3 px-3 text-center">
-                                    @if ($item->lampiran_laporan && $item->lampiran_laporan !== '-')
+                                    @if ($item->lampiran_laporan &&$item->lampiran_laporan !== '-')
                                         <a href="{{ $item->lampiran_laporan }}" target="_blank" class="border-2 border-black bg-blue-500 hover:bg-blue-600 text-white px-2.5 py-1 text-xs font-bold transition inline-block shadow-xs">
                                             📄 Laporan
                                         </a>
@@ -236,7 +249,6 @@
                                         <span class="text-gray-500 text-xs">-</span>
                                     @endif
                                 </td>
-                                <!-- KOLOM AKSI (EDIT, HAPUS, CETAK PDF) -->
                                 <td class="py-3 px-2 text-center">
                                     <div class="flex flex-col items-center justify-center gap-1.5 w-full">
                                         @if ($isKoordinator)
@@ -258,29 +270,29 @@
                                             </form>
                                         @endif
 
-                                        <!-- TOMBOL CETAK PDF (Dapat diakses seluruh user) -->
+                                        <!-- Tombol Cetak PDF -->
                                         <a href="{{ url('/laporan-kegiatan/'.$item->id_laporan.'/cetak') }}" target="_blank" class="w-20 border-2 border-black bg-emerald-400 hover:bg-emerald-500 text-black font-bold px-2 py-1 text-xs transition inline-block text-center shadow-xs">
                                             🖨️ Cetak
                                         </a>
                                     </div>
                                 </td>
                             </tr>
-                        @endforeach
-                    @else
+                        <?php endforeach; ?>
+                    <?php else: ?>
                         <tr>
-                            <td colspan="6" class="py-8 text-center text-gray-500 font-semibold text-sm">
+                            <td colspan="7" class="py-8 text-center text-gray-500 font-semibold text-sm">
                                 Belum ada data laporan hasil kegiatan yang terdaftar.
                             </td>
                         </tr>
-                    @endif
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>
 
         <!-- PAGINATION -->
-        @if (isset($laporan) && $laporan->hasPages())
+        @if (isset($laporan) &&$laporan->hasPages())
             <div class="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3 pt-3 border-t-2 border-black text-xs font-bold">
-                <span>Menampilkan {{ $laporan->firstItem() }} - {{ $laporan->lastItem() }} dari {{ $laporan->total() }} Laporan</span>
+                <span>Menampilkan {{ $laporan->firstItem() }} - {{ $laporan->lastItem() }} dari {{$laporan->total() }} Laporan</span>
                 <div class="flex gap-1">
                     {{ $laporan->links() }}
                 </div>
@@ -300,11 +312,13 @@
                     <label class="block font-bold mb-1">PILIH KEGIATAN (STATUS SELESAI):</label>
                     <select name="id_keg" id="tambah_id_keg" required class="select2-kegiatan w-full border-2 border-black bg-white p-2 font-medium">
                         <option value="" data-peserta="0">-- Cari / Pilih Kegiatan --</option>
-                        @foreach ($kegiatanSelesai as $kS)
-                            <option value="{{ $kS->id_keg }}" data-peserta="{{ $kS->jmlh_peserta }}">
-                                {{ $kS->nama_keg }} (Total Peserta: {{ $kS->jmlh_peserta }} Orang)
-                            </option>
-                        @endforeach
+                        <?php if (isset($kegiatanSelesai) && count($kegiatanSelesai) > 0): ?>
+                            <?php foreach ($kegiatanSelesai as$kS): ?>
+                                <option value="{{ $kS->id_keg }}" data-peserta="{{ $kS->jmlh_peserta }}">
+                                    {{ $kS->nama_keg }} (Total Peserta: {{$kS->jmlh_peserta }} Orang)
+                                </option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </select>
                 </div>
 
@@ -332,6 +346,17 @@
                     <div>
                         <label class="block font-bold mb-1">NILAI TERENDAH:</label>
                         <input type="number" step="0.01" name="nilai_terendah" placeholder="280.00" class="w-full border-2 border-black p-2 font-medium">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold mb-1">PESERTA LULUS:</label>
+                        <input type="number" name="peserta_lulus" id="tambah_peserta_lulus" min="0" value="0" class="w-full border-2 border-black p-2 font-medium">
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1">PESERTA TIDAK LULUS:</label>
+                        <input type="number" name="peserta_tidak_lulus" id="tambah_peserta_tidak_lulus" min="0" value="0" class="w-full border-2 border-black p-2 font-medium">
                     </div>
                 </div>
 
@@ -390,6 +415,17 @@
                     </div>
                 </div>
 
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold mb-1">PESERTA LULUS:</label>
+                        <input type="number" name="peserta_lulus" id="edit_peserta_lulus" min="0" class="w-full border-2 border-black p-2 font-medium">
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1">PESERTA TIDAK LULUS:</label>
+                        <input type="number" name="peserta_tidak_lulus" id="edit_peserta_tidak_lulus" min="0" class="w-full border-2 border-black p-2 font-medium">
+                    </div>
+                </div>
+
                 <div>
                     <label class="block font-bold mb-1">LINK DOKUMEN LAPORAN:</label>
                     <input type="text" name="lampiran_laporan" id="edit_lampiran_laporan" class="w-full border-2 border-black p-2 font-medium">
@@ -416,8 +452,7 @@
         const tambahModal = document.getElementById('tambahLaporanModal');
         const editModal = document.getElementById('editLaporanModal');
 
-        $(document).ready(function() {
-            $('.select2-kegiatan').select2({
+        $(document).ready(function() {$('.select2-kegiatan').select2({
                 dropdownParent: $('#tambahLaporanModal'),
                 placeholder: "-- Cari / Pilih Kegiatan --",
                 width: '100%'
@@ -476,6 +511,9 @@
                 document.getElementById('edit_peserta_hadir').max = currentTotalPesertaEdit;
                 document.getElementById('edit_peserta_hadir').value = data.peserta_hadir;
                 document.getElementById('edit_peserta_tidak_hadir').value = data.peserta_tidak_hadir;
+
+                document.getElementById('edit_peserta_lulus').value = data.peserta_lulus || 0;
+                document.getElementById('edit_peserta_tidak_lulus').value = data.peserta_tidak_lulus || 0;
 
                 document.getElementById('edit_nilai_tertinggi').value = data.nilai_tertinggi || '';
                 document.getElementById('edit_nilai_terendah').value = data.nilai_terendah || '';

@@ -88,6 +88,14 @@
             <td>{{ number_format($laporan->peserta_tidak_hadir) }} Orang</td>
         </tr>
         <tr>
+            <th>PESERTA LULUS</th>
+            <td>{{ number_format($laporan->peserta_lulus) }} Orang</td>
+        </tr>
+        <tr>
+            <th>PESERTA TIDAK LULUS</th>
+            <td>{{ number_format($laporan->peserta_tidak_lulus) }} Orang</td>
+        </tr>
+        <tr>
             <th>NILAI TERTINGGI / TERENDAH</th>
             <td>Max: {{ $laporan->nilai_tertinggi ?? '-' }} | Min: {{ $laporan->nilai_terendah ?? '-' }}</td>
         </tr>
