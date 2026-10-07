@@ -85,6 +85,7 @@
             <div class="flex items-center space-x-2">
                 <!-- Search Form -->
                 <form id="searchForm" method="GET" action="{{ url('/laporan-kegiatan') }}" class="m-0 p-0 flex items-center">
+                    @if(request('id_jeniskeg')) <input type="hidden" name="id_jeniskeg" value="{{ request('id_jeniskeg') }}"> @endif
                     @if(request('range')) <input type="hidden" name="range" value="{{ request('range') }}"> @endif
                     @if(request('tgl_mulai')) <input type="hidden" name="tgl_mulai" value="{{ request('tgl_mulai') }}"> @endif
                     @if(request('tgl_selesai')) <input type="hidden" name="tgl_selesai" value="{{ request('tgl_selesai') }}"> @endif
@@ -103,51 +104,70 @@
             </div>
         </div>
 
-        <!-- BARIS FILTER TANGGAL & PERIODE -->
-        <div class="border-2 border-black bg-gray-50 p-3">
-            <form method="GET" action="{{ url('/laporan-kegiatan') }}" class="flex flex-wrap items-end gap-3 text-xs">
-                @if(request('search'))
-                    <input type="hidden" name="search" value="{{ request('search') }}">
-                @endif
+    <!-- BARIS FILTER TANGGAL, PERIODE & JENIS KEGIATAN -->
+    <div class="border-2 border-black bg-gray-50 p-3">
+        <form method="GET" action="{{ url('/laporan-kegiatan') }}" class="flex flex-wrap items-end gap-3 text-xs">
+            @if(request('search'))
+                <input type="hidden" name="search" value="{{ request('search') }}">
+            @endif
 
-                <!-- Periode Cepat -->
-                <div>
-                    <label class="block font-bold text-gray-800 mb-1">PERIODE CEPAT:</label>
-                    <select name="range" onchange="this.form.submit()" class="border-2 border-black bg-white p-1.5 font-bold">
-                        <option value="">-- Semua Waktu --</option>
-                        <option value="7_days" {{ request('range') == '7_days' ? 'selected' : '' }}>7 Hari Terakhir</option>
-                        <option value="1_month" {{ request('range') == '1_month' ? 'selected' : '' }}>1 Bulan Terakhir</option>
-                        <option value="3_months" {{ request('range') == '3_months' ? 'selected' : '' }}>3 Bulan Terakhir</option>
-                    </select>
-                </div>
-
-                <span class="font-bold self-center pt-3 text-gray-500">ATAU</span>
-
-                <!-- Tanggal Mulai -->
-                <div>
-                    <label class="block font-bold text-gray-800 mb-1">DARI TANGGAL:</label>
-                    <input type="date" name="tgl_mulai" value="{{ request('tgl_mulai') }}" class="border-2 border-black bg-white p-1.5 font-bold">
-                </div>
-
-                <!-- Tanggal Selesai -->
-                <div>
-                    <label class="block font-bold text-gray-800 mb-1">SAMPAI TANGGAL:</label>
-                    <input type="date" name="tgl_selesai" value="{{ request('tgl_selesai') }}" class="border-2 border-black bg-white p-1.5 font-bold">
-                </div>
-
-                <!-- Tombol Submit Filter & Reset -->
-                <div class="flex items-center gap-1.5">
-                    <button type="submit" class="border-2 border-black bg-blue-500 hover:bg-blue-600 text-white font-bold px-3 py-1.5 shadow-xs">
-                        Filter
-                    </button>
-                    @if(request()->hasAny(['range', 'tgl_mulai', 'tgl_selesai']))
-                        <a href="{{ url('/laporan-kegiatan') }}" class="border-2 border-black bg-gray-200 hover:bg-gray-300 text-black font-bold px-3 py-1.5">
-                            Reset
-                        </a>
+            <!-- Filter Jenis Kegiatan (BARU) -->
+            <div>
+                <label class="block font-bold text-gray-800 mb-1">JENIS KEGIATAN:</label>
+                <select name="id_jeniskeg" onchange="this.form.submit()" class="border-2 border-black bg-white p-1.5 font-bold">
+                    <option value="">-- Semua Jenis --</option>
+                    @if (isset($jenisKegiatan))
+                        @foreach ($jenisKegiatan as $jk)
+                            <option value="{{ $jk->id_jeniskeg }}" {{ request('id_jeniskeg') == $jk->id_jeniskeg ? 'selected' : '' }}>
+                                {{ $jk->nama_jeniskeg }}
+                            </option>
+                        @endforeach
                     @endif
-                </div>
-            </form>
-        </div>
+                </select>
+            </div>
+
+            <!-- Periode Cepat -->
+            <div>
+                <label class="block font-bold text-gray-800 mb-1">PERIODE CEPAT:</label>
+                <select name="range" onchange="this.form.submit()" class="border-2 border-black bg-white p-1.5 font-bold">
+                    <option value="">-- Semua Waktu --</option>
+                    <option value="7_days" {{ request('range') == '7_days' ? 'selected' : '' }}>7 Hari Terakhir</option>
+                    <option value="1_month" {{ request('range') == '1_month' ? 'selected' : '' }}>1 Bulan Terakhir</option>
+                    <option value="3_months" {{ request('range') == '3_months' ? 'selected' : '' }}>3 Bulan Terakhir</option>
+                </select>
+            </div>
+
+            <span class="font-bold self-center pt-3 text-gray-500">ATAU</span>
+
+            <!-- Tanggal Mulai -->
+            <div>
+                <label class="block font-bold text-gray-800 mb-1">DARI TANGGAL:</label>
+                <input type="date" name="tgl_mulai" value="{{ request('tgl_mulai') }}" class="border-2 border-black bg-white p-1.5 font-bold">
+            </div>
+
+            <!-- Tanggal Selesai -->
+            <div>
+                <label class="block font-bold text-gray-800 mb-1">SAMPAI TANGGAL:</label>
+                <input type="date" name="tgl_selesai" value="{{ request('tgl_selesai') }}" class="border-2 border-black bg-white p-1.5 font-bold">
+            </div>
+
+            <!-- Tombol Submit Filter & Reset -->
+            <div class="flex items-center gap-1.5">
+                <button type="submit" class="border-2 border-black bg-blue-500 hover:bg-blue-600 text-white font-bold px-3 py-1.5 shadow-xs">
+                    Filter
+                </button>
+                @if(request()->hasAny(['range', 'tgl_mulai', 'tgl_selesai', 'id_jeniskeg']))
+                    <a href="{{ url('/laporan-kegiatan') }}" class="border-2 border-black bg-gray-200 hover:bg-gray-300 text-black font-bold px-3 py-1.5">
+                        Reset
+                    </a>
+                @endif
+                <a href="{{ url('/laporan-kegiatan/export-csv?' . http_build_query(request()->all())) }}" 
+                class="border-2 border-black bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-3 py-1.5 shadow-xs transition inline-block">
+                    📊 Export CSV / Excel
+                </a>
+            </div>
+        </form>
+    </div>
 
         <!-- Tabel Laporan Hasil Kegiatan -->
         <div class="mt-2 border-2 border-black overflow-x-auto">

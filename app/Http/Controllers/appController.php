@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Kegiatan;
@@ -524,6 +525,82 @@ class AppController extends Controller
         return view('riwayat-kegiatan', compact('kegiatan', 'sort'));
     }
 
+    public function exportCsv(Request $request): StreamedResponse
+    {
+        $fileName = 'Laporan_Kegiatan_BKN_' . date('Y-m-d_H-i') . '.csv';
+
+        return response()->streamDownload(function () use ($request) {
+            $file = fopen('php://output', 'w');
+
+            // Menambahkan BOM agar karakter UTF-8 / Bahasa Indonesia terbaca rapi di Microsoft Excel
+            fputs($file, $bom = chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+            // 1. Header Kolom Spreadsheet
+            fputcsv($file, [
+                'No Laporan',
+                'Nama Kegiatan',
+                'Jenis Kegiatan',
+                'Koordinator',
+                'Lokasi',
+                'Instansi',
+                'Peserta Hadir',
+                'Peserta Absen',
+                'Nilai Tertinggi',
+                'Nilai Terendah',
+                'Catatan Evaluasi',
+                'Tanggal Pelaporan',
+            ]);
+
+            // 2. Query Data Berdasarkan Filter Aktif
+            $query = LaporanKegiatan::with(['kegiatan.jenis', 'kegiatan.lokasi', 'kegiatan.instansi', 'kegiatan.koordinator']);
+
+            if ($request->filled('id_jeniskeg')) {
+                $query->whereHas('kegiatan', fn($q) => $q->where('id_jeniskeg', $request->id_jeniskeg));
+            }
+
+            if ($request->filled('search')) {
+                $query->whereHas('kegiatan', fn($q) => $q->where('nama_keg', 'like', '%' . $request->search . '%'));
+            }
+
+            if ($request->filled('range')) {
+                if ($request->range == '7_days') {
+                    $query->whereHas('kegiatan', fn($q) => $q->where('tanggal_mulai', '>=', now()->subDays(7)));
+                } elseif ($request->range == '1_month') {
+                    $query->whereHas('kegiatan', fn($q) => $q->where('tanggal_mulai', '>=', now()->subMonth()));
+                } elseif ($request->range == '3_months') {
+                    $query->whereHas('kegiatan', fn($q) => $q->where('tanggal_mulai', '>=', now()->subMonths(3)));
+                }
+            } elseif ($request->filled('tgl_mulai') && $request->filled('tgl_selesai')) {
+                $query->whereHas('kegiatan', fn($q) => $q->whereBetween('tanggal_mulai', [$request->tgl_mulai, $request->tgl_selesai]));
+            }
+
+            // 3. Tulis Baris Data ke Berkas
+            $query->orderBy('created_at', 'desc')->chunk(100, function ($laporans) use ($file) {
+                foreach ($laporans as $item) {
+                    fputcsv($file, [
+                        $item->id_laporan,
+                        $item->kegiatan->nama_keg ?? '-',
+                        $item->kegiatan->jenis->nama_jeniskeg ?? '-',
+                        $item->kegiatan->koordinator->nama_karyawan ?? '-',
+                        $item->kegiatan->lokasi->nm_lokasi ?? '-',
+                        $item->kegiatan->instansi->nm_instansi ?? '-',
+                        $item->peserta_hadir,
+                        $item->peserta_tidak_hadir,
+                        $item->nilai_tertinggi ?? '-',
+                        $item->nilai_terendah ?? '-',
+                        $item->catatan_evaluasi ?? '-',
+                        $item->created_at ? $item->created_at->format('d-m-Y H:i') : '-',
+                    ]);
+                }
+            });
+
+            fclose($file);
+        }, $fileName, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$fileName}\"",
+        ]);
+    }
+
     /**
      * Halaman Utama Laporan Kegiatan
      */
@@ -553,7 +630,14 @@ class AppController extends Controller
             });
         }
 
-        // 3. FILTER TANGGAL (PERIODE CEPAT ATAU RENTANG KUSTOM)
+        // 3. Filter berdasarkan Jenis Kegiatan (BARU)
+        if ($request->filled('id_jeniskeg')) {
+            $query->whereHas('kegiatan', function($q) use ($request) {
+                $q->where('id_jeniskeg', $request->id_jeniskeg);
+            });
+        }
+
+        // 4. FILTER TANGGAL (PERIODE CEPAT ATAU RENTANG KUSTOM)
         if ($range) {
             switch ($range) {
                 case '7_days':
@@ -573,7 +657,7 @@ class AppController extends Controller
             ]);
         }
 
-        // 4. PENGURUTAN (SORTING)
+        // 5. PENGURUTAN (SORTING)
         if ($sort === 'terlama') {
             $query->orderBy('created_at', 'asc');
         } elseif ($sort === 'az') {
@@ -587,7 +671,7 @@ class AppController extends Controller
         // Mengamankan parameter query string di pagination (search, sort, range, dll)
         $laporan = $query->paginate(10)->withQueryString();
 
-        // 5. QUERY KEGIATAN SELESAI YANG BELUM ADA LAPORAN
+        // 6. QUERY KEGIATAN SELESAI YANG BELUM ADA LAPORAN
         $kegiatanSelesaiQuery = Kegiatan::where('status', 'Selesai')
             ->whereDoesntHave('laporan')
             ->orderBy('nama_keg', 'asc');
@@ -598,7 +682,10 @@ class AppController extends Controller
 
         $kegiatanSelesai = $kegiatanSelesaiQuery->get();
 
-        return view('laporan-kegiatan', compact('laporan', 'kegiatanSelesai', 'sort', 'range', 'tglMulai', 'tglSelesai'));
+        // Ambil master data jenis kegiatan untuk dropdown filter
+        $jenisKegiatan = JenisKeg::all();
+
+        return view('laporan-kegiatan', compact('laporan', 'kegiatanSelesai', 'jenisKegiatan', 'sort', 'range', 'tglMulai', 'tglSelesai'));
     }
 
     // METHOD BARU UNTUK CETAK PDF INDIVIDUAL LAPORAN
@@ -707,4 +794,5 @@ class AppController extends Controller
 
         return redirect()->back()->with('success', 'Laporan kegiatan berhasil dihapus!');
     }
+    
 }
