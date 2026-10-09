@@ -543,12 +543,12 @@ class AppController extends Controller
         return response()->streamDownload(function () use ($request, $loggedUser) {
             $file = fopen('php://output', 'w');
 
-            // Menambahkan UTF-8 BOM agar tulisan rapi saat dibuka di Microsoft Excel
+            // UTF-8 BOM agar rapi saat dibuka di Microsoft Excel
             fputs($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
 
-            // Header Kolom CSV
+            // Header Kolom CSV (Diubah jadi 'No')
             fputcsv($file, [
-                'No Laporan',
+                'No',
                 'Nama Kegiatan',
                 'Jenis Kegiatan',
                 'Koordinator',
@@ -561,20 +561,24 @@ class AppController extends Controller
                 'Nilai Tertinggi',
                 'Nilai Terendah',
                 'Catatan Evaluasi',
-                'Tanggal Pelaporan',
             ]);
 
-            // Query Dasar Laporan
-            $query = LaporanKegiatan::query();
+            // Query Laporan Kegiatan beserta Eager Loading Relasinya
+            $query = LaporanKegiatan::with([
+                'kegiatan.jenis', 
+                'kegiatan.koordinator', 
+                'kegiatan.lokasi', 
+                'kegiatan.instansi'
+            ]);
 
-            // 1. FILTER KHUSUS ROLE PEGAWAI: Hanya ambil data yang diampu pegawai login
+            // 1. FILTER KHUSUS ROLE PEGAWAI
             if ($loggedUser && $loggedUser->role === 'pegawai' && $loggedUser->id_karyawan) {
                 $query->whereHas('kegiatan', function ($q) use ($loggedUser) {
                     $q->where('id_karyawan_koor', $loggedUser->id_karyawan);
                 });
             }
 
-            // 2. Filter dari Form UI (Jenis Kegiatan, Search, Range Tanggal)
+            // 2. Filter dari Form UI
             if ($request->filled('id_jeniskeg')) {
                 $query->whereHas('kegiatan', function ($q) use ($request) {
                     $q->where('id_jeniskeg', $request->id_jeniskeg);
@@ -601,19 +605,26 @@ class AppController extends Controller
                 });
             }
 
-            // 3. Tulis Data ke File (Aman dari null pointer & crash)
             $laporans = $query->orderBy('id_laporan', 'desc')->get();
+
+            // Variabel Counter untuk Nomor Urut
+            $no = 1;
 
             foreach ($laporans as $item) {
                 $keg = $item->kegiatan;
 
+                $namaJenis = $keg->jenis->nama_jeniskeg 
+                    ?? $keg->jenisKegiatan->nama_jeniskeg 
+                    ?? $keg->jenisKeg->nama_jeniskeg 
+                    ?? '-';
+
                 fputcsv($file, [
-                    $item->id_laporan,
+                    $no++, // Increment nomor urut (1, 2, 3, dst.)
                     $keg->nama_keg ?? '-',
-                    optional($keg)->jenisKegiatan->nama_jeniskeg ?? optional($keg)->jenisKeg->nama_jeniskeg ?? '-',
-                    optional($keg)->koordinator->nama_karyawan ?? '-',
-                    optional($keg)->lokasi->nm_lokasi ?? '-',
-                    optional($keg)->instansi->nm_instansi ?? '-',
+                    $namaJenis,
+                    $keg->koordinator->nama_karyawan ?? '-',
+                    $keg->lokasi->nm_lokasi ?? '-',
+                    $keg->instansi->nm_instansi ?? '-',
                     $item->peserta_hadir ?? 0,
                     $item->peserta_tidak_hadir ?? 0,
                     $item->peserta_lulus ?? '-',
@@ -621,7 +632,6 @@ class AppController extends Controller
                     $item->nilai_tertinggi ?? '-',
                     $item->nilai_terendah ?? '-',
                     $item->catatan_evaluasi ?? '-',
-                    $item->created_at ? date('d-m-Y H:i', strtotime($item->created_at)) : '-',
                 ]);
             }
 
