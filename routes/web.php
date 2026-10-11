@@ -66,13 +66,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/laporan-kegiatan/{id}/cetak', [AppController::class, 'cetakPdfLaporan'])->middleware('auth');
     Route::get('/laporan-kegiatan/export-csv', [AppController::class, 'exportCsv'])->middleware('auth');
 
-    // Dilihat oleh Pimpinan dan Admin
-    Route::middleware(['role:pimpinan,admin'])->group(function () {
+    // Hanya dapat diakses oleh Admin (Pimpinan tidak diberi akses ke master data teknis)
+    Route::middleware(['role:admin'])->group(function () {
         Route::get('/riwayat-kerja', [AppController::class, 'riwayatKerja'])->name('riwayat-kerja');
         Route::get('/jenis-kegiatan', [AppController::class, 'jenisKegiatan'])->name('jenis-kegiatan');
         Route::get('/titik-lokasi', [AppController::class, 'titikLokasi'])->name('titik-lokasi');
         Route::get('/instansi', [AppController::class, 'instansi'])->name('instansi');
         Route::get('/riwayat-kegiatan', [AppController::class, 'riwayatKegiatan'])->name('riwayat-kegiatan');
+        
+        Route::get('/master-user', [AppController::class, 'masterUser'])->name('master-user');
+        Route::post('/master-user', [AppController::class, 'storeUser'])->name('master-user.store');
+        Route::put('/master-user/{id}', [AppController::class, 'updateUser'])->name('master-user.update');
+        Route::delete('/master-user/{id}', [AppController::class, 'destroyUser'])->name('master-user.destroy');
     });
 
     // Khusus Admin
