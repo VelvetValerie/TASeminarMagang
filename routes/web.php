@@ -1,90 +1,63 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AppController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\KegiatanController;
+use App\Http\Controllers\LaporanKegiatanController;
+use App\Http\Controllers\MasterDataController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Models\Kegiatan;
-use App\Http\Controllers\Api\Public\KalenderController;
 
-// 1. Rute Akar (Landing Page Utama Publik)
+// 1. Rute Publik
 Route::get('/', function () {
-    // Ambil data kegiatan beserta relasinya (jenis, lokasi, koordinator)
     $kegiatan = Kegiatan::with(['jenis', 'lokasi', 'koordinator'])->get();
-
     return view('landing', compact('kegiatan'));
 })->name('landing');
 
-Route::get('/kalender-kegiatan', [KalenderController::class, 'getKegiatan']);
-
-Route::get('/berita', function () {
-    return view('news');
-});
-
-Route::get('/berita/detail', function () {
-    return view('news_detail');
-});
-
-Route::get('/informasi', function () {
-    return view('information');
-});
-
-Route::get('/informasi/timeline', function () {
-    return view('timeline_detail');
-});
-
-// 2. Rute Tamu / Belum Login (Guest)
+// 2. Guest Routes
 Route::middleware(['guest'])->group(function () {
-    Route::get('/login', [AppController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AppController::class, 'login'])->name('login.perform');
-
-    // Fitur Tambahan: Lupa Password & OTP
-    Route::get('/forgot-password', [AppController::class, 'showForgotPasswordForm'])->name('password.request');
-    Route::post('/forgot-password', [AppController::class, 'sendResetOtp'])->name('password.email');
-    Route::get('/verify-otp', [AppController::class, 'showVerifyOtpForm'])->name('password.verify.form');
-    Route::post('/reset-password', [AppController::class, 'resetPassword'])->name('password.update');
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.perform');
+    Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
+    Route::post('/forgot-password', [AuthController::class, 'sendResetOtp'])->name('password.email');
+    Route::get('/verify-otp', [AuthController::class, 'showVerifyOtpForm'])->name('password.verify.form');
+    Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 });
 
-// 3. Rute Autentikasi / Sudah Login (Auth)
+// 3. Authenticated Routes
 Route::middleware(['auth'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // Dilihat oleh SEMUA Role (Admin, Pimpinan, Pegawai)
-    Route::get('/dashboard', [AppController::class, 'dashboard'])->name('dashboard');
-    Route::get('/kalender', [AppController::class, 'kalender'])->name('kalender');
+    // Dashboard & Kalender
+    Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+    Route::get('/kalender', [DashboardController::class, 'kalender'])->name('kalender');
 
-    // PERENCANAAN KEGIATAN (Diakses SEMUA ROLE dengan restriksi koordinator di Controller)
-    Route::get('/kegiatan', [AppController::class, 'kegiatan'])->name('kegiatan');
-    Route::post('/kegiatan', [AppController::class, 'storeKegiatan'])->name('kegiatan.store');
-    Route::put('/kegiatan/{id}', [AppController::class, 'updateKegiatan'])->name('kegiatan.update');
-    Route::delete('/kegiatan/{id}', [AppController::class, 'destroyKegiatan'])->name('kegiatan.destroy');
+    // Perencanaan Kegiatan
+    Route::get('/kegiatan', [KegiatanController::class, 'index'])->name('kegiatan');
+    Route::post('/kegiatan', [KegiatanController::class, 'store'])->name('kegiatan.store');
+    Route::put('/kegiatan/{id}', [KegiatanController::class, 'update'])->name('kegiatan.update');
+    Route::delete('/kegiatan/{id}', [KegiatanController::class, 'destroy'])->name('kegiatan.destroy');
 
-    // LAPORAN KEGIATAN (Eksklusif SEMUA ROLE)
-    Route::get('/laporan-kegiatan', [AppController::class, 'laporanKegiatan'])->name('laporan-kegiatan');
-    Route::post('/laporan-kegiatan', [AppController::class, 'storeLaporanKegiatan'])->name('laporan-kegiatan.store');
-    Route::put('/laporan-kegiatan/{id}', [AppController::class, 'updateLaporanKegiatan'])->name('laporan-kegiatan.update');
-    Route::delete('/laporan-kegiatan/{id}', [AppController::class, 'destroyLaporanKegiatan'])->name('laporan-kegiatan.destroy');
-    Route::get('/laporan-kegiatan/{id}/cetak', [AppController::class, 'cetakPdfLaporan'])->middleware('auth');
-    Route::get('/laporan-kegiatan/export-csv', [AppController::class, 'exportCsv'])->middleware('auth');
+    // Laporan Kegiatan
+    Route::get('/laporan-kegiatan', [LaporanKegiatanController::class, 'index'])->name('laporan-kegiatan');
+    Route::post('/laporan-kegiatan', [LaporanKegiatanController::class, 'store'])->name('laporan-kegiatan.store');
+    Route::put('/laporan-kegiatan/{id}', [LaporanKegiatanController::class, 'update'])->name('laporan-kegiatan.update');
+    Route::delete('/laporan-kegiatan/{id}', [LaporanKegiatanController::class, 'destroy'])->name('laporan-kegiatan.destroy');
+    Route::get('/laporan-kegiatan/{id}/cetak', [LaporanKegiatanController::class, 'cetakPdfLaporan']);
+    Route::get('/laporan-kegiatan/export-csv', [LaporanKegiatanController::class, 'exportCsv']);
 
-    // Hanya dapat diakses oleh Admin (Pimpinan tidak diberi akses ke master data teknis)
+    // Khusus Admin (Master Data)
     Route::middleware(['role:admin'])->group(function () {
-        Route::get('/riwayat-kerja', [AppController::class, 'riwayatKerja'])->name('riwayat-kerja');
-        Route::get('/jenis-kegiatan', [AppController::class, 'jenisKegiatan'])->name('jenis-kegiatan');
-        Route::get('/titik-lokasi', [AppController::class, 'titikLokasi'])->name('titik-lokasi');
-        Route::get('/instansi', [AppController::class, 'instansi'])->name('instansi');
-        Route::get('/riwayat-kegiatan', [AppController::class, 'riwayatKegiatan'])->name('riwayat-kegiatan');
-        
-        Route::get('/master-user', [AppController::class, 'masterUser'])->name('master-user');
-        Route::post('/master-user', [AppController::class, 'storeUser'])->name('master-user.store');
-        Route::put('/master-user/{id}', [AppController::class, 'updateUser'])->name('master-user.update');
-        Route::delete('/master-user/{id}', [AppController::class, 'destroyUser'])->name('master-user.destroy');
-    });
+        Route::get('/riwayat-kerja', [MasterDataController::class, 'riwayatKerja'])->name('riwayat-kerja');
+        Route::get('/jenis-kegiatan', [MasterDataController::class, 'jenisKegiatan'])->name('jenis-kegiatan');
+        Route::get('/titik-lokasi', [MasterDataController::class, 'titikLokasi'])->name('titik-lokasi');
+        Route::get('/instansi', [MasterDataController::class, 'instansi'])->name('instansi');
+        Route::get('/riwayat-kegiatan', [KegiatanController::class, 'riwayatKegiatan'])->name('riwayat-kegiatan');
 
-    // Khusus Admin
-    Route::middleware(['role:admin'])->group(function () {
-        Route::get('/master-user', [AppController::class, 'masterUser'])->name('master-user');
-        Route::post('/master-user', [AppController::class, 'storeUser'])->name('master-user.store');
-        Route::put('/master-user/{id}', [AppController::class, 'updateUser'])->name('master-user.update');
-        Route::delete('/master-user/{id}', [AppController::class, 'destroyUser'])->name('master-user.destroy');
+        Route::get('/master-user', [UserController::class, 'index'])->name('master-user');
+        Route::post('/master-user', [UserController::class, 'store'])->name('master-user.store');
+        Route::put('/master-user/{id}', [UserController::class, 'update'])->name('master-user.update');
+        Route::delete('/master-user/{id}', [UserController::class, 'destroy'])->name('master-user.destroy');
     });
 });
