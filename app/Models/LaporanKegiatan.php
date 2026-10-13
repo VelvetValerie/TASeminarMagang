@@ -12,6 +12,8 @@ class LaporanKegiatan extends Model
         'id_keg',
         'peserta_hadir',
         'peserta_tidak_hadir',
+        'peserta_lulus',
+        'peserta_tidak_lulus',
         'nilai_tertinggi',
         'nilai_terendah',
         'lampiran_laporan',

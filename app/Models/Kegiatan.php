@@ -8,7 +8,19 @@ class Kegiatan extends Model
 {
     protected $table = 'kegiatan';
     protected $primaryKey = 'id_keg';
-    protected $guarded = [];
+
+    protected $fillable = [
+        'nama_keg',
+        'id_jeniskeg',
+        'id_tklokasi',
+        'id_instansi',
+        'id_karyawan_koor',
+        'jmlh_peserta',
+        'tanggal_mulai',
+        'tanggal_selesai',
+        'status',
+        'lampiran',
+    ];
 
     public function lokasi()
     {
