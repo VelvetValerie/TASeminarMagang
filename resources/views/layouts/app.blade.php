@@ -81,9 +81,9 @@
         </div>
 
         <!-- Menu Links Container -->
-        <div class="flex-1 overflow-y-auto px-4 py-5 space-y-5">
+        <div class="flex-1 overflow-y-auto px-4 py-5 space-y-6">
             
-            <!-- Group 1: Menu Utama -->
+            <!-- Group 1: Utama -->
             <div>
                 <p class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">Utama</p>
                 <nav class="space-y-1">
@@ -110,7 +110,7 @@
                 <p class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">Pelaksanaan</p>
                 <nav class="space-y-1">
                     
-                    <!-- 1. Menu Kegiatan (TERBUKA UNTUK SEMUA ROLE) -->
+                    <!-- 1. Menu Kegiatan -->
                     <a href="{{ url('/kegiatan') }}" 
                     class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('kegiatan') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
                         <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->is('kegiatan') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -119,7 +119,7 @@
                         Kegiatan
                     </a>
 
-                    <!-- 2. Menu Riwayat Kerja (Khusus Role Admin & Pimpinan) -->
+                    <!-- 2. Menu Riwayat Kerja -->
                     @if(in_array($userRole, ['pimpinan', 'admin']))
                         <a href="{{ url('/riwayat-kerja') }}" 
                         class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('riwayat-kerja') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
@@ -130,7 +130,7 @@
                         </a>
                     @endif
 
-                    <!-- 3. Menu Laporan Kegiatan (EKSKLUSIF UNTUK SEMUA ROLE) -->
+                    <!-- 3. Menu Laporan Kegiatan -->
                     <a href="{{ url('/laporan-kegiatan') }}" 
                     class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('laporan-kegiatan') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
                         <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->is('laporan-kegiatan') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -138,13 +138,24 @@
                         </svg>
                         Laporan Kegiatan
                     </a>
+                    
+                    <!-- 4. Manajemen Data User (Sekarang di Section Pelaksanaan) -->
+                    @if(Auth::check() && Auth::user()->role === 'admin')
+                    <a href="{{ route('master-user') }}" 
+                       class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->routeIs('master-user*') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                        <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->routeIs('master-user*') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                        Manajemen Data User
+                    </a>
+                    @endif
 
                 </nav>
             </div>
 
             <!-- Group 3: Dropdown Manajemen Data Kegiatan -->
             @if(in_array($userRole, ['pimpinan', 'admin']))
-                <div class="pt-2">
+                <div>
                     <details class="group rounded-xl border border-slate-700/80 bg-slate-900/60 overflow-hidden transition"
                              {{ request()->is('jenis-kegiatan', 'titik-lokasi', 'instansi', 'riwayat-kegiatan') ? 'open' : '' }}>
                         <summary class="flex items-center justify-between px-4 py-3 text-xs sm:text-sm font-bold text-white bg-slate-800 hover:bg-slate-750 cursor-pointer transition list-none select-none">
@@ -178,21 +189,41 @@
                 </div>
             @endif
 
-            <!-- Item Menu 3: Manajemen Data User -->
+            <!-- Group 4: Umum (Dropdown Manajemen Informasi) -->
             @if(Auth::check() && Auth::user()->role === 'admin')
-                <a href="{{ route('master-user') }}" 
-                   class="flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-lg transition {{ request()->routeIs('master-user*') ? 'bg-slate-800 text-white font-bold' : 'text-gray-300 hover:bg-slate-800/60 hover:text-white' }}">
-                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                    </svg>
-                    <span>Manajemen Data User</span>
-                </a>
+                <div>
+                    <p class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">Umum</p>
+                    <details class="group rounded-xl border border-slate-700/80 bg-slate-900/60 overflow-hidden transition"
+                             {{ request()->is('pusat-informasi', 'admin/berita*') ? 'open' : '' }}>
+                        <summary class="flex items-center justify-between px-4 py-3 text-xs sm:text-sm font-bold text-white bg-slate-800 hover:bg-slate-750 cursor-pointer transition list-none select-none">
+                            <span class="w-full text-center leading-tight">
+                                Manajemen<br>Informasi
+                            </span>
+                            <svg class="w-4 h-4 text-slate-400 transition-transform duration-200 group-open:rotate-180 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </summary>
+
+                        <div class="divide-y divide-slate-700/70 border-t border-slate-700 bg-slate-950/40">
+                            <!-- Sesuaikan URL di bawah ini dengan route aplikasi Anda -->
+                            <a href="{{ url('/pusat-informasi') }}" 
+                               class="block py-2.5 px-4 text-center text-xs font-semibold transition {{ request()->is('pusat-informasi') ? 'bg-sky-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                Pusat Informasi
+                            </a>
+                            <a href="{{ route('admin.berita.index') }}" 
+                               class="block py-2.5 px-4 text-center text-xs font-semibold transition {{ request()->routeIs('admin.berita.*') ? 'bg-sky-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                Daftar Berita
+                            </a>
+                        </div>
+                    </details>
+                </div>
             @endif
+
         </div>
 
         <!-- Footer -->
         <div class="p-4 border-t border-slate-800 bg-slate-950/20 space-y-2">
-            <a href="{{ url('/') }}" class="flex items-center justify-center space-x-2 w-full px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition">
+            <a href="{{ url('/') }}" target="_blank" class="flex items-center justify-center space-x-2 w-full px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                 </svg>
@@ -236,16 +267,16 @@
                         @elseif(request()->is('titik-lokasi')) Master Data Titik Lokasi & Gedung
                         @elseif(request()->is('instansi')) Daftar Instansi Mitra Terdaftar
                         @elseif(request()->is('riwayat-kegiatan')) Rekapitulasi Riwayat Kegiatan Terlaksana
-                        @elseif(request()->is('master-user*')) Manajemen Master Data Pengguna
-                        @elseif(request()->is('master-kegiatan*')) Master Data Kegiatan
-                        @elseif(request()->is('master-lokasi*')) Master Data Lokasi
+                        @elseif(request()->routeIs('master-user*')) Manajemen Master Data Pengguna
+                        @elseif(request()->is('pusat-informasi')) Pusat Informasi Publik
+                        @elseif(request()->routeIs('admin.berita.*')) Daftar Berita & Publikasi
                         @else Sistem Informasi BKN
                         @endif
                     </h2>
                 </div>
             </div>
 
-            <!-- Right Profile Info & Symmetrical Logout Button & Notifikasi -->
+            <!-- Right Profile Info & Notifikasi -->
             <div class="flex items-center gap-3 pl-4 border-l border-slate-250">
                 
                 <!-- PENGINGAT NOTIFIKASI KOORDINATOR HARI INI -->
@@ -340,5 +371,10 @@
             mobileBackdrop.addEventListener('click', toggleSidebar);
         }
     </script>
+    <!-- Stack untuk menampung semua modal -->
+    @stack('modals')
+    
+    <!-- Stack untuk menampung script tambahan -->
+    @stack('scripts')
 </body>
 </html>

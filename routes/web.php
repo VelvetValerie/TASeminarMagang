@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Api\Public\BeritaController;
+use App\Http\Controllers\AdminBeritaController;
 use App\Models\Kegiatan;
 use App\Http\Controllers\Api\Public\KalenderController;
 
@@ -16,13 +18,8 @@ Route::get('/', function () {
 
 Route::get('/kalender-kegiatan', [KalenderController::class, 'getKegiatan']);
 
-Route::get('/berita', function () {
-    return view('news');
-});
-
-Route::get('/berita/detail', function () {
-    return view('news_detail');
-});
+Route::get('/berita', [BeritaController::class, 'index'])->name('berita.index');
+Route::get('/berita/detail/{slug}', [BeritaController::class, 'show'])->name('berita.show');
 
 Route::get('/informasi', function () {
     return view('information');
@@ -81,5 +78,12 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/master-user', [AppController::class, 'storeUser'])->name('master-user.store');
         Route::put('/master-user/{id}', [AppController::class, 'updateUser'])->name('master-user.update');
         Route::delete('/master-user/{id}', [AppController::class, 'destroyUser'])->name('master-user.destroy');
+
+        Route::get('/admin/berita', [AdminBeritaController::class, 'index'])->name('admin.berita.index');
+        Route::get('/admin/berita/create', [AdminBeritaController::class, 'create'])->name('admin.berita.create');
+        Route::post('/admin/berita', [AdminBeritaController::class, 'store'])->name('admin.berita.store');
+        Route::get('/admin/berita/{slug}/edit', [AdminBeritaController::class, 'edit'])->name('admin.berita.edit');
+        Route::put('/admin/berita/{slug}', [AdminBeritaController::class, 'update'])->name('admin.berita.update');
+        Route::delete('/admin/berita/{id}', [AdminBeritaController::class, 'destroy'])->name('admin.berita.destroy');
     });
 });
