@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 07, 2026 at 03:29 AM
+-- Generation Time: Oct 11, 2026 at 10:46 AM
 -- Server version: 8.0.40
 -- PHP Version: 8.3.28
 
@@ -717,7 +717,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id_user`, `username`, `nip`, `email`, `password`, `role`, `id_karyawan`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'admin_bkn', '199001012015011001', 'rafifadillah420@gmail.com', '$2y$12$hhOuPFTQOxM7Jdp8qXnJLuwkpEndJXb8ARMGXhTFAtO.LrTOFQaU.', 'admin', NULL, NULL, '2026-09-01 17:37:19', '2026-09-24 07:10:58'),
+(1, 'admin_bkn', '199001012015011001', 'rafifadillah420@gmail.com', '$2y$12$f4uxTB55wiGjExcJeAU/Q.iOWPxpJwmwLpsP98.bq2ivxYizCYWNe', 'admin', NULL, NULL, '2026-09-01 17:37:19', '2026-10-08 18:50:23'),
 (2, 'budi_santoso', '199203042018021002', 'budi.santoso@bkn.go.id', '$2y$12$hKicAGqcuggCLStODtdohOVWnbCHXv.wv1hRtfoedAvzbWFRhsLlG', 'pegawai', 1, NULL, '2026-09-03 01:14:01', '2026-09-23 23:12:41'),
 (3, 'siti_rahma', '199505062020032001', 'siti.rahma@bkn.go.id', '$2y$12$azWdf4/Q8jWKkWVkEEWQp.Ic1W5D2tkOnuHsUMRYDwVzSC/oa9Bza', 'pegawai', 2, NULL, '2026-09-03 01:14:01', '2026-09-22 00:48:29'),
 (4, 'pimpinan_bkn', '198507082010041003', 'pimpinan01@bkn.go.id', '$2y$12$8QEpJWSFi5KwPdHEMFGiauiWo/ZdNGr3Uo/WBHbdHesRbYNWK3mFS', 'pimpinan', NULL, NULL, '2026-09-03 01:14:01', '2026-10-04 20:35:33'),
@@ -729,6 +729,25 @@ INSERT INTO `users` (`id_user`, `username`, `nip`, `email`, `password`, `role`, 
 (11, 'rina_aprilia', '199504182020022001', 'rina.aprilia@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai', 10, NULL, '2026-09-22 02:41:28', '2026-09-22 02:41:28'),
 (12, 'eko_prasetyo', '199207222018011004', 'eko.prasetyo@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai', 11, NULL, '2026-09-22 02:41:28', '2026-09-22 02:41:28'),
 (13, 'maya_kartika', '199310102019022002', 'maya.kartika@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai', 12, NULL, '2026-09-22 02:41:28', '2026-09-22 02:41:28');
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `vw_kalender_landing_page`
+-- (See below for the actual view)
+--
+CREATE TABLE `vw_kalender_landing_page` (
+`ID Kegiatan` int unsigned
+,`Nama Kegiatan` varchar(150)
+,`Jenis Kegiatan` varchar(100)
+,`Titik Lokasi` varchar(100)
+,`Instansi` varchar(150)
+,`Nama Karyawan Koordinator` varchar(100)
+,`Jumlah Peserta` int unsigned
+,`Tanggal Mulai` date
+,`Tanggal Selesai` date
+,`Status` enum('Belum Konfirmasi','Terkonfirmasi','Selesai','Dibatalkan')
+);
 
 --
 -- Indexes for dumped tables
@@ -844,6 +863,15 @@ ALTER TABLE `titik_lokasi`
 --
 ALTER TABLE `users`
   MODIFY `id_user` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `vw_kalender_landing_page`
+--
+DROP TABLE IF EXISTS `vw_kalender_landing_page`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vw_kalender_landing_page`  AS SELECT DISTINCT `kg`.`id_keg` AS `ID Kegiatan`, `kg`.`nama_keg` AS `Nama Kegiatan`, `jk`.`nama_jeniskeg` AS `Jenis Kegiatan`, `tl`.`nm_lokasi` AS `Titik Lokasi`, `ins`.`nm_instansi` AS `Instansi`, `kar`.`nama_karyawan` AS `Nama Karyawan Koordinator`, `kg`.`jmlh_peserta` AS `Jumlah Peserta`, `kg`.`tanggal_mulai` AS `Tanggal Mulai`, `kg`.`tanggal_selesai` AS `Tanggal Selesai`, `kg`.`status` AS `Status` FROM ((((`kegiatan` `kg` join `jenis_keg` `jk` on((`kg`.`id_jeniskeg` = `jk`.`id_jeniskeg`))) join `instansi` `ins` on((`kg`.`id_instansi` = `ins`.`id_instansi`))) join `karyawan` `kar` on((`kg`.`id_karyawan_koor` = `kar`.`id_karyawan`))) join `titik_lokasi` `tl` on((`kg`.`id_tklokasi` = `tl`.`id_tklokasi`))) WHERE (`kg`.`status` in ('Selesai','Terkonfirmasi')) ;
 
 --
 -- Constraints for dumped tables
