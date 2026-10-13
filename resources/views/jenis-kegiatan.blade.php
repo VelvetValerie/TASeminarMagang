@@ -89,6 +89,7 @@
         </div>
     </div>
 
+    @push('modals')
     <!-- POPUP MODAL INFORMASI JENIS KEGIATAN -->
     <div id="infoModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
         <div class="relative w-full max-w-lg bg-white border-2 border-black p-5 shadow-2xl">
@@ -119,6 +120,7 @@
             </div>
         </div>
     </div>
+    @endpush
 
     <!-- LOGIKA JAVASCRIPT: MODAL, SEARCH, & SORTING -->
     <script>

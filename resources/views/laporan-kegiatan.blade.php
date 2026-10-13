@@ -263,8 +263,7 @@
                                             <form action="{{ url('/laporan-kegiatan/'.$item->id_laporan) }}" method="POST" class="w-20" onsubmit="return confirm('Apakah Anda yakin ingin menghapus laporan kegiatan ini?')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" 
-                                                        class="w-full border-2 border-black bg-rose-500 hover:bg-rose-600 text-white font-bold px-2 py-1 text-xs transition cursor-pointer shadow-xs">
+                                                <button type="button" onclick="openDeleteLaporanModal('{{ $item->id_laporan }}')" class="w-20 border-2 border-black bg-rose-500 hover:bg-rose-600 text-white font-bold px-2 py-1 text-xs transition cursor-pointer shadow-xs">
                                                     Hapus
                                                 </button>
                                             </form>
@@ -301,6 +300,7 @@
     </div>
 
     <!-- MODAL 1: FORM TAMBAH LAPORAN KEGIATAN -->
+    @push('modals')
     <div id="tambahLaporanModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
         <div class="relative w-full max-w-lg bg-white border-2 border-black p-5 shadow-2xl">
             <button type="button" onclick="closeTambahLaporanModal()" class="absolute top-2 right-2 p-1 text-red-600 font-bold">✕</button>
@@ -377,8 +377,10 @@
             </form>
         </div>
     </div>
+    @endpush
 
     <!-- MODAL 2: FORM EDIT LAPORAN KEGIATAN -->
+    @push('modals')
     <div id="editLaporanModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
         <div class="relative w-full max-w-lg bg-white border-2 border-black p-5 shadow-2xl">
             <button type="button" onclick="closeEditLaporanModal()" class="absolute top-2 right-2 p-1 text-red-600 font-bold">✕</button>
@@ -443,8 +445,36 @@
             </form>
         </div>
     </div>
+    @endpush
+
+    @push('modals')
+    <!-- ================= MODAL HAPUS LAPORAN ================= -->
+    <div id="deleteLaporanModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+        <div class="relative w-full max-w-md bg-white border-2 border-black p-6 shadow-2xl space-y-4">
+            <div class="border-b-2 border-black pb-2">
+                <h3 class="text-base sm:text-lg font-black uppercase text-rose-600">
+                    Konfirmasi Hapus Laporan
+                </h3>
+            </div>
+            <p class="text-xs sm:text-sm font-semibold text-gray-800">
+                Apakah Anda yakin ingin menghapus laporan kegiatan ini? Tindakan ini tidak dapat dibatalkan.
+            </p>
+            <form id="deleteLaporanForm" method="POST" action="" class="flex justify-end gap-2 border-t-2 border-black pt-4">
+                @csrf
+                @method('DELETE')
+                <button type="button" onclick="closeDeleteLaporanModal()" class="border-2 border-black bg-gray-200 hover:bg-gray-300 font-bold px-4 py-1.5 text-xs uppercase cursor-pointer">
+                    Batal
+                </button>
+                <button type="submit" class="border-2 border-black bg-rose-600 hover:bg-rose-700 text-white font-bold px-4 py-1.5 text-xs uppercase cursor-pointer">
+                    Ya, Hapus
+                </button>
+            </form>
+        </div>
+    </div>
+    @endpush
 
     <!-- SCRIPT JAVASCRIPT: SELECT2 & OTOMATISASI FORM -->
+    @push('scripts')
     <script>
         let currentTotalPesertaTambah = 0;
         let currentTotalPesertaEdit = 0;
@@ -539,5 +569,15 @@
         function closeEditLaporanModal() {
             editModal.classList.add('hidden');
         }
+
+        function openDeleteLaporanModal(id) {
+            document.getElementById('deleteLaporanForm').action = `/laporan-kegiatan/${id}`;
+            document.getElementById('deleteLaporanModal').classList.remove('hidden');
+        }
+
+        function closeDeleteLaporanModal() {
+            document.getElementById('deleteLaporanModal').classList.add('hidden');
+        }
     </script>
+    @endpush
 @endsection

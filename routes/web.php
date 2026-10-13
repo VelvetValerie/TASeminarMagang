@@ -7,6 +7,8 @@ use App\Http\Controllers\LaporanKegiatanController;
 use App\Http\Controllers\MasterDataController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Api\Public\BeritaController;
+use App\Http\Controllers\AdminBeritaController;
 use App\Models\Kegiatan;
 
 // 1. Rute Publik
@@ -15,6 +17,20 @@ Route::get('/', function () {
     return view('landing', compact('kegiatan'));
 })->name('landing');
 
+Route::get('/kalender-kegiatan', [KalenderController::class, 'getKegiatan']);
+
+Route::get('/berita', [BeritaController::class, 'index'])->name('berita.index');
+Route::get('/berita/detail/{slug}', [BeritaController::class, 'show'])->name('berita.show');
+
+Route::get('/informasi', function () {
+    return view('information');
+});
+
+Route::get('/informasi/timeline', function () {
+    return view('timeline_detail');
+});
+
+// 2. Rute Tamu / Belum Login (Guest)
 // 2. Guest Routes
 Route::middleware(['guest'])->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -49,6 +65,17 @@ Route::middleware(['auth'])->group(function () {
 
     // Khusus Admin (Master Data)
     Route::middleware(['role:admin'])->group(function () {
+        Route::get('/master-user', [AppController::class, 'masterUser'])->name('master-user');
+        Route::post('/master-user', [AppController::class, 'storeUser'])->name('master-user.store');
+        Route::put('/master-user/{id}', [AppController::class, 'updateUser'])->name('master-user.update');
+        Route::delete('/master-user/{id}', [AppController::class, 'destroyUser'])->name('master-user.destroy');
+
+        Route::get('/admin/berita', [AdminBeritaController::class, 'index'])->name('admin.berita.index');
+        Route::get('/admin/berita/create', [AdminBeritaController::class, 'create'])->name('admin.berita.create');
+        Route::post('/admin/berita', [AdminBeritaController::class, 'store'])->name('admin.berita.store');
+        Route::get('/admin/berita/{slug}/edit', [AdminBeritaController::class, 'edit'])->name('admin.berita.edit');
+        Route::put('/admin/berita/{slug}', [AdminBeritaController::class, 'update'])->name('admin.berita.update');
+        Route::delete('/admin/berita/{id}', [AdminBeritaController::class, 'destroy'])->name('admin.berita.destroy');
         Route::get('/riwayat-kerja', [MasterDataController::class, 'riwayatKerja'])->name('riwayat-kerja');
         Route::get('/jenis-kegiatan', [MasterDataController::class, 'jenisKegiatan'])->name('jenis-kegiatan');
         Route::get('/titik-lokasi', [MasterDataController::class, 'titikLokasi'])->name('titik-lokasi');

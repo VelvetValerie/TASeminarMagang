@@ -135,6 +135,7 @@
     </div>
 </div>
 
+@push('modals')
 <!-- ================= MODAL EDIT USER ================= -->
 <div id="editUserModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
     <div class="relative w-full max-w-lg bg-white border-2 border-black p-6 shadow-2xl space-y-4">
@@ -194,7 +195,9 @@
         </form>
     </div>
 </div>
+@endpush
 
+@push('modals')
 <!-- ================= MODAL HAPUS USER ================= -->
 <div id="deleteUserModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
     <div class="relative w-full max-w-md bg-white border-2 border-black p-6 shadow-2xl space-y-4">
@@ -223,7 +226,9 @@
         </form>
     </div>
 </div>
+@endpush
 
+@push('modals')
 <!-- ================= MODAL TAMBAH USER BARU ================= -->
 <div id="addUserModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
     <div class="relative w-full max-w-lg bg-white border-2 border-black p-6 shadow-2xl space-y-4">
@@ -284,6 +289,7 @@
         </form>
     </div>
 </div>
+@endpush
 
 <!-- SCRIPT LOGIKA FILTER & MODAL POPUP -->
 <script>

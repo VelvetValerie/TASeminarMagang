@@ -197,7 +197,7 @@
                                         <form action="{{ url('/kegiatan/' . $item->id_keg) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data {{ $item->nama_keg }}?')" class="flex items-center justify-center m-0 p-0">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="p-1 text-gray-900 hover:text-red-600 transition cursor-pointer leading-none flex items-center justify-center" title="Hapus Kegiatan">
+                                            <button type="button" onclick="openDeleteKegiatanModal('{{ $item->id_keg }}', '{{ addslashes($item->nama_keg) }}')" class="p-1 text-gray-900 hover:text-red-600 transition cursor-pointer leading-none flex items-center justify-center" title="Hapus Kegiatan">
                                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                                 </svg>
@@ -233,31 +233,10 @@
 
         <!-- PAGINATION -->
         @if ($kegiatan->hasPages())
-            <div class="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t-2 border-black">
-                <p class="text-xs sm:text-sm font-semibold text-gray-700">
-                    Menampilkan <span class="font-bold text-gray-900">{{ $kegiatan->firstItem() }}</span> - <span class="font-bold text-gray-900">{{ $kegiatan->lastItem() }}</span> dari <span class="font-bold text-gray-900">{{ $kegiatan->total() }}</span> kegiatan
-                </p>
-
-                <div class="flex items-center space-x-1.5">
-                    @if ($kegiatan->onFirstPage())
-                        <span class="border-2 border-black bg-gray-200 text-gray-400 px-3 py-1 font-bold text-xs sm:text-sm cursor-not-allowed">&laquo;</span>
-                    @else
-                        <a href="{{ $kegiatan->appends(request()->query())->previousPageUrl() }}" class="border-2 border-black bg-white hover:bg-gray-200 text-gray-900 px-3 py-1 font-bold text-xs sm:text-sm transition">&laquo;</a>
-                    @endif
-
-                    @foreach ($kegiatan->appends(request()->query())->getUrlRange(1, $kegiatan->lastPage()) as $page => $url)
-                        @if ($page == $kegiatan->currentPage())
-                            <span class="border-2 border-black bg-black text-white px-3 py-1 font-bold text-xs sm:text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]">{{ $page }}</span>
-                        @else
-                            <a href="{{ $url }}" class="border-2 border-black bg-white hover:bg-gray-200 text-gray-900 px-3 py-1 font-bold text-xs sm:text-sm transition">{{ $page }}</a>
-                        @endif
-                    @endforeach
-
-                    @if ($kegiatan->hasMorePages())
-                        <a href="{{ $kegiatan->nextPageUrl() }}" class="border-2 border-black bg-white hover:bg-gray-200 text-gray-900 px-3 py-1 font-bold text-xs sm:text-sm transition">&raquo;</a>
-                    @else
-                        <span class="border-2 border-black bg-gray-200 text-gray-400 px-3 py-1 font-bold text-xs sm:text-sm cursor-not-allowed">&raquo;</span>
-                    @endif
+            <div class="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3 pt-3 border-t-2 border-black text-xs font-bold">
+                <span>Menampilkan {{ $kegiatan->firstItem() }} - {{ $kegiatan->lastItem() }} dari {{ $kegiatan->total() }} Kegiatan</span>
+                <div class="flex gap-1">
+                    {{ $kegiatan->appends(request()->query())->links() }}
                 </div>
             </div>
         @endif
@@ -265,6 +244,7 @@
     </div>
 
     <!-- POPUP MODAL 1: FORM TAMBAH / EDIT KEGIATAN -->
+    @push('modals')
     <div id="addModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs overflow-y-auto">
         <div class="relative w-full max-w-xl bg-white border-2 border-black p-6 shadow-2xl my-8">
             
@@ -418,8 +398,10 @@
 
         </div>
     </div>
+    @endpush
 
     <!-- POPUP MODAL 2: DETAIL KEGIATAN -->
+    @push('modals')
     <div id="detailKegiatanModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
         <div class="relative w-full max-w-xl bg-white border-2 border-black p-5 shadow-2xl">
             <button type="button" onclick="closeDetailModal()" class="absolute top-2 right-2 p-1 text-red-600 hover:text-red-800 transition cursor-pointer" title="Tutup">
@@ -447,8 +429,36 @@
             </div>
         </div>
     </div>
+    @endpush
+
+    @push('modals')
+    <!-- ================= MODAL HAPUS KEGIATAN ================= -->
+    <div id="deleteKegiatanModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+        <div class="relative w-full max-w-md bg-white border-2 border-black p-6 shadow-2xl space-y-4">
+            <div class="border-b-2 border-black pb-2">
+                <h3 class="text-base sm:text-lg font-black uppercase text-rose-600">
+                    Konfirmasi Hapus Kegiatan
+                </h3>
+            </div>
+            <p class="text-xs sm:text-sm font-semibold text-gray-800">
+                Apakah Anda yakin ingin menghapus data <strong id="delete_kegiatan_text" class="text-black"></strong>? Tindakan ini tidak dapat dibatalkan.
+            </p>
+            <form id="deleteKegiatanForm" method="POST" action="" class="flex justify-end gap-2 border-t-2 border-black pt-4">
+                @csrf
+                @method('DELETE')
+                <button type="button" onclick="closeDeleteKegiatanModal()" class="border-2 border-black bg-gray-200 hover:bg-gray-300 font-bold px-4 py-1.5 text-xs uppercase cursor-pointer">
+                    Batal
+                </button>
+                <button type="submit" class="border-2 border-black bg-rose-600 hover:bg-rose-700 text-white font-bold px-4 py-1.5 text-xs uppercase cursor-pointer">
+                    Ya, Hapus
+                </button>
+            </form>
+        </div>
+    </div>
+    @endpush
 
     <!-- LOGIKA JAVASCRIPT -->
+    @push('scripts')
     <script>
         const filterBtn = document.getElementById('filterDropdownBtn');
         const filterMenu = document.getElementById('filterMenu');
@@ -609,5 +619,17 @@
             if (e.target === addModal) closeAddModal();
             if (e.target === detailModal) closeDetailModal();
         });
+        
+
+        function openDeleteKegiatanModal(id, nama) {
+            document.getElementById('delete_kegiatan_text').innerText = nama;
+            document.getElementById('deleteKegiatanForm').action = `/kegiatan/${id}`;
+            document.getElementById('deleteKegiatanModal').classList.remove('hidden');
+        }
+
+        function closeDeleteKegiatanModal() {
+            document.getElementById('deleteKegiatanModal').classList.add('hidden');
+        }
     </script>
+    @endpush
 @endsection

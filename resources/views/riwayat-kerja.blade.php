@@ -245,6 +245,7 @@
     </div>
 
     <!-- POPUP MODAL 1: RINGKASAN RIWAYAT KERJA -->
+    @push('modals')
     <div id="modal1" class="hidden fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
         <div class="relative w-full max-w-xl bg-white border-2 border-black p-5 shadow-2xl">
             
@@ -281,8 +282,10 @@
             </div>
         </div>
     </div>
+    @endpush
 
     <!-- POPUP MODAL 2: DAFTAR LENGKAP RIWAYAT KERJA -->
+    @push('modals')
     <div id="modal2" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
         <div class="relative w-full max-w-2xl bg-white border-2 border-black p-5 shadow-2xl">
             
@@ -303,8 +306,10 @@
             </div>
         </div>
     </div>
+    @endpush
 
     <!-- POPUP MODAL 3: RINCIAN DETAIL KEGIATAN SPESIFIK -->
+    @push('modals')
     <div id="modal3Detail" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
         <div class="relative w-full max-w-xl bg-white border-2 border-black p-5 shadow-2xl">
             <button type="button" onclick="closeModal3()" class="absolute top-2 right-2 p-1 text-red-600 hover:text-red-800 transition cursor-pointer" title="Kembali">
@@ -330,8 +335,10 @@
             </div>
         </div>
     </div>
+    @endpush
 
     <!-- SCRIPT JAVASCRIPT: FILTER, SEARCH, SORTING, & MODAL DINAMIS -->
+    @push('scripts')
     <script>
         const searchInput = document.getElementById('searchInput');
         const sortDropdownBtn = document.getElementById('sortDropdownBtn');
@@ -528,4 +535,5 @@
         modal2.addEventListener('click', (e) => { if (e.target === modal2) closeModal2(); });
         modal3.addEventListener('click', (e) => { if (e.target === modal3) closeModal3(); });
     </script>
+    @endpush
 @endsection
