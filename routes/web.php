@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminBeritaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KegiatanController;
@@ -7,6 +8,7 @@ use App\Http\Controllers\LaporanKegiatanController;
 use App\Http\Controllers\MasterDataController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BeritaController;
 use App\Models\Kegiatan;
 use App\Http\Controllers\Api\Public\KalenderController;
 
@@ -26,34 +28,24 @@ Route::get('/', function () {
 
 Route::get('/kalender-kegiatan', [KalenderController::class, 'getKegiatan']);
 
-Route::get('/berita', function () {
-    return view('news');
-});
-
-Route::get('/berita/detail', function () {
-    return view('news_detail');
-});
-
-Route::get('/informasi', function () {
-    return view('information');
-});
-
-Route::get('/informasi/timeline', function () {
-    return view('timeline_detail');
-});
+// Berita & Informasi Publik
+Route::get('/berita', [AdminBeritaController::class, 'index'])->name('berita.index');
+Route::get('/berita/detail', [AdminBeritaController::class, 'detail'])->name('berita.detail');
+Route::get('/informasi', [AdminBeritaController::class, 'informasi'])->name('informasi.index');
+Route::get('/informasi/timeline', [AdminBeritaController::class, 'timeline'])->name('informasi.timeline');
 
 
 // ==========================================
 // 2. RUTE TAMU / GUEST (BELUM LOGIN)
 // ==========================================
 Route::middleware(['guest'])->group(function () {
-    // Halaman & Proses Login (Di-throttle maks 5x per menit)
+    // Halaman & Proses Login (Throttle maks 5x per menit)
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])
         ->middleware('throttle:5,1')
         ->name('login.perform');
 
-    // Lupa Password & Reset OTP (Di-throttle untuk keamanan)
+    // Lupa Password & Reset OTP (Throttle untuk keamanan)
     Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
     
     // Maksimal 3 kali minta OTP dalam 1 menit
@@ -96,7 +88,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/laporan-kegiatan/{id}/cetak', [LaporanKegiatanController::class, 'cetakPdfLaporan']);
     Route::get('/laporan-kegiatan/export-csv', [LaporanKegiatanController::class, 'exportCsv']);
 
-    // KHUSUS ROLE ADMIN (Master Data Teknis & Pengelolaan User)
+    // KHUSUS ROLE ADMIN (Master Data Teknis, Pengelolaan User, & Berita)
     Route::middleware(['role:admin'])->group(function () {
         Route::get('/riwayat-kerja', [MasterDataController::class, 'riwayatKerja'])->name('riwayat-kerja');
         Route::get('/jenis-kegiatan', [MasterDataController::class, 'jenisKegiatan'])->name('jenis-kegiatan');
@@ -109,6 +101,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/master-user', [UserController::class, 'store'])->name('master-user.store');
         Route::put('/master-user/{id}', [UserController::class, 'update'])->name('master-user.update');
         Route::delete('/master-user/{id}', [UserController::class, 'destroy'])->name('master-user.destroy');
+
+        // Rute Kelola Berita & Informasi (Solusi Error admin.berita.index)
+        Route::get('/admin/berita', [AdminBeritaController::class, 'index'])->name('admin.berita.index');
+        Route::get('/pusat-informasi', [AdminBeritaController::class, 'informasi'])->name('pusat-informasi');
     });
 
 });
