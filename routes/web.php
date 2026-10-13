@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\AdminBeritaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KegiatanController;
@@ -8,8 +7,9 @@ use App\Http\Controllers\LaporanKegiatanController;
 use App\Http\Controllers\MasterDataController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\BeritaController;
+use App\Http\Controllers\AdminBeritaController;
 use App\Models\Kegiatan;
+use App\Models\Berita;
 use App\Http\Controllers\Api\Public\KalenderController;
 
 /*
@@ -29,33 +29,40 @@ Route::get('/', function () {
 Route::get('/kalender-kegiatan', [KalenderController::class, 'getKegiatan']);
 
 // Berita & Informasi Publik
-Route::get('/berita', [AdminBeritaController::class, 'index'])->name('berita.index');
-Route::get('/berita/detail', [AdminBeritaController::class, 'detail'])->name('berita.detail');
-Route::get('/informasi', [AdminBeritaController::class, 'informasi'])->name('informasi.index');
-Route::get('/informasi/timeline', [AdminBeritaController::class, 'timeline'])->name('informasi.timeline');
+Route::get('/berita', function () {
+    $berita = Berita::where('status', 'Terbit')->latest()->get();
+    return view('news', compact('berita'));
+})->name('berita.index');
+
+Route::get('/berita/{slug}', function ($slug) {
+    $berita = Berita::where('slug', $slug)->firstOrFail();
+    return view('news_detail', compact('berita'));
+})->name('berita.show');
+
+Route::get('/informasi', function () {
+    return view('information');
+})->name('informasi.index');
+
+Route::get('/informasi/timeline', function () {
+    return view('timeline_detail');
+})->name('informasi.timeline');
 
 
 // ==========================================
 // 2. RUTE TAMU / GUEST (BELUM LOGIN)
 // ==========================================
 Route::middleware(['guest'])->group(function () {
-    // Halaman & Proses Login (Throttle maks 5x per menit)
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])
         ->middleware('throttle:5,1')
         ->name('login.perform');
 
-    // Lupa Password & Reset OTP (Throttle untuk keamanan)
     Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
-    
-    // Maksimal 3 kali minta OTP dalam 1 menit
     Route::post('/forgot-password', [AuthController::class, 'sendResetOtp'])
         ->middleware('throttle:3,1')
         ->name('password.email');
 
     Route::get('/verify-otp', [AuthController::class, 'showVerifyOtpForm'])->name('password.verify.form');
-    
-    // Maksimal 5 kali coba verifikasi OTP dalam 1 menit
     Route::post('/reset-password', [AuthController::class, 'resetPassword'])
         ->middleware('throttle:5,1')
         ->name('password.update');
@@ -67,20 +74,19 @@ Route::middleware(['guest'])->group(function () {
 // ==========================================
 Route::middleware(['auth'])->group(function () {
     
-    // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // Dilihat oleh SEMUA Role (Admin, Pimpinan, Pegawai)
+    // Dashboard & Kalender
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
     Route::get('/kalender', [DashboardController::class, 'kalender'])->name('kalender');
 
-    // PERENCANAAN KEGIATAN
+    // Perencanaan Kegiatan
     Route::get('/kegiatan', [KegiatanController::class, 'index'])->name('kegiatan');
     Route::post('/kegiatan', [KegiatanController::class, 'store'])->name('kegiatan.store');
     Route::put('/kegiatan/{id}', [KegiatanController::class, 'update'])->name('kegiatan.update');
     Route::delete('/kegiatan/{id}', [KegiatanController::class, 'destroy'])->name('kegiatan.destroy');
 
-    // LAPORAN KEGIATAN
+    // Laporan Kegiatan
     Route::get('/laporan-kegiatan', [LaporanKegiatanController::class, 'index'])->name('laporan-kegiatan');
     Route::post('/laporan-kegiatan', [LaporanKegiatanController::class, 'store'])->name('laporan-kegiatan.store');
     Route::put('/laporan-kegiatan/{id}', [LaporanKegiatanController::class, 'update'])->name('laporan-kegiatan.update');
@@ -88,7 +94,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/laporan-kegiatan/{id}/cetak', [LaporanKegiatanController::class, 'cetakPdfLaporan']);
     Route::get('/laporan-kegiatan/export-csv', [LaporanKegiatanController::class, 'exportCsv']);
 
-    // KHUSUS ROLE ADMIN (Master Data Teknis, Pengelolaan User, & Berita)
+    // KHUSUS ROLE ADMIN
     Route::middleware(['role:admin'])->group(function () {
         Route::get('/riwayat-kerja', [MasterDataController::class, 'riwayatKerja'])->name('riwayat-kerja');
         Route::get('/jenis-kegiatan', [MasterDataController::class, 'jenisKegiatan'])->name('jenis-kegiatan');
@@ -96,15 +102,24 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/instansi', [MasterDataController::class, 'instansi'])->name('instansi');
         Route::get('/riwayat-kegiatan', [KegiatanController::class, 'riwayatKegiatan'])->name('riwayat-kegiatan');
 
-        // Manajemen Master User
         Route::get('/master-user', [UserController::class, 'index'])->name('master-user');
         Route::post('/master-user', [UserController::class, 'store'])->name('master-user.store');
         Route::put('/master-user/{id}', [UserController::class, 'update'])->name('master-user.update');
         Route::delete('/master-user/{id}', [UserController::class, 'destroy'])->name('master-user.destroy');
 
-        // Rute Kelola Berita & Informasi (Solusi Error admin.berita.index)
-        Route::get('/admin/berita', [AdminBeritaController::class, 'index'])->name('admin.berita.index');
-        Route::get('/pusat-informasi', [AdminBeritaController::class, 'informasi'])->name('pusat-informasi');
+        // CRUD Berita Admin
+        Route::prefix('admin')->name('admin.')->group(function () {
+            Route::get('/berita', [AdminBeritaController::class, 'index'])->name('berita.index');
+            Route::get('/berita/create', [AdminBeritaController::class, 'create'])->name('berita.create');
+            Route::post('/berita', [AdminBeritaController::class, 'store'])->name('berita.store');
+            Route::get('/berita/{slug}/edit', [AdminBeritaController::class, 'edit'])->name('berita.edit');
+            Route::put('/berita/{slug}', [AdminBeritaController::class, 'update'])->name('berita.update');
+            Route::delete('/berita/{id}', [AdminBeritaController::class, 'destroy'])->name('berita.destroy');
+        });
+
+        Route::get('/pusat-informasi', function () {
+            return view('information');
+        })->name('pusat-informasi');
     });
 
 });

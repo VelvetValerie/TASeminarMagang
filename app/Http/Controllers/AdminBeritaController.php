@@ -14,7 +14,6 @@ class AdminBeritaController extends Controller
      */
     public function index()
     {
-        // Menampilkan semua berita (termasuk Draft)
         $berita = Berita::latest()->get();
         return view('admin.berita.index', compact('berita'));
     }
@@ -34,12 +33,11 @@ class AdminBeritaController extends Controller
     {
         $request->validate([
             'judul_berita' => 'required|string|max:255',
-            'konten'       => 'required',
+            'konten'       => 'required|string',
             'status'       => 'required|in:Terbit,Draft',
-            'lampiran_url' => 'nullable|url',
+            'lampiran_url' => 'nullable|url|max:255',
         ]);
 
-        // Membuat slug unik (judul + random string agar tidak bentrok)
         $slug = Str::slug($request->judul_berita) . '-' . Str::random(5);
 
         Berita::create([
@@ -48,7 +46,7 @@ class AdminBeritaController extends Controller
             'konten'       => $request->konten,
             'status'       => $request->status,
             'lampiran_url' => $request->lampiran_url,
-            'id_penulis' => Auth::id(),
+            'id_penulis'   => Auth::id(),
         ]);
 
         return redirect()->route('admin.berita.index')
@@ -56,7 +54,7 @@ class AdminBeritaController extends Controller
     }
 
     /**
-     * Menampilkan form edit berita
+     * Menampilkan form edit berita berdasarkan slug
      */
     public function edit($slug)
     {
@@ -73,19 +71,20 @@ class AdminBeritaController extends Controller
 
         $request->validate([
             'judul_berita' => 'required|string|max:255',
-            'konten'       => 'required',
+            'konten'       => 'required|string',
             'status'       => 'required|in:Terbit,Draft',
-            'lampiran_url' => 'nullable|url',
+            'lampiran_url' => 'nullable|url|max:255',
         ]);
 
-        // Update data
         $berita->judul_berita = $request->judul_berita;
-        $berita->konten = $request->konten;
-        $berita->status = $request->status;
+        $berita->konten       = $request->konten;
+        $berita->status       = $request->status;
         $berita->lampiran_url = $request->lampiran_url;
         
-        // Jika judul berubah, Anda bisa mengupdate slug atau membiarkannya tetap
-        // $berita->slug = Str::slug($request->judul_berita) . '-' . Str::random(5);
+        // Memperbarui slug jika judul berita mengalami perubahan
+        if ($berita->isDirty('judul_berita')) {
+            $berita->slug = Str::slug($request->judul_berita) . '-' . Str::random(5);
+        }
 
         $berita->save();
 
@@ -94,12 +93,11 @@ class AdminBeritaController extends Controller
     }
 
     /**
-     * Menghapus berita
+     * Menghapus data berita berdasarkan ID atau primary key
      */
     public function destroy($id)
     {
-        // Sesuaikan parameter $id dengan primary key Anda (id atau id_berita)
-        $berita = Berita::findOrFail($id);
+        $berita = Berita::where('id_berita', $id)->orWhere('id', $id)->firstOrFail();
         $berita->delete();
 
         return redirect()->route('admin.berita.index')

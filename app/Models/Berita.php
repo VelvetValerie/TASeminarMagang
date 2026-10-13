@@ -9,32 +9,25 @@ class Berita extends Model
 {
     use HasFactory;
 
-    // Sesuaikan dengan nama tabel di database Anda
     protected $table = 'berita'; 
 
-    // Tentukan primary key jika tidak menggunakan default 'id'
-    // (Jika di database Anda namanya 'id', baris ini bisa dihapus)
     protected $primaryKey = 'id_berita'; 
 
-    // Kolom-kolom yang diizinkan untuk diisi secara massal (Mass Assignment)
     protected $fillable = [
         'judul_berita',
         'slug',
         'konten',
         'status',
-        'thumbnail',     // Opsional: jika nanti ada fitur upload gambar sampul
+        'thumbnail',
         'lampiran_url',
-        'id_penulis',       // Menyimpan ID admin yang membuat/mengunggah
+        'id_penulis',
     ];
 
     /**
-     * Relasi ke model User atau Pegawai (Penulis Berita)
-     * Ini digunakan pada pemanggilan $berita->penulis->nama_karyawan di blade
+     * Relasi ke model User (Penulis Berita)
      */
     public function penulis()
     {
-        // Ganti 'User::class' dengan model yang Anda gunakan untuk Master User/Karyawan
-        // 'id_user' adalah foreign key di tabel berita, 'id' adalah primary key di tabel user
-        return $this->belongsTo(User::class, 'id_user', 'id');
+        return $this->belongsTo(User::class, 'id_penulis', 'id_user');
     }
 }
