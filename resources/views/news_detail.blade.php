@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $berita->judul_berita }} | Portal Informasi CAT BKN VIII</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Paksa sembunyikan img tag dari editor konten agar tidak bentrok dengan thumbnail utama */
+        .konten-berita img {
+            display: none !important;
+        }
+    </style>
 </head>
 <body class="bg-[#F8F9FA] min-h-screen font-sans text-gray-900 flex flex-col pt-24">
 
@@ -46,17 +52,17 @@
                 </div>
 
                 <!-- Gambar Utama Artikel -->
-                <div class="mb-8 rounded-lg overflow-hidden border border-gray-100">
-                    @if($berita->thumbnail)
-                        <img src="{{ asset('storage/' . $berita->thumbnail) }}" alt="{{ $berita->judul_berita }}" class="w-full h-auto object-cover max-h-[450px]">
-                    @else
-                        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Ilustrasi Default" class="w-full h-auto object-cover max-h-[450px]">
-                    @endif
-                    <p class="text-xs text-gray-500 italic p-2 text-center bg-gray-50">Ilustrasi pelaksanaan Seleksi Kompetensi Dasar menggunakan fasilitas Computer Assisted Test (CAT).</p>
-                </div>
+                @if($berita->thumbnail)
+                <figure class="mb-8 rounded-lg overflow-hidden border border-gray-100 flex flex-col">
+                    <img src="{{ asset('storage/' . $berita->thumbnail) }}" alt="{{ $berita->judul_berita }}" class="w-full h-auto object-cover max-h-[450px]">
+                    <figcaption class="text-xs text-gray-500 italic p-2 text-center bg-gray-50 border-t border-gray-200">
+                        Ilustrasi: {{ $berita->caption_thumbnail }}
+                    </figcaption>
+                </figure>
+                @endif
 
                 <!-- Isi Artikel -->
-                <div class="space-y-5 text-gray-700 leading-relaxed text-base md:text-lg">
+                <div class="konten-berita space-y-5 text-gray-700 leading-relaxed text-base md:text-lg">
                     {!! $berita->konten !!}
                 </div>
 
@@ -200,11 +206,9 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 @forelse($beritaLainnya as $lainnya)
                     <div class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col">
+                        
                         @if($lainnya->thumbnail)
-                            <img src="{{ asset('storage/' . $lainnya->thumbnail) }}" alt="{{ $lainnya->judul_berita }}" class="w-full h-40 object-cover">
-                        @else
-                            <!-- Gambar Default jika thumbnail kosong -->
-                            <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Berita Default" class="w-full h-40 object-cover">
+                            <img src="{{ asset('storage/' . $lainnya->thumbnail) }}" alt="{{ $lainnya->judul_berita }}" class="w-full h-40 object-cover border-b border-gray-100">
                         @endif
                         
                         <div class="p-5 flex flex-col flex-grow">

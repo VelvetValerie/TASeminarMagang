@@ -28,10 +28,16 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
             @forelse($berita as $item)
-                <div class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col">
-                    <!-- Gunakan thumbnail default jika tidak ada gambar -->
-                    <img src="{{ $item->thumbnail ?? 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' }}" alt="Ilustrasi" class="w-full h-48 md:h-52 object-cover">
-                    <div class="p-6 flex flex-col flex-grow">
+                <div class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col">
+                    @if($item->thumbnail)
+                        <!-- Gambar dari Database -->
+                        <img src="{{ asset('storage/' . $item->thumbnail) }}" alt="{{ $item->judul_berita }}" class="w-full h-48 object-cover border-b border-gray-100">
+                    @else
+                        <!-- Thumbnail Generik / Default -->
+                        <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Berita Default" class="w-full h-48 object-cover border-b border-gray-100">
+                    @endif
+                    
+                    <div class="p-5 flex flex-col flex-grow">
                         <h3 class="font-semibold text-lg text-gray-900 leading-snug mb-3 line-clamp-2">{{ $item->judul_berita }}</h3>
                         <div class="flex items-center gap-4 text-xs font-medium text-gray-500 mb-4">
                             <span class="flex items-center gap-1.5">

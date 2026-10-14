@@ -10,7 +10,10 @@ class BeritaController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Berita::where('status', 'Terbit')->latest();
+        // Hanya ambil yang berkategori 'Berita'
+        $query = Berita::where('kategori_publikasi', 'Berita')
+                       ->where('status', 'Terbit')
+                       ->latest();
 
         if ($request->has('q') && $request->q != '') {
             $keyword = $request->q;
@@ -28,20 +31,21 @@ class BeritaController extends Controller
     public function show($slug)
     {
         $berita = Berita::where('slug', $slug)
+                        ->where('kategori_publikasi', 'Berita')
                         ->where('status', 'Terbit')
                         ->firstOrFail();
 
-        // Mengambil 5 berita terbaru untuk sidebar
-        $beritaTerbaru = Berita::where('status', 'Terbit')
+        $beritaTerbaru = Berita::where('kategori_publikasi', 'Berita')
+                               ->where('status', 'Terbit')
                                ->where('id_berita', '!=', $berita->id_berita ?? $berita->id)
                                ->latest()
                                ->take(5)
                                ->get();
 
-        // Mengambil 3 berita lainnya untuk section bawah
-        $beritaLainnya = Berita::where('status', 'Terbit')
+        $beritaLainnya = Berita::where('kategori_publikasi', 'Berita')
+                               ->where('status', 'Terbit')
                                ->where('id_berita', '!=', $berita->id_berita ?? $berita->id)
-                               ->inRandomOrder() // Diacak agar lebih variatif, atau ganti latest()
+                               ->inRandomOrder()
                                ->take(3)
                                ->get();
 

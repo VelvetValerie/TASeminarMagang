@@ -308,7 +308,7 @@
         
         const monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
         
-        const defaultTargetDate = new Date(2026, 9, 6); 
+        const defaultTargetDate = new Date(); 
         let currentMonth = defaultTargetDate.getMonth();
         let currentYear = defaultTargetDate.getFullYear();
         const realTodayDate = new Date(); 
@@ -403,9 +403,9 @@
                 daysLayer.innerHTML = weekDays.map((d) => {
                     const textClass = d.isCurrent ? 'text-gray-900 font-bold' : 'text-gray-400';
                     const todayBadge = d.isToday ? 'bg-[#F97316] text-white w-7 h-7 rounded-full flex items-center justify-center font-bold' : '';
-                    const targetBadge = (d.isTarget && !d.isToday) ? 'bg-blue-600 text-white w-7 h-7 rounded-full flex items-center justify-center font-bold' : '';
-                    const combinedBadge = todayBadge || targetBadge;
-                    const todayBorder = (d.isToday || d.isTarget) ? 'border-2 border-blue-400 z-10' : '';
+                    const targetBadge = '';
+                    const combinedBadge = todayBadge;
+                    const todayBorder = (d.isToday) ? 'border-2 border-blue-400 z-10' : '';
                     
                     return `
                         <div class="day-cell bg-white p-2.5 relative flex flex-col justify-start hover:bg-gray-50 cursor-pointer transition-colors ${todayBorder} h-full" data-date="${d.date}" data-month-offset="${d.monthOffset}">
