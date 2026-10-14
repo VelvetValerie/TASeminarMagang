@@ -57,7 +57,7 @@
         <!-- Header Kotak: Judul + Search Database & Filter + Tombol Tambah -->
         <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b-2 border-black relative">
             <h2 class="text-base md:text-lg font-bold text-gray-900">
-                Daftar Perencanaan Kegiatan {{ $loggedUser->role === 'pegawai' ? '(Yang Diampu)' : '' }}
+                Daftar Kegiatan {{ $loggedUser->role === 'pegawai' ? '(Yang Diampu)' : '' }}
             </h2>
 
             <!-- Kontrol Filter, Search, & Tambah -->
