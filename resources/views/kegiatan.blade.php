@@ -57,7 +57,7 @@
         <!-- Header Kotak: Judul + Search Database & Filter + Tombol Tambah -->
         <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b-2 border-black relative">
             <h2 class="text-base md:text-lg font-bold text-gray-900">
-                Daftar Perencanaan Kegiatan {{ $loggedUser->role === 'pegawai' ? '(Yang Diampu)' : '' }}
+                Daftar Kegiatan {{ $loggedUser->role === 'pegawai' ? '(Yang Diampu)' : '' }}
             </h2>
 
             <!-- Kontrol Filter, Search, & Tambah -->
@@ -185,7 +185,7 @@
                             <!-- Grup Tombol Aksi -->
                             <td class="py-3 px-3 text-center">
                                 <div class="flex items-center justify-center space-x-2">
-                                    <!-- Icon Detail (Bisa diakses semua) -->
+                                    <!-- Icon Detail -->
                                     <button type="button" onclick="openDetailModal(this)" class="p-1 text-gray-900 hover:text-blue-600 transition cursor-pointer leading-none flex items-center justify-center" title="Detail Kegiatan">
                                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
@@ -194,18 +194,14 @@
 
                                     <!-- Form Hapus (Khusus Admin) -->
                                     @if($loggedUser->role !== 'pegawai')
-                                        <form action="{{ url('/kegiatan/' . $item->id_keg) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data {{ $item->nama_keg }}?')" class="flex items-center justify-center m-0 p-0">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="button" onclick="openDeleteKegiatanModal('{{ $item->id_keg }}', '{{ addslashes($item->nama_keg) }}')" class="p-1 text-gray-900 hover:text-red-600 transition cursor-pointer leading-none flex items-center justify-center" title="Hapus Kegiatan">
-                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                                </svg>
-                                            </button>
-                                        </form>
+                                        <button type="button" onclick="openDeleteKegiatanModal('{{ $item->id_keg }}', '{{ addslashes($item->nama_keg) }}')" class="p-1 text-gray-900 hover:text-red-600 transition cursor-pointer leading-none flex items-center justify-center" title="Hapus Kegiatan">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                        </button>
                                     @endif
 
-                                    <!-- Icon Edit / Update Status (Bisa jika Koordinator / Admin) -->
+                                    <!-- Icon Edit / Update Status -->
                                     @if($canEdit)
                                         <button type="button" onclick="openEditModal(this)" class="p-1 text-gray-900 hover:text-yellow-600 transition cursor-pointer leading-none flex items-center justify-center" title="Edit Data / Status Kegiatan">
                                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -231,12 +227,91 @@
             </table>
         </div>
 
-        <!-- PAGINATION -->
+        <!-- PAGINATION: DISINKRONKAN DENGAN LAMAN RIWAYAT KEGIATAN -->
         @if ($kegiatan->hasPages())
-            <div class="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3 pt-3 border-t-2 border-black text-xs font-bold">
-                <span>Menampilkan {{ $kegiatan->firstItem() }} - {{ $kegiatan->lastItem() }} dari {{ $kegiatan->total() }} Kegiatan</span>
-                <div class="flex gap-1">
-                    {{ $kegiatan->appends(request()->query())->links() }}
+            <div class="mt-6 flex flex-col md:flex-row items-center justify-between gap-3 pt-4 border-t-2 border-black">
+                <div class="flex flex-col sm:flex-row items-center gap-2 text-xs sm:text-sm font-semibold text-gray-700">
+                    <p>Menampilkan <span class="font-bold text-gray-900">{{ $kegiatan->firstItem() }}</span> - <span class="font-bold text-gray-900">{{ $kegiatan->lastItem() }}</span> dari <span class="font-bold text-gray-900">{{ $kegiatan->total() }}</span> rekaman</p>
+                    <span class="hidden sm:inline text-gray-400">|</span>
+                    <p class="text-gray-500">Showing {{ $kegiatan->firstItem() }} to {{ $kegiatan->lastItem() }} of {{ $kegiatan->total() }} results</p>
+                </div>
+
+                <div class="flex items-center bg-slate-800 text-white rounded-lg p-1 shadow-md border-2 border-black max-w-full relative">
+                    <!-- Tombol Prev -->
+                    @if ($kegiatan->onFirstPage())
+                        <span class="px-2.5 py-1 text-slate-500 cursor-not-allowed text-xs sm:text-sm font-bold">&lt;</span>
+                    @else
+                        <a href="{{ $kegiatan->appends(request()->query())->previousPageUrl() }}" class="px-2.5 py-1 text-slate-300 hover:text-white hover:bg-slate-700 rounded transition text-xs sm:text-sm font-bold">&lt;</a>
+                    @endif
+
+                    @php
+                        $currentPage = $kegiatan->currentPage();
+                        $lastPage = $kegiatan->lastPage();
+
+                        // Rentang 5 nomor halaman
+                        $start = max(1, $currentPage - 2);
+                        $end = min($lastPage, $start + 4);
+
+                        if ($end - $start < 4) {
+                            $start = max(1, $end - 4);
+                        }
+                    @endphp
+
+                    <!-- Tampilkan Halaman Pertama jika terpisah jauh -->
+                    @if ($start > 1)
+                        <a href="{{ $kegiatan->appends(request()->query())->url(1) }}" class="px-2.5 py-1 text-slate-300 hover:text-white hover:bg-slate-700 rounded transition text-xs sm:text-sm font-bold">1</a>
+                        
+                        <!-- Popover Input Cari Halaman (Kiri) -->
+                        <div class="relative group">
+                            <button class="px-2 py-1 text-slate-400 hover:text-white text-xs font-bold focus:outline-none" title="Lompat ke halaman">...</button>
+                            <div class="hidden group-hover:flex group-focus-within:flex absolute bottom-full left-1/2 -translate-x-1/2 mb-2 p-2 bg-slate-900 border-2 border-black rounded shadow-xl z-50 flex-col gap-1.5 w-36">
+                                <span class="text-[10px] text-slate-300 font-bold text-center">Lompat Halaman</span>
+                                <form method="GET" action="{{ url('/kegiatan') }}" class="flex items-center gap-1 m-0">
+                                    @foreach(request()->except('page') as $key => $val)
+                                        <input type="hidden" name="{{ $key }}" value="{{ $val }}">
+                                    @endforeach
+                                    <input type="number" min="1" max="{{ $lastPage }}" name="page" placeholder="1-{{ $lastPage }}" class="w-full px-1.5 py-0.5 text-xs bg-slate-800 border border-slate-600 text-white rounded text-center focus:outline-none focus:border-blue-400">
+                                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-2 py-0.5 text-xs text-white font-bold rounded">Go</button>
+                                </form>
+                            </div>
+                        </div>
+                    @endif
+
+                    <!-- Loop 5 Angka Utama -->
+                    @for ($i = $start; $i <= $end; $i++)
+                        @if ($i == $currentPage)
+                            <span class="px-2.5 py-1 bg-slate-600 text-white font-black text-xs sm:text-sm rounded border border-slate-500">{{ $i }}</span>
+                        @else
+                            <a href="{{ $kegiatan->appends(request()->query())->url($i) }}" class="px-2.5 py-1 text-slate-300 hover:text-white hover:bg-slate-700 rounded transition text-xs sm:text-sm font-bold">{{ $i }}</a>
+                        @endif
+                    @endfor
+
+                    <!-- Tampilkan Halaman Terakhir jika terpisah jauh -->
+                    @if ($end < $lastPage)
+                        <!-- Popover Input Cari Halaman (Kanan) -->
+                        <div class="relative group">
+                            <button class="px-2 py-1 text-slate-400 hover:text-white text-xs font-bold focus:outline-none" title="Lompat ke halaman">...</button>
+                            <div class="hidden group-hover:flex group-focus-within:flex absolute bottom-full left-1/2 -translate-x-1/2 mb-2 p-2 bg-slate-900 border-2 border-black rounded shadow-xl z-50 flex-col gap-1.5 w-36">
+                                <span class="text-[10px] text-slate-300 font-bold text-center">Lompat Halaman</span>
+                                <form method="GET" action="{{ url('/kegiatan') }}" class="flex items-center gap-1 m-0">
+                                    @foreach(request()->except('page') as $key => $val)
+                                        <input type="hidden" name="{{ $key }}" value="{{ $val }}">
+                                    @endforeach
+                                    <input type="number" min="1" max="{{ $lastPage }}" name="page" placeholder="1-{{ $lastPage }}" class="w-full px-1.5 py-0.5 text-xs bg-slate-800 border border-slate-600 text-white rounded text-center focus:outline-none focus:border-blue-400">
+                                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-2 py-0.5 text-xs text-white font-bold rounded">Go</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <a href="{{ $kegiatan->appends(request()->query())->url($lastPage) }}" class="px-2.5 py-1 text-slate-300 hover:text-white hover:bg-slate-700 rounded transition text-xs sm:text-sm font-bold">{{ $lastPage }}</a>
+                    @endif
+
+                    <!-- Tombol Next -->
+                    @if ($kegiatan->hasMorePages())
+                        <a href="{{ $kegiatan->appends(request()->query())->nextPageUrl() }}" class="px-2.5 py-1 text-slate-300 hover:text-white hover:bg-slate-700 rounded transition text-xs sm:text-sm font-bold">&gt;</a>
+                    @else
+                        <span class="px-2.5 py-1 text-slate-500 cursor-not-allowed text-xs sm:text-sm font-bold">&gt;</span>
+                    @endif
                 </div>
             </div>
         @endif
@@ -371,7 +446,7 @@
                            class="sm:col-span-2 border-2 border-black bg-[#d1d5db] p-2 focus:outline-none focus:bg-white {{ $loggedUser->role === 'pegawai' ? 'cursor-not-allowed opacity-80' : '' }}">
                 </div>
 
-                <!-- Status (DAPAT DIUBAH OLEH PEGAWAI KETIKA IA JADI KOORDINATOR) -->
+                <!-- Status -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-2 bg-amber-100 p-2 border border-black">
                     <label class="font-bold text-gray-900">Status Kegiatan</label>
                     <select id="selectStatus" name="status" required class="sm:col-span-2 border-2 border-black bg-white p-2 font-bold focus:outline-none">
@@ -619,7 +694,6 @@
             if (e.target === addModal) closeAddModal();
             if (e.target === detailModal) closeDetailModal();
         });
-        
 
         function openDeleteKegiatanModal(id, nama) {
             document.getElementById('delete_kegiatan_text').innerText = nama;

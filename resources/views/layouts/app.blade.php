@@ -262,15 +262,15 @@
                 <div>
                     <h2 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">
                         @if(request()->is('dashboard')) Dashboard
-                        @elseif(request()->is('kalender')) Kalender Perencanaan Jadwal
-                        @elseif(request()->is('kegiatan')) Manajemen Perencanaan Kegiatan
-                        @elseif(request()->is('riwayat-kerja')) Rekapitulasi Riwayat Kerja Pegawai
+                        @elseif(request()->is('kalender')) Kalender Jadwal Kegiatan
+                        @elseif(request()->is('kegiatan')) Manajemen Kegiatan
+                        @elseif(request()->is('riwayat-kerja')) Riwayat Kerja Pegawai
                         @elseif(request()->is('laporan-kegiatan')) Laporan Hasil & Evaluasi Kegiatan
-                        @elseif(request()->is('jenis-kegiatan')) Master Kategori Jenis Kegiatan
-                        @elseif(request()->is('titik-lokasi')) Master Data Titik Lokasi & Gedung
+                        @elseif(request()->is('jenis-kegiatan')) Kategori Jenis Kegiatan
+                        @elseif(request()->is('titik-lokasi')) Titik Lokasi & Gedung
                         @elseif(request()->is('instansi')) Daftar Instansi Mitra Terdaftar
-                        @elseif(request()->is('riwayat-kegiatan')) Rekapitulasi Riwayat Kegiatan Terlaksana
-                        @elseif(request()->routeIs('master-user*')) Manajemen Master Data Pengguna
+                        @elseif(request()->is('riwayat-kegiatan')) Riwayat Kegiatan
+                        @elseif(request()->routeIs('master-user*')) Manajemen Data Pengguna
                         @elseif(request()->is('pusat-informasi')) Pusat Informasi Publik
                         @elseif(request()->routeIs('admin.berita.*')) Daftar Berita & Publikasi
                         @else Sistem Informasi BKN
