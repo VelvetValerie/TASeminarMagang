@@ -65,7 +65,7 @@
         <div class="mb-4 border-2 border-black bg-rose-100 p-3 font-bold text-rose-900 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] text-xs sm:text-sm">
             <p class="font-extrabold mb-1">Gagal Menyimpan Data Laporan:</p>
             <ul class="list-disc pl-5 space-y-0.5">
-                <?php foreach ($errors->all() as$error): ?>
+                <?php foreach ($errors->all() as $error): ?>
                     <li>{{ $error }}</li>
                 <?php endforeach; ?>
             </ul>
@@ -115,7 +115,7 @@
                 <select name="id_jeniskeg" onchange="this.form.submit()" class="border-2 border-black bg-white p-1.5 font-bold">
                     <option value="">-- Semua Jenis --</option>
                     <?php if (isset($jenisKegiatan) && count($jenisKegiatan) > 0): ?>
-                        <?php foreach ($jenisKegiatan as$jk): ?>
+                        <?php foreach ($jenisKegiatan as $jk): ?>
                             <option value="{{ $jk->id_jeniskeg }}" {{ request('id_jeniskeg') == $jk->id_jeniskeg ? 'selected' : '' }}>
                                 {{ $jk->nama_jeniskeg }}
                             </option>
@@ -183,13 +183,13 @@
                 </thead>
                 <tbody class="font-medium text-gray-900">
                     <?php if (isset($laporan) && count($laporan) > 0): ?>
-                        <?php foreach ($laporan as $idx =>$item): ?>
+                        <?php foreach ($laporan as $idx => $item): ?>
                             <?php 
-                                $no = $laporan->firstItem() +$idx; 
-                                $keg =$item->kegiatan;
+                                $no = $laporan->firstItem() + $idx; 
+                                $keg = $item->kegiatan;
                                 
-                                $isKoordinator = ($loggedUser &&$loggedUser->role === 'pegawai') 
-                                    ? ($keg && $keg->id_karyawan_koor ==$loggedUser->id_karyawan) 
+                                $isKoordinator = ($loggedUser && $loggedUser->role === 'pegawai') 
+                                    ? ($keg && $keg->id_karyawan_koor == $loggedUser->id_karyawan) 
                                     : true;
 
                                 $payloadEdit = [
@@ -241,7 +241,7 @@
                                     <p class="text-rose-900">Min: {{ $item->nilai_terendah ?? '-' }}</p>
                                 </td>
                                 <td class="border-r-2 border-black py-3 px-3 text-center">
-                                    @if ($item->lampiran_laporan &&$item->lampiran_laporan !== '-')
+                                    @if ($item->lampiran_laporan && $item->lampiran_laporan !== '-')
                                         <a href="{{ $item->lampiran_laporan }}" target="_blank" class="border-2 border-black bg-blue-500 hover:bg-blue-600 text-white px-2.5 py-1 text-xs font-bold transition inline-block shadow-xs">
                                             📄 Laporan
                                         </a>
@@ -260,13 +260,9 @@
                                             </button>
                                             
                                             <!-- Tombol Hapus -->
-                                            <form action="{{ url('/laporan-kegiatan/'.$item->id_laporan) }}" method="POST" class="w-20" onsubmit="return confirm('Apakah Anda yakin ingin menghapus laporan kegiatan ini?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button" onclick="openDeleteLaporanModal('{{ $item->id_laporan }}')" class="w-20 border-2 border-black bg-rose-500 hover:bg-rose-600 text-white font-bold px-2 py-1 text-xs transition cursor-pointer shadow-xs">
-                                                    Hapus
-                                                </button>
-                                            </form>
+                                            <button type="button" onclick="openDeleteLaporanModal('{{ $item->id_laporan }}')" class="w-20 border-2 border-black bg-rose-500 hover:bg-rose-600 text-white font-bold px-2 py-1 text-xs transition cursor-pointer shadow-xs">
+                                                Hapus
+                                            </button>
                                         @endif
 
                                         <!-- Tombol Cetak PDF -->
@@ -288,12 +284,91 @@
             </table>
         </div>
 
-        <!-- PAGINATION -->
-        @if (isset($laporan) &&$laporan->hasPages())
-            <div class="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3 pt-3 border-t-2 border-black text-xs font-bold">
-                <span>Menampilkan {{ $laporan->firstItem() }} - {{ $laporan->lastItem() }} dari {{$laporan->total() }} Laporan</span>
-                <div class="flex gap-1">
-                    {{ $laporan->links() }}
+        <!-- PAGINATION: DISINKRONKAN DENGAN LAMAN RIWAYAT KEGIATAN -->
+        @if (isset($laporan) && $laporan->hasPages())
+            <div class="mt-6 flex flex-col md:flex-row items-center justify-between gap-3 pt-4 border-t-2 border-black">
+                <div class="flex flex-col sm:flex-row items-center gap-2 text-xs sm:text-sm font-semibold text-gray-700">
+                    <p>Menampilkan <span class="font-bold text-gray-900">{{ $laporan->firstItem() }}</span> - <span class="font-bold text-gray-900">{{ $laporan->lastItem() }}</span> dari <span class="font-bold text-gray-900">{{ $laporan->total() }}</span> rekaman</p>
+                    <span class="hidden sm:inline text-gray-400">|</span>
+                    <p class="text-gray-500">Showing {{ $laporan->firstItem() }} to {{ $laporan->lastItem() }} of {{ $laporan->total() }} results</p>
+                </div>
+
+                <div class="flex items-center bg-slate-800 text-white rounded-lg p-1 shadow-md border-2 border-black max-w-full relative">
+                    <!-- Tombol Prev -->
+                    @if ($laporan->onFirstPage())
+                        <span class="px-2.5 py-1 text-slate-500 cursor-not-allowed text-xs sm:text-sm font-bold">&lt;</span>
+                    @else
+                        <a href="{{ $laporan->appends(request()->query())->previousPageUrl() }}" class="px-2.5 py-1 text-slate-300 hover:text-white hover:bg-slate-700 rounded transition text-xs sm:text-sm font-bold">&lt;</a>
+                    @endif
+
+                    @php
+                        $currentPage = $laporan->currentPage();
+                        $lastPage = $laporan->lastPage();
+
+                        // Rentang 5 nomor halaman
+                        $start = max(1, $currentPage - 2);
+                        $end = min($lastPage, $start + 4);
+
+                        if ($end - $start < 4) {
+                            $start = max(1, $end - 4);
+                        }
+                    @endphp
+
+                    <!-- Tampilkan Halaman Pertama jika terpisah jauh -->
+                    @if ($start > 1)
+                        <a href="{{ $laporan->appends(request()->query())->url(1) }}" class="px-2.5 py-1 text-slate-300 hover:text-white hover:bg-slate-700 rounded transition text-xs sm:text-sm font-bold">1</a>
+                        
+                        <!-- Popover Input Cari Halaman (Kiri) -->
+                        <div class="relative group">
+                            <button class="px-2 py-1 text-slate-400 hover:text-white text-xs font-bold focus:outline-none" title="Lompat ke halaman">...</button>
+                            <div class="hidden group-hover:flex group-focus-within:flex absolute bottom-full left-1/2 -translate-x-1/2 mb-2 p-2 bg-slate-900 border-2 border-black rounded shadow-xl z-50 flex-col gap-1.5 w-36">
+                                <span class="text-[10px] text-slate-300 font-bold text-center">Lompat Halaman</span>
+                                <form method="GET" action="{{ url('/laporan-kegiatan') }}" class="flex items-center gap-1 m-0">
+                                    @foreach(request()->except('page') as $key => $val)
+                                        <input type="hidden" name="{{ $key }}" value="{{ $val }}">
+                                    @endforeach
+                                    <input type="number" min="1" max="{{ $lastPage }}" name="page" placeholder="1-{{ $lastPage }}" class="w-full px-1.5 py-0.5 text-xs bg-slate-800 border border-slate-600 text-white rounded text-center focus:outline-none focus:border-blue-400">
+                                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-2 py-0.5 text-xs text-white font-bold rounded">Go</button>
+                                </form>
+                            </div>
+                        </div>
+                    @endif
+
+                    <!-- Loop 5 Angka Utama -->
+                    @for ($i = $start; $i <= $end; $i++)
+                        @if ($i == $currentPage)
+                            <span class="px-2.5 py-1 bg-slate-600 text-white font-black text-xs sm:text-sm rounded border border-slate-500">{{ $i }}</span>
+                        @else
+                            <a href="{{ $laporan->appends(request()->query())->url($i) }}" class="px-2.5 py-1 text-slate-300 hover:text-white hover:bg-slate-700 rounded transition text-xs sm:text-sm font-bold">{{ $i }}</a>
+                        @endif
+                    @endfor
+
+                    <!-- Tampilkan Halaman Terakhir jika terpisah jauh -->
+                    @if ($end < $lastPage)
+                        <!-- Popover Input Cari Halaman (Kanan) -->
+                        <div class="relative group">
+                            <button class="px-2 py-1 text-slate-400 hover:text-white text-xs font-bold focus:outline-none" title="Lompat ke halaman">...</button>
+                            <div class="hidden group-hover:flex group-focus-within:flex absolute bottom-full left-1/2 -translate-x-1/2 mb-2 p-2 bg-slate-900 border-2 border-black rounded shadow-xl z-50 flex-col gap-1.5 w-36">
+                                <span class="text-[10px] text-slate-300 font-bold text-center">Lompat Halaman</span>
+                                <form method="GET" action="{{ url('/laporan-kegiatan') }}" class="flex items-center gap-1 m-0">
+                                    @foreach(request()->except('page') as $key => $val)
+                                        <input type="hidden" name="{{ $key }}" value="{{ $val }}">
+                                    @endforeach
+                                    <input type="number" min="1" max="{{ $lastPage }}" name="page" placeholder="1-{{ $lastPage }}" class="w-full px-1.5 py-0.5 text-xs bg-slate-800 border border-slate-600 text-white rounded text-center focus:outline-none focus:border-blue-400">
+                                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-2 py-0.5 text-xs text-white font-bold rounded">Go</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <a href="{{ $laporan->appends(request()->query())->url($lastPage) }}" class="px-2.5 py-1 text-slate-300 hover:text-white hover:bg-slate-700 rounded transition text-xs sm:text-sm font-bold">{{ $lastPage }}</a>
+                    @endif
+
+                    <!-- Tombol Next -->
+                    @if ($laporan->hasMorePages())
+                        <a href="{{ $laporan->appends(request()->query())->nextPageUrl() }}" class="px-2.5 py-1 text-slate-300 hover:text-white hover:bg-slate-700 rounded transition text-xs sm:text-sm font-bold">&gt;</a>
+                    @else
+                        <span class="px-2.5 py-1 text-slate-500 cursor-not-allowed text-xs sm:text-sm font-bold">&gt;</span>
+                    @endif
                 </div>
             </div>
         @endif
@@ -313,9 +388,9 @@
                     <select name="id_keg" id="tambah_id_keg" required class="select2-kegiatan w-full border-2 border-black bg-white p-2 font-medium">
                         <option value="" data-peserta="0">-- Cari / Pilih Kegiatan --</option>
                         <?php if (isset($kegiatanSelesai) && count($kegiatanSelesai) > 0): ?>
-                            <?php foreach ($kegiatanSelesai as$kS): ?>
+                            <?php foreach ($kegiatanSelesai as $kS): ?>
                                 <option value="{{ $kS->id_keg }}" data-peserta="{{ $kS->jmlh_peserta }}">
-                                    {{ $kS->nama_keg }} (Total Peserta: {{$kS->jmlh_peserta }} Orang)
+                                    {{ $kS->nama_keg }} (Total Peserta: {{ $kS->jmlh_peserta }} Orang)
                                 </option>
                             <?php endforeach; ?>
                         <?php endif; ?>

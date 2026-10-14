@@ -88,7 +88,7 @@
         <!-- Header Kotak: Judul + Search Server-Side & Sort Dropdown -->
         <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b-2 border-black relative">
             <h2 class="text-base md:text-lg font-bold text-gray-900">
-                Daftar Rekaman Riwayat Kegiatan
+                Daftar Riwayat Kegiatan
             </h2>
 
             <!-- Kontrol Filter & Search -->
