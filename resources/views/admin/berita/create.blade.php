@@ -76,7 +76,10 @@
                     <div class="p-4">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Unggah Gambar Utama</label>
                         <input type="file" name="thumbnail" id="inputThumbnail" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 bg-white border border-gray-300 rounded-md">
-                        <p class="text-xs text-gray-500 mt-2">Maksimal ukuran 2MB (JPG, PNG, WEBP).</p>
+                        <p class="text-xs text-gray-500 mt-2 mb-4">Maksimal ukuran 10MB (JPG, PNG, WEBP).</p>
+
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi Gambar (Caption)</label>
+                        <input type="text" id="inputCaption" name="caption_thumbnail" maxlength="150" value="{{ old('caption_thumbnail') }}" placeholder="Tulis caption gambar di sini (Maks. 150 karakter)..." class="w-full text-sm p-2 bg-white border border-gray-300 rounded-md focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
                     </div>
                 </div>
 
@@ -114,7 +117,7 @@
             <div id="previewThumbnailContainer" class="hidden mb-8 rounded-lg overflow-hidden border border-gray-100 relative">
                 <img id="previewThumbnailImage" src="" alt="Preview Thumbnail" class="w-full h-auto object-cover max-h-[450px]">
                 <p id="previewThumbnailCaption" class="text-xs text-gray-500 italic p-2 text-center bg-gray-50 border-t border-gray-200">
-                    Ilustrasi: <span id="captionText">Judul Berita Akan Muncul Di Sini...</span>
+                    <span id="captionText">Deskripsi gambar akan muncul di sini...</span>
                 </p>
             </div>
 
@@ -132,6 +135,7 @@
         const inputJudul = document.getElementById('inputJudul');
         const inputKonten = document.getElementById('inputKonten');
         const inputThumbnail = document.getElementById('inputThumbnail');
+        const inputCaption = document.getElementById('inputCaption');
         
         const previewJudul = document.getElementById('previewJudul');
         const previewKonten = document.getElementById('previewKonten');
@@ -139,27 +143,24 @@
         const previewThumbnailImage = document.getElementById('previewThumbnailImage');
         const captionText = document.getElementById('captionText');
 
-        // Fungsi proteksi lapis 2: Menghapus tag gambar pakai JS
         function hapusGambarDariString(htmlString) {
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = htmlString;
-            
-            // Cari semua elemen yang berbau gambar dan hapus dari memory
             const images = tempDiv.querySelectorAll('img, picture, figure, image, svg');
             images.forEach(img => img.remove());
-            
             return tempDiv.innerHTML;
         }
 
         inputJudul.addEventListener('input', function() {
-            const val = this.value.trim() !== '' ? this.value : 'Judul Berita Akan Muncul Di Sini...';
-            previewJudul.innerText = val;
-            captionText.innerText = val;
+            previewJudul.innerText = this.value.trim() !== '' ? this.value : 'Judul Berita Akan Muncul Di Sini...';
+        });
+
+        inputCaption.addEventListener('input', function() {
+            captionText.innerText = this.value.trim() !== '' ? this.value : 'Deskripsi gambar akan muncul di sini...';
         });
 
         inputKonten.addEventListener('input', function() {
             if (this.value.trim() !== '') {
-                // Bersihkan gambar dulu, baru ubah enter jadi <br>
                 let kontenBersih = hapusGambarDariString(this.value);
                 previewKonten.innerHTML = kontenBersih.replace(/\n/g, '<br>');
             } else {

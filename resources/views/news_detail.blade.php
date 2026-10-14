@@ -56,7 +56,7 @@
                 <figure class="mb-8 rounded-lg overflow-hidden border border-gray-100 flex flex-col">
                     <img src="{{ asset('storage/' . $berita->thumbnail) }}" alt="{{ $berita->judul_berita }}" class="w-full h-auto object-cover max-h-[450px]">
                     <figcaption class="text-xs text-gray-500 italic p-2 text-center bg-gray-50 border-t border-gray-200">
-                        Ilustrasi: {{ $berita->judul_berita }}
+                        Ilustrasi: {{ $berita->caption_thumbnail }}
                     </figcaption>
                 </figure>
                 @endif

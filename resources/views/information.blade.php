@@ -53,28 +53,47 @@
     <x-footer />
 
 <script>
-    // Data List Informasi 
-    const allData = [
+    // 1. DATA MANUAL (Timeline)
+    const manualData = [
         {
-            id: 1,
+            id: 'manual_1',
             kategori: 'Timeline Seleksi',
             tanggal: '29/09/2026',
             judul: 'Timeline & Alur Pelaksanaan Seleksi Terpadu',
             deskripsi: 'Jadwal lengkap dan rincian alur pelaksanaan seleksi mulai dari CASN, Non-ASN, Pengembangan Karir, hingga Sekolah Kedinasan tahun ini.',
             gambar: '../images/information_dummy.png',
             link: '/informasi/timeline' 
-        },
-        {
-            id: 2,
-            kategori: 'Panduan',
-            tanggal: '30/09/2026',
-            judul: 'Panduan Lengkap Pembuatan Akun SSCASN',
-            deskripsi: 'Langkah demi langkah cara mendaftar, membuat akun, dan melengkapi data profil pada portal resmi pendaftaran CPNS dan PPPK.',
-            gambar: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-            link: '#'
         }
     ];
 
+    // 2. DATA DARI DATABASE (Informasi Resmi)
+    const rawDbData = @json($informasiDB ?? []);
+    const dbData = rawDbData.map(item => {
+        // Hapus tag HTML untuk preview teks
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = item.konten || '';
+        const plainText = tempDiv.textContent || tempDiv.innerText || '';
+
+        // Format tanggal
+        const d = new Date(item.created_at);
+        const tgl = ("0" + d.getDate()).slice(-2) + "/" + ("0" + (d.getMonth() + 1)).slice(-2) + "/" + d.getFullYear();
+
+        return {
+            id: 'db_' + item.id_berita,
+            kategori: 'Informasi Resmi',
+            tanggal: tgl,
+            judul: item.judul_berita,
+            deskripsi: plainText.substring(0, 150) + '...',
+            gambar: item.thumbnail ? `/storage/${item.thumbnail}` : 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-4.0.3',
+            link: `/informasi/${item.slug}` // Route untuk membaca full artikel
+        };
+    });
+
+    // 3. GABUNGKAN DATA
+    const allData = [...manualData, ...dbData];
+
+    // Logika Pagination & Render Grid Anda sebelumnya diletakkan di bawah sini...
+    // (Gunakan array `allData` sebagai basis data untuk `filteredData`)
     let filteredData = [...allData];
     const itemsPerPage = 6;
     let currentPage = 1;

@@ -89,7 +89,11 @@
                     <div class="p-4">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Unggah Thumbnail Baru</label>
                         <input type="file" name="thumbnail" id="inputThumbnail" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 bg-white border border-gray-300 rounded-md">
-                        <p class="text-xs text-gray-500 mt-2">Biarkan kosong jika tidak ingin mengubah gambar.</p>
+                        <p class="text-xs text-gray-500 mt-2 mb-4">Maksimal ukuran 10MB (JPG, PNG, WEBP).</p>
+
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi Gambar (Caption)</label>
+                        <!-- Pastikan kolom 'caption_thumbnail' ada di tabel database berita Anda -->
+                        <input type="text" id="inputCaption" name="caption_thumbnail" maxlength="150" value="{{ old('caption_thumbnail', $berita->caption_thumbnail) }}" placeholder="Tulis caption gambar di sini (Maks. 150 karakter)..." class="w-full text-sm p-2 bg-white border border-gray-300 rounded-md focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
 
                         <!-- Tampilkan thumbnail saat ini jika ada -->
                         @if($berita->thumbnail)
@@ -134,11 +138,11 @@
                 <span>Admin / Penulis</span>
             </div>
 
-            <!-- Pratinjau Thumbnail (Ditampilkan jika ada thumbnail lama, diganti jika upload baru) -->
+            <!-- Pratinjau Thumbnail -->
             <div id="previewThumbnailContainer" class="{{ $berita->thumbnail ? '' : 'hidden' }} mb-8 rounded-lg overflow-hidden border border-gray-100 relative">
                 <img id="previewThumbnailImage" src="{{ $berita->thumbnail ? asset('storage/' . $berita->thumbnail) : '' }}" alt="Preview Thumbnail" class="w-full h-auto object-cover max-h-[450px]">
                 <p id="previewThumbnailCaption" class="text-xs text-gray-500 italic p-2 text-center bg-gray-50 border-t border-gray-200">
-                    Ilustrasi: <span id="captionText">{{ old('judul_berita', $berita->judul_berita) }}</span>
+                    <span id="captionText">{{ old('caption_thumbnail', $berita->caption_thumbnail ?? '') ?: 'Deskripsi gambar akan muncul di sini...' }}</span>
                 </p>
             </div>
 
@@ -157,6 +161,7 @@
         const inputJudul = document.getElementById('inputJudul');
         const inputKonten = document.getElementById('inputKonten');
         const inputThumbnail = document.getElementById('inputThumbnail');
+        const inputCaption = document.getElementById('inputCaption');
         
         const previewJudul = document.getElementById('previewJudul');
         const previewKonten = document.getElementById('previewKonten');
@@ -164,25 +169,23 @@
         const previewThumbnailImage = document.getElementById('previewThumbnailImage');
         const captionText = document.getElementById('captionText');
 
-        // Fungsi proteksi lapis 2: Menghapus tag gambar pakai JS
         function hapusGambarDariString(htmlString) {
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = htmlString;
-            
             const images = tempDiv.querySelectorAll('img, picture, figure, image, svg');
             images.forEach(img => img.remove());
-            
             return tempDiv.innerHTML;
         }
 
-        // --- BERSIHKAN GAMBAR SAAT HALAMAN EDIT PERTAMA KALI DIBUKA ---
         const initialImages = previewKonten.querySelectorAll('img, picture, figure, image, svg');
         initialImages.forEach(img => img.remove());
 
         inputJudul.addEventListener('input', function() {
-            const val = this.value.trim() !== '' ? this.value : 'Judul Berita Akan Muncul Di Sini...';
-            previewJudul.innerText = val;
-            if(captionText) captionText.innerText = val;
+            previewJudul.innerText = this.value.trim() !== '' ? this.value : 'Judul Berita Akan Muncul Di Sini...';
+        });
+
+        inputCaption.addEventListener('input', function() {
+            captionText.innerText = this.value.trim() !== '' ? this.value : 'Deskripsi gambar akan muncul di sini...';
         });
 
         inputKonten.addEventListener('input', function() {

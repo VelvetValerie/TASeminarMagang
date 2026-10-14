@@ -198,7 +198,7 @@
                 <div>
                     <p class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">Umum</p>
                     <details class="group rounded-xl border border-slate-700/80 bg-slate-900/60 overflow-hidden transition"
-                             {{ request()->is('pusat-informasi', 'admin/berita*') ? 'open' : '' }}>
+                             {{ request()->is('informasi', 'admin/berita*') ? 'open' : '' }}>
                         <summary class="flex items-center justify-between px-4 py-3 text-xs sm:text-sm font-bold text-white bg-slate-800 hover:bg-slate-750 cursor-pointer transition list-none select-none">
                             <span class="w-full text-center leading-tight">
                                 Manajemen<br>Informasi
@@ -209,8 +209,8 @@
                         </summary>
 
                         <div class="divide-y divide-slate-700/70 border-t border-slate-700 bg-slate-950/40">
-                            <a href="{{ url('/pusat-informasi') }}" 
-                               class="block py-2.5 px-4 text-center text-xs font-semibold transition {{ request()->is('pusat-informasi') ? 'bg-sky-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                            <a href="{{ route('admin.informasi.index') }}" 
+                               class="block py-2.5 px-4 text-center text-xs font-semibold transition {{ request()->is('informasi') ? 'bg-sky-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
                                 Pusat Informasi
                             </a>
                             <a href="{{ route('admin.berita.index') }}" 
@@ -271,7 +271,7 @@
                         @elseif(request()->is('instansi')) Daftar Instansi Mitra Terdaftar
                         @elseif(request()->is('riwayat-kegiatan')) Rekapitulasi Riwayat Kegiatan Terlaksana
                         @elseif(request()->routeIs('master-user*')) Manajemen Master Data Pengguna
-                        @elseif(request()->is('pusat-informasi')) Pusat Informasi Publik
+                        @elseif(request()->is('informasi')) Pusat Informasi Publik
                         @elseif(request()->routeIs('admin.berita.*')) Daftar Berita & Publikasi
                         @else Sistem Informasi BKN
                         @endif
