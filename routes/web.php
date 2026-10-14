@@ -11,6 +11,7 @@ use App\Http\Controllers\AdminBeritaController;
 use App\Models\Kegiatan;
 use App\Models\Berita;
 use App\Http\Controllers\Api\Public\KalenderController;
+use App\Http\Controllers\Api\Public\BeritaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,15 +30,9 @@ Route::get('/', function () {
 Route::get('/kalender-kegiatan', [KalenderController::class, 'getKegiatan']);
 
 // Berita & Informasi Publik
-Route::get('/berita', function () {
-    $berita = Berita::where('status', 'Terbit')->latest()->get();
-    return view('news', compact('berita'));
-})->name('berita.index');
+Route::get('/berita', [BeritaController::class, 'index'])->name('berita.index');
 
-Route::get('/berita/{slug}', function ($slug) {
-    $berita = Berita::where('slug', $slug)->firstOrFail();
-    return view('news_detail', compact('berita'));
-})->name('berita.show');
+Route::get('/berita/{slug}', [BeritaController::class, 'show'])->name('berita.show');
 
 Route::get('/informasi', function () {
     return view('information');
