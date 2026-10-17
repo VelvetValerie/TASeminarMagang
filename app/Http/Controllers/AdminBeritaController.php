@@ -10,6 +10,13 @@ use Illuminate\Support\Facades\Storage;
 
 class AdminBeritaController extends Controller
 {
+    public function __construct()
+    {
+        // Jika user belum login atau role-nya bukan admin/pegawai_humas, langsung hentikan akses (403 Forbidden)
+        if (Auth::check() && !in_array(Auth::user()->role, ['admin', 'pegawai_humas'])) {
+            abort(403, 'Anda tidak memiliki hak akses untuk halaman ini.');
+        }
+    }
     /**
      * Menampilkan daftar semua berita di dashboard admin
      */

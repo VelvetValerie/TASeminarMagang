@@ -31,9 +31,9 @@
 
     @if($errors->any())
         <div class="border-2 border-black bg-rose-100 p-3 text-xs font-bold text-rose-800 space-y-1">
-            @foreach($errors->all() as $err)
+            <?php foreach ($errors->all() as$err): ?>
                 <p>• {{ $err }}</p>
-            @endforeach
+            <?php endforeach; ?>
         </div>
     @endif
 
@@ -53,12 +53,13 @@
                     <option value="all">Semua Role</option>
                     <option value="admin">Admin</option>
                     <option value="pimpinan">Pimpinan</option>
-                    <option value="pegawai">Pegawai</option>
+                    <option value="pegawai_koordinasi">Pegawai Koordinator</option>
+                    <option value="pegawai_humas">Pegawai Humas</option>
                 </select>
             </div>
         </div>
 
-        <!-- TABEL DATA USER -->
+        <!-- TABEL DATA USER (MENGGUNAKAN FOR NATIVE PHP) -->
         <div class="border-2 border-black overflow-x-auto">
             <table class="w-full border-collapse border-black min-w-[700px] text-left">
                 <thead>
@@ -66,68 +67,77 @@
                         <th class="border-r-2 border-black p-3 text-center w-12">No</th>
                         <th class="border-r-2 border-black p-3">NIP & Username</th>
                         <th class="border-r-2 border-black p-3">Email Dinas</th>
-                        <th class="border-r-2 border-black p-3 text-center w-36">Role Access</th>
+                        <th class="border-r-2 border-black p-3 text-center w-44">Role Access</th>
                         <th class="p-3 text-center w-32">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="text-xs sm:text-sm font-semibold divide-y-2 divide-black">
-                    @forelse ($users as $index => $u)
-                        <tr class="user-row border-b-2 border-black hover:bg-gray-50 transition" data-role="{{ strtolower($u->role) }}">
-                            <td class="border-r-2 border-black p-3 text-center font-bold text-gray-600">
-                                {{ $index + 1 }}
-                            </td>
-                            <td class="border-r-2 border-black p-3">
-                                <div class="font-black text-gray-900">{{ $u->username }}</div>
-                                <div class="text-xs font-mono text-gray-600">NIP: {{ $u->nip ?? '-' }}</div>
-                            </td>
-                            <td class="border-r-2 border-black p-3 font-medium text-gray-800">
-                                {{ $u->email ?? '-' }}
-                            </td>
-                            <td class="border-r-2 border-black p-3 text-center">
-                                @if($u->role === 'admin')
-                                    <span class="inline-block border-2 border-black bg-rose-200 text-rose-900 px-2.5 py-0.5 text-[11px] font-black uppercase rounded-full">
-                                        Admin
-                                    </span>
-                                @elseif($u->role === 'pimpinan')
-                                    <span class="inline-block border-2 border-black bg-amber-200 text-amber-900 px-2.5 py-0.5 text-[11px] font-black uppercase rounded-full">
-                                        Pimpinan
-                                    </span>
-                                @else
-                                    <span class="inline-block border-2 border-black bg-sky-200 text-sky-900 px-2.5 py-0.5 text-[11px] font-black uppercase rounded-full">
-                                        Pegawai
-                                    </span>
-                                @endif
-                            </td>
-                            <td class="p-3 text-center">
-                                @if($u->role === 'admin')
-                                    <!-- JIKA ROLE ADMIN: TOMBOL TERKUNCI / DISABLED -->
-                                    <span class="text-[11px] font-bold text-gray-400 italic bg-gray-100 border border-gray-300 px-2 py-1 rounded">
-                                        Protected
-                                    </span>
-                                @else
-                                    <!-- JIKA PEGAWAI / PIMPINAN: TOMBOL EDIT DAN HAPUS AKTIF -->
-                                    <div class="flex items-center justify-center gap-1">
-                                        <button type="button" title="Edit Data User"
-                                                onclick="openEditUserModal('{{ $u->id_user }}', '{{ $u->username }}', '{{ $u->nip }}', '{{ $u->email }}', '{{ $u->role }}')" 
-                                                class="border-2 border-black bg-gray-200 hover:bg-gray-300 p-1.5 font-bold transition cursor-pointer">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                        </button>
-                                        <button type="button" title="Hapus User" 
-                                                onclick="openDeleteUserModal('{{ $u->id_user }}', '{{ $u->username }}')"
-                                                class="border-2 border-black bg-rose-500 hover:bg-rose-600 text-white p-1.5 font-bold transition cursor-pointer">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                        </button>
-                                    </div>
-                                @endif
-                            </td>
-                        </tr>
-                    @empty
+                    <?php if (count($users) > 0): ?>
+                        <?php for ($i = 0; $i < count($users);$i++): ?>
+                            <?php $u = $users[$i]; ?>
+                            <tr class="user-row border-b-2 border-black hover:bg-gray-50 transition" data-role="{{ strtolower($u->role) }}">
+                                <td class="border-r-2 border-black p-3 text-center font-bold text-gray-600">
+                                    {{ $i + 1 }}
+                                </td>
+                                <td class="border-r-2 border-black p-3">
+                                    <div class="font-black text-gray-900">{{ $u->username }}</div>
+                                    <div class="text-xs font-mono text-gray-600">NIP: {{ $u->nip ?? '-' }}</div>
+                                </td>
+                                <td class="border-r-2 border-black p-3 font-medium text-gray-800">
+                                    {{ $u->email ?? '-' }}
+                                </td>
+                                <td class="border-r-2 border-black p-3 text-center">
+                                    @if($u->role === 'admin')
+                                        <span class="inline-block border-2 border-black bg-rose-200 text-rose-900 px-2.5 py-0.5 text-[11px] font-black uppercase rounded-full">
+                                            Admin
+                                        </span>
+                                    @elseif($u->role === 'pimpinan')
+                                        <span class="inline-block border-2 border-black bg-amber-200 text-amber-900 px-2.5 py-0.5 text-[11px] font-black uppercase rounded-full">
+                                            Pimpinan
+                                        </span>
+                                    @elseif($u->role === 'pegawai_humas')
+                                        <span class="inline-block border-2 border-black bg-purple-200 text-purple-900 px-2.5 py-0.5 text-[11px] font-black uppercase rounded-full">
+                                            Pegawai Humas
+                                        </span>
+                                    @elseif($u->role === 'pegawai_koordinasi')
+                                        <span class="inline-block border-2 border-black bg-sky-200 text-sky-900 px-2.5 py-0.5 text-[11px] font-black uppercase rounded-full">
+                                            Pegawai Koordinator
+                                        </span>
+                                    @else
+                                        <span class="inline-block border-2 border-black bg-gray-200 text-gray-900 px-2.5 py-0.5 text-[11px] font-black uppercase rounded-full">
+                                            {{ $u->role }}
+                                        </span>
+                                    @endif
+                                </td>
+                                <td class="p-3 text-center">
+                                    @if($u->role === 'admin')
+                                        <span class="text-[11px] font-bold text-gray-400 italic bg-gray-100 border border-gray-300 px-2 py-1 rounded">
+                                            Protected
+                                        </span>
+                                    @else
+                                        <div class="flex items-center justify-center gap-1">
+                                            <button type="button" title="Edit Data User"
+                                                    onclick="openEditUserModal('{{ $u->id_user }}', '{{ $u->username }}', '{{$u->nip }}', '{{ $u->email }}', '{{$u->role }}')" 
+                                                    class="border-2 border-black bg-gray-200 hover:bg-gray-300 p-1.5 font-bold transition cursor-pointer">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                            </button>
+                                            <button type="button" title="Hapus User" 
+                                                    onclick="openDeleteUserModal('{{ $u->id_user }}', '{{$u->username }}')"
+                                                    class="border-2 border-black bg-rose-500 hover:bg-rose-600 text-white p-1.5 font-bold transition cursor-pointer">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                            </button>
+                                        </div>
+                                    @endif
+                                </td>
+                            </tr>
+                        <?php endfor; ?>
+                    <?php else: ?>
                         <tr>
                             <td colspan="5" class="p-8 text-center text-gray-500 font-bold">
                                 Belum ada data pengguna terdaftar.
                             </td>
                         </tr>
-                    @endforelse
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>
@@ -171,7 +181,8 @@
             <div>
                 <label class="block text-xs font-bold uppercase mb-1">Role Access</label>
                 <select id="edit_role" name="role" required class="w-full border-2 border-black p-2 text-xs sm:text-sm font-bold bg-white focus:outline-none">
-                    <option value="pegawai">Pegawai</option>
+                    <option value="pegawai_koordinasi">Pegawai Koordinator</option>
+                    <option value="pegawai_humas">Pegawai Humas</option>
                     <option value="pimpinan">Pimpinan</option>
                 </select>
             </div>
@@ -264,9 +275,9 @@
                 <label class="block text-xs font-bold uppercase mb-1">Role Access <span class="text-rose-600">*</span></label>
                 <select name="role" required class="w-full border-2 border-black p-2 text-xs sm:text-sm font-bold bg-white focus:outline-none">
                     <option value="" disabled selected>-- Pilih Role --</option>
-                    <option value="pegawai">Pegawai</option>
+                    <option value="pegawai_koordinasi">Pegawai Koordinator</option>
+                    <option value="pegawai_humas">Pegawai Humas</option>
                     <option value="pimpinan">Pimpinan</option>
-                    <!-- Option Admin Dihapus dari Pilihan UI -->
                 </select>
             </div>
 
@@ -324,13 +335,11 @@
     // --- MODAL EDIT FUNCTIONS ---
     function openEditUserModal(id, username, nip, email, role) {
         document.getElementById('edit_username').value = username;
-        document.getElementById('edit_nip').value = nip !== 'null' ? nip : '';
-        document.getElementById('edit_email').value = email !== 'null' ? email : '';
+        document.getElementById('edit_nip').value = (nip !== 'null' && nip !== '') ? nip : '';
+        document.getElementById('edit_email').value = (email !== 'null' && email !== '') ? email : '';
         document.getElementById('edit_role').value = role;
 
-        // Set action URL form update
         document.getElementById('editUserForm').action = `/master-user/${id}`;
-
         document.getElementById('editUserModal').classList.remove('hidden');
     }
 
@@ -341,10 +350,7 @@
     // --- MODAL HAPUS FUNCTIONS ---
     function openDeleteUserModal(id, username) {
         document.getElementById('delete_username_text').innerText = username;
-        
-        // Set action URL form delete
         document.getElementById('deleteUserForm').action = `/master-user/${id}`;
-
         document.getElementById('deleteUserModal').classList.remove('hidden');
     }
 
@@ -352,13 +358,13 @@
         document.getElementById('deleteUserModal').classList.add('hidden');
     }
 
- // --- MODAL TAMBAH USER FUNCTIONS ---
-function openAddUserModal() {
-    document.getElementById('addUserModal').classList.remove('hidden');
-}
+    // --- MODAL TAMBAH USER FUNCTIONS ---
+    function openAddUserModal() {
+        document.getElementById('addUserModal').classList.remove('hidden');
+    }
 
-function closeAddUserModal() {
-    document.getElementById('addUserModal').classList.add('hidden');
-}
+    function closeAddUserModal() {
+        document.getElementById('addUserModal').classList.add('hidden');
+    }
 </script>
 @endsection

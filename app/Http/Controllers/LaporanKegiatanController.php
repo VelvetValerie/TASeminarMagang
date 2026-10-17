@@ -21,7 +21,8 @@ class LaporanKegiatanController extends Controller
 
         $query = LaporanKegiatan::with(['kegiatan.jenis', 'kegiatan.lokasi', 'kegiatan.instansi', 'kegiatan.koordinator']);
 
-        if ($user->role === 'pegawai') {
+        // Filter laporan hanya untuk kegiatan yang dikoordinasikan jika role pegawai_koordinasi
+        if ($user->role === 'pegawai_koordinasi') {
             $query->whereHas('kegiatan', function ($q) use ($user) {
                 $q->where('id_karyawan_koor', $user->id_karyawan);
             });
@@ -74,7 +75,7 @@ class LaporanKegiatanController extends Controller
             ->whereDoesntHave('laporan')
             ->orderBy('nama_keg', 'asc');
 
-        if ($user->role === 'pegawai') {
+        if ($user->role === 'pegawai_koordinasi') {
             $kegiatanSelesaiQuery->where('id_karyawan_koor', $user->id_karyawan);
         }
 
@@ -89,7 +90,7 @@ class LaporanKegiatanController extends Controller
         $user = Auth::user();
         $kegiatan = Kegiatan::findOrFail($request->id_keg);
 
-        if ($user->role === 'pegawai' && $kegiatan->id_karyawan_koor != $user->id_karyawan) {
+        if ($user->role === 'pegawai_koordinasi' && $kegiatan->id_karyawan_koor != $user->id_karyawan) {
             return redirect()->back()->with('error', 'Anda tidak memiliki hak akses untuk menginput laporan kegiatan ini karena Anda bukan koordinator terpilih.');
         }
 
@@ -129,7 +130,7 @@ class LaporanKegiatanController extends Controller
         $laporan = LaporanKegiatan::findOrFail($id);
         $kegiatan = Kegiatan::findOrFail($laporan->id_keg);
 
-        if ($user->role === 'pegawai' && $kegiatan->id_karyawan_koor != $user->id_karyawan) {
+        if ($user->role === 'pegawai_koordinasi' && $kegiatan->id_karyawan_koor != $user->id_karyawan) {
             return redirect()->back()->with('error', 'Anda tidak diizinkan mengubah laporan kegiatan ini.');
         }
 
@@ -168,7 +169,7 @@ class LaporanKegiatanController extends Controller
         $laporan = LaporanKegiatan::findOrFail($id);
         $kegiatan = Kegiatan::findOrFail($laporan->id_keg);
 
-        if ($user->role === 'pegawai' && $kegiatan->id_karyawan_koor != $user->id_karyawan) {
+        if ($user->role === 'pegawai_koordinasi' && $kegiatan->id_karyawan_koor != $user->id_karyawan) {
             return redirect()->back()->with('error', 'Anda tidak diizinkan menghapus laporan kegiatan ini.');
         }
 
@@ -218,7 +219,7 @@ class LaporanKegiatanController extends Controller
                 'kegiatan.instansi'
             ]);
 
-            if ($loggedUser && $loggedUser->role === 'pegawai' && $loggedUser->id_karyawan) {
+            if ($loggedUser && $loggedUser->role === 'pegawai_koordinasi' && $loggedUser->id_karyawan) {
                 $query->whereHas('kegiatan', function ($q) use ($loggedUser) {
                     $q->where('id_karyawan_koor', $loggedUser->id_karyawan);
                 });

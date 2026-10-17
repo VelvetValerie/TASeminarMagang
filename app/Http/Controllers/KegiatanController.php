@@ -17,7 +17,8 @@ class KegiatanController extends Controller
         $user = Auth::user();
         $query = Kegiatan::with(['jenis', 'koordinator', 'lokasi', 'instansi']);
 
-        if ($user && $user->role === 'pegawai') {
+        // Jika user adalah Pegawai Koordinator, tampilkan kegiatan yang ditugaskan kepadanya
+        if ($user && $user->role === 'pegawai_koordinasi') {
             $query->where('id_karyawan_koor', $user->id_karyawan);
         }
 
@@ -62,8 +63,9 @@ class KegiatanController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->role === 'pegawai') {
-            return redirect()->back()->with('error', 'Akses ditolak! Pegawai tidak diizinkan menambahkan kegiatan baru.');
+        // Pimpinan dan Pegawai Humas tidak diizinkan membuat kegiatan
+        if (in_array($user->role, ['pimpinan', 'pegawai_humas'])) {
+            return redirect()->back()->with('error', 'Akses ditolak! Anda tidak diizinkan menambahkan kegiatan baru.');
         }
 
         $validated = $request->validate([
@@ -93,8 +95,14 @@ class KegiatanController extends Controller
         $user = Auth::user();
         $kegiatan = Kegiatan::findOrFail($id);
 
-        if ($user->role === 'pegawai' && $kegiatan->id_karyawan_koor != $user->id_karyawan) {
+        // Jika Pegawai Koordinator, pastikan dia adalah koordinator untuk kegiatan tersebut
+        if ($user->role === 'pegawai_koordinasi' && $kegiatan->id_karyawan_koor != $user->id_karyawan) {
             return redirect()->back()->with('error', 'Akses ditolak! Anda bukan koordinator terpilih untuk kegiatan ini.');
+        }
+
+        // Pimpinan & Pegawai Humas tidak boleh mengubah data kegiatan
+        if (in_array($user->role, ['pimpinan', 'pegawai_humas'])) {
+            return redirect()->back()->with('error', 'Akses ditolak! Anda tidak memiliki izin untuk mengubah kegiatan.');
         }
 
         $validated = $request->validate([
@@ -123,8 +131,9 @@ class KegiatanController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->role === 'pegawai') {
-            return redirect()->back()->with('error', 'Akses ditolak! Pegawai tidak diizinkan menghapus data kegiatan.');
+        // Hanya Admin yang diizinkan menghapus kegiatan
+        if ($user->role !== 'admin') {
+            return redirect()->back()->with('error', 'Akses ditolak! Hanya Admin yang diizinkan menghapus data kegiatan.');
         }
 
         $kegiatan = Kegiatan::findOrFail($id);

@@ -17,26 +17,50 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    // 2. Proses Login
+    // 2. Proses Login (Dukungan NIP, Username, dan Email)
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'login'    => ['required', 'string'],
-            'password' => ['required', 'string'],
+        $request->validate([
+            'login'    => 'required|string',
+            'password' => 'required|string',
         ], [
-            'login.required'    => 'NIP atau Username wajib diisi.',
+            'login.required'    => 'NIP / Username / Email wajib diisi.',
             'password.required' => 'Password wajib diisi.',
         ]);
 
-        $fieldType = is_numeric($request->login) ? 'nip' : 'username';
+        $input = trim($request->input('login'));
+        $password = $request->input('password');
 
-        if (Auth::attempt([$fieldType => $credentials['login'], 'password' => $credentials['password']])) {
+        // Tentukan kolom database yang dicari (NIP / Email / Username)
+        if (numeric_only($input) && strlen($input) === 18) {
+            $fieldType = 'nip';
+        } elseif (filter_var($input, FILTER_VALIDATE_EMAIL)) {
+            $fieldType = 'email';
+        } else {
+            $fieldType = 'username';
+        }
+
+        $credentials = [
+            $fieldType => $input,
+            'password'  => $password,
+        ];
+
+        // Jalankan Autentikasi
+        if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             return redirect()->intended('/dashboard');
         }
 
+        // Jika Percobaan Pertama Gagal, Coba Cek sebagai Username (Fallback)
+        if ($fieldType !== 'username') {
+            if (Auth::attempt(['username' => $input, 'password' => $password])) {
+                $request->session()->regenerate();
+                return redirect()->intended('/dashboard');
+            }
+        }
+
         return back()->withErrors([
-            'login' => 'NIP/Username atau Password yang Anda masukkan salah.',
+            'login' => 'NIP/Username/Email atau Password yang Anda masukkan salah.',
         ])->onlyInput('login');
     }
 
@@ -52,7 +76,9 @@ class AuthController extends Controller
         $request->validate([
             'email' => 'required|email|exists:users,email',
         ], [
-            'email.exists' => 'Alamat email tidak terdaftar dalam sistem kepegawaian.',
+            'email.required' => 'Alamat email wajib diisi.',
+            'email.email'    => 'Format email tidak valid.',
+            'email.exists'   => 'Alamat email tidak terdaftar dalam sistem kepegawaian.',
         ]);
 
         $otpCode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
@@ -74,7 +100,7 @@ class AuthController extends Controller
             ->with('success', 'Kode konfirmasi OTP telah dikirimkan ke email Anda.');
     }
 
-    // 5. Tampilkan Form Verifikasi OTP (METHOD YANG HILANG)
+    // 5. Tampilkan Form Verifikasi OTP
     public function showVerifyOtpForm()
     {
         if (!session('reset_email')) {
@@ -90,9 +116,10 @@ class AuthController extends Controller
             'otp'                   => 'required|numeric',
             'password'              => 'required|min:6|confirmed',
         ], [
-            'otp.required'          => 'Kode OTP wajib diisi.',
-            'password.confirmed'    => 'Konfirmasi password baru tidak cocok.',
-            'password.min'          => 'Password minimal 6 karakter.'
+            'otp.required'       => 'Kode OTP wajib diisi.',
+            'password.required'  => 'Password baru wajib diisi.',
+            'password.confirmed' => 'Konfirmasi password baru tidak cocok.',
+            'password.min'       => 'Password minimal 6 karakter.'
         ]);
 
         $email = session('reset_email');
@@ -140,5 +167,14 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('login');
+    }
+}
+
+/**
+ * Helper Sederhana Pengecekan Angka (Mencegah Error jika Ctype Belum Aktif)
+ */
+if (!function_exists('numeric_only')) {
+    function numeric_only($string) {
+        return preg_match('/^[0-9]+$/', $string);
     }
 }
