@@ -12,6 +12,27 @@
     </a>
 </div>
 
+<!-- ALERT FEEDBACK NOTIFIKASI BERHASIL / GAGAL -->
+@if (session('success'))
+    <div class="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm font-semibold flex items-center justify-between shadow-sm">
+        <div class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-green-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            <span>{{ session('success') }}</span>
+        </div>
+        <button type="button" onclick="this.parentElement.remove()" class="text-green-700 hover:text-green-900 font-bold ml-2">&times;</button>
+    </div>
+@endif
+
+@if (session('error'))
+    <div class="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm font-semibold flex items-center justify-between shadow-sm">
+        <div class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-red-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            <span>{{ session('error') }}</span>
+        </div>
+        <button type="button" onclick="this.parentElement.remove()" class="text-red-700 hover:text-red-900 font-bold ml-2">&times;</button>
+    </div>
+@endif
+
 <!-- KOTAK PENCARIAN & FILTER -->
 <div class="bg-white border border-gray-200 rounded-lg shadow-sm mb-4 p-4 flex flex-wrap items-center justify-between gap-3">
     <h2 class="text-sm font-semibold text-gray-700">Daftar Publikasi Berita</h2>
@@ -72,24 +93,20 @@
                         </span>
                     </td>
                     <td class="p-4 text-center space-x-2 flex items-center justify-center">
-                        <!-- Tombol Lihat (Mata) -->
                         @if($item->status == 'Terbit')
                             <a href="{{ route('berita.show', $item->slug) }}" target="_blank" class="inline-flex text-gray-500 hover:text-green-600 transition" title="Lihat Halaman Publik">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                             </a>
                         @else
                             <button type="button" disabled class="inline-flex text-gray-300 cursor-not-allowed" title="Belum Terbit (Draft)">
-                                <!-- Ikon mata dicoret -->
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>
                             </button>
                         @endif
 
-                        <!-- Tombol Edit -->
                         <a href="{{ route('admin.berita.edit', $item->slug) }}" class="inline-flex text-blue-600 hover:text-blue-800 transition" title="Edit">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                         </a>
 
-                        <!-- Tombol Hapus -->
                         <button onclick="openDeleteBeritaModal('{{ $item->id_berita }}', '{{ addslashes($item->judul_berita) }}')" class="inline-flex text-red-500 hover:text-red-700 transition" title="Hapus">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         </button>
