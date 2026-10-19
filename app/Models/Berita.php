@@ -21,7 +21,15 @@ class Berita extends Model
         'lampiran_url',
         'thumbnail',
         'caption_thumbnail',
+        'multi_images', // Ditambahkan agar data JSON galeri tersimpan
         'id_penulis',
+    ];
+
+    /**
+     * Otomatis mengonversi kolom JSON multi_images ke/dari array PHP
+     */
+    protected $casts = [
+        'multi_images' => 'array',
     ];
 
     /**

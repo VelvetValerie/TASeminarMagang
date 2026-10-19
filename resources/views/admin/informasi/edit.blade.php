@@ -1,28 +1,27 @@
 @extends('layouts.app')
 
-@push('styles')
-<style>
-    /* Proteksi lapis 1: CSS */
-    #previewKonten img, #previewKonten image, #previewKonten picture, #previewKonten figure, #previewKonten svg {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        width: 0 !important;
-        height: 0 !important;
-    }
-</style>
-@endpush
-
 @section('content')
+<style>
+    div#previewKonten h2, #previewKonten h2 { font-size: 1.75rem !important; font-weight: 700 !important; margin-top: 1.35rem !important; margin-bottom: 0.5rem !important; color: #1f2937 !important; line-height: 1.3 !important; display: block !important; }
+    div#previewKonten h3, #previewKonten h3 { font-size: 1.375rem !important; font-weight: 700 !important; margin-top: 1.15rem !important; margin-bottom: 0.5rem !important; color: #374151 !important; line-height: 1.35 !important; display: block !important; }
+    div#previewKonten h4, #previewKonten h4 { font-size: 1.125rem !important; font-weight: 600 !important; margin-top: 1rem !important; margin-bottom: 0.5rem !important; color: #4b5563 !important; line-height: 1.4 !important; display: block !important; }
+    div#previewKonten h5, #previewKonten h5 { font-size: 1rem !important; font-weight: 600 !important; margin-top: 0.75rem !important; margin-bottom: 0.25rem !important; color: #4b5563 !important; display: block !important; }
+    div#previewKonten h6, #previewKonten h6 { font-size: 0.875rem !important; font-weight: 600 !important; margin-top: 0.75rem !important; margin-bottom: 0.25rem !important; color: #6b7280 !important; display: block !important; }
+    div#previewKonten blockquote, #previewKonten blockquote { border-left: 4px solid #3b82f6 !important; padding-left: 1rem !important; font-style: italic !important; color: #4b5563 !important; margin: 1rem 0 !important; display: block !important; }
+    div#previewKonten ul, #previewKonten ul { list-style-type: disc !important; padding-left: 1.5rem !important; margin: 0.75rem 0 !important; display: block !important; }
+    div#previewKonten ol, #previewKonten ol { list-style-type: decimal !important; padding-left: 1.5rem !important; margin: 0.75rem 0 !important; display: block !important; }
+    div#previewKonten li, #previewKonten li { margin-bottom: 0.25rem !important; display: list-item !important; }
+    div#previewKonten img, #previewKonten img { max-width: 100% !important; height: auto !important; border-radius: 0.5rem !important; margin: 1rem auto !important; display: block !important; }
+    div#previewKonten p, #previewKonten p { margin-bottom: 0.75rem !important; font-size: 1rem !important; line-height: 1.625 !important; }
+</style>
+
 <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-8">
-    
     <div class="flex justify-between items-center mb-6">
         <a href="{{ route('admin.informasi.index') }}" class="text-sm font-medium text-gray-500 hover:text-gray-900 flex items-center gap-1">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
             Kembali
         </a>
         
-        <!-- HANYA BISA DILIHAT DI PORTAL JIKA TERBIT -->
         @if($informasi->status === 'Terbit')
             <a href="{{ route('informasi.show', $informasi->slug) }}" target="_blank" class="text-sm font-bold text-blue-600 hover:underline">
                 Lihat di Portal Publik &rarr;
@@ -42,7 +41,7 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.informasi.update', $informasi->slug) }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('admin.informasi.update', $informasi->slug) }}" method="POST" enctype="multipart/form-data" id="formInformasi">
         @csrf
         @method('PUT')
         
@@ -50,14 +49,92 @@
             <!-- KOLOM KIRI -->
             <div class="w-full lg:w-3/4 space-y-6">
                 <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1">Judul Berita</label>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Judul Informasi <span class="text-red-500">*</span></label>
                     <input type="text" id="inputJudul" name="judul_berita" value="{{ old('judul_berita', $informasi->judul_berita) }}" placeholder="Tambahkan judul..." 
                         class="w-full text-xl md:text-2xl font-bold p-3 bg-white border border-gray-300 rounded-md focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors placeholder-gray-400" required autofocus>
                 </div>
+
                 <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1">Konten Berita</label>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Konten Informasi <span class="text-red-500">*</span></label>
+                    
+                    <!-- TOOLBOX FORMATTING -->
+                    <div class="flex flex-wrap gap-1 bg-gray-50 border border-gray-300 p-2 rounded-t-md border-b-0" id="toolbarKonten">
+                        <select id="formatHeader" class="text-xs border border-gray-300 rounded p-1 bg-white hover:bg-gray-100 cursor-pointer" onchange="applyHeader()">
+                            <option value="">Header</option>
+                            <option value="h2">Header 2</option>
+                            <option value="h3">Header 3</option>
+                            <option value="h4">Header 4</option>
+                            <option value="h5">Header 5</option>
+                            <option value="h6">Header 6</option>
+                        </select>
+                        
+                        <div class="w-px h-6 bg-gray-300 mx-1 my-auto"></div>
+
+                        <button type="button" onclick="formatText('<b>', '</b>')" class="px-2 py-1 bg-white border border-gray-300 rounded hover:bg-gray-100 text-xs font-bold" title="Toggle Bold">B</button>
+                        <button type="button" onclick="formatText('<i>', '</i>')" class="px-2 py-1 bg-white border border-gray-300 rounded hover:bg-gray-100 text-xs italic" title="Toggle Italic">I</button>
+                        <button type="button" onclick="formatText('<u>', '</u>')" class="px-2 py-1 bg-white border border-gray-300 rounded hover:bg-gray-100 text-xs underline" title="Toggle Underline">U</button>
+                        <button type="button" onclick="formatText('<s>', '</s>')" class="px-2 py-1 bg-white border border-gray-300 rounded hover:bg-gray-100 text-xs line-through" title="Toggle Strikethrough">S</button>
+                        
+                        <div class="w-px h-6 bg-gray-300 mx-1 my-auto"></div>
+
+                        <button type="button" onclick="formatText('<sup>', '</sup>')" class="px-2 py-1 bg-white border border-gray-300 rounded hover:bg-gray-100 text-xs" title="Superscript">x&sup2;</button>
+                        <button type="button" onclick="formatText('<sub>', '</sub>')" class="px-2 py-1 bg-white border border-gray-300 rounded hover:bg-gray-100 text-xs" title="Subscript">x&sbquo;</button>
+                        <button type="button" onclick="formatText('<blockquote>', '</blockquote>')" class="px-2 py-1 bg-white border border-gray-300 rounded hover:bg-gray-100 text-xs" title="Quote">&quot; Quote</button>
+
+                        <div class="w-px h-6 bg-gray-300 mx-1 my-auto"></div>
+
+                        <select id="formatList" class="text-xs border border-gray-300 rounded p-1 bg-white hover:bg-gray-100 cursor-pointer" onchange="applyList()">
+                            <option value="">List</option>
+                            <option value="ul">Dots (&bull;)</option>
+                            <option value="ol-1">Angka (1, 2, 3)</option>
+                            <option value="ol-a">Huruf (a, b, c)</option>
+                            <option value="ol-i">Romawi (i, ii, iii)</option>
+                        </select>
+
+                        <div class="w-px h-6 bg-gray-300 mx-1 my-auto"></div>
+
+                        <button type="button" onclick="openImageModal()" class="px-2.5 py-1 bg-blue-50 border border-blue-300 text-blue-700 rounded hover:bg-blue-100 flex items-center gap-1 text-xs font-semibold" title="Insert Image">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            Image Galeri
+                        </button>
+                    </div>
+
                     <textarea name="konten" id="inputKonten" rows="15" placeholder="Mulai menulis konten di sini..." 
-                        class="w-full p-4 bg-white border border-gray-300 rounded-md focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-gray-700 resize-y" required>{{ old('konten', $informasi->konten) }}</textarea>
+                        class="w-full p-4 bg-white border border-gray-300 rounded-b-md rounded-t-none border-t-0 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-gray-700 resize-y" required>{{ old('konten', $informasi->konten) }}</textarea>
+                </div>
+
+                <!-- MANAJEMEN GAMBAR TERLAMPIR -->
+                @php
+                    $galleryImages = is_array($informasi->multi_images) ? $informasi->multi_images : (json_decode($informasi->multi_images, true) ?? []);
+                @endphp
+                <div class="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+                    <h4 class="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        Manajemen Gambar Terlampir Di Server
+                    </h4>
+
+                    <div id="galleryAlert" class="hidden mb-3 p-3 rounded-md text-xs font-semibold transition-all duration-300"></div>
+                    
+                    <div id="galleryWrapper">
+                        @if(!empty($galleryImages))
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="galleryContainer">
+                                @foreach($galleryImages as $index => $imgPath)
+                                    <div class="img-card-item relative group border border-gray-200 rounded-lg overflow-hidden bg-gray-50 flex flex-col justify-between" data-path="{{ $imgPath }}">
+                                        <div class="relative aspect-video overflow-hidden bg-gray-100 flex items-center justify-center">
+                                            <img src="{{ asset('storage/' . $imgPath) }}" alt="Gallery Image" class="max-h-full max-w-full object-contain">
+                                            <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-2">
+                                                <button type="button" onclick="insertImageFromCard('{{ asset('storage/' . $imgPath) }}', '{{ basename($imgPath) }}')" class="p-1.5 bg-blue-600 text-white rounded text-xs font-medium hover:bg-blue-700">Sisipkan</button>
+                                                <button type="button" onclick="openDeleteImageModal('{{ $imgPath }}', '{{ basename($imgPath) }}', this)" class="p-1.5 bg-red-600 text-white rounded text-xs font-medium hover:bg-red-700">Hapus</button>
+                                            </div>
+                                        </div>
+                                        <div class="p-1.5 bg-white border-t border-gray-100 text-[10px] text-gray-500 truncate" title="{{ basename($imgPath) }}">{{ basename($imgPath) }}</div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <p class="text-xs text-gray-400 italic" id="emptyGalleryNotice">Belum ada gambar tambahan yang tersimpan di galeri informasi ini.</p>
+                        @endif
+                    </div>
                 </div>
             </div>
 
@@ -68,8 +145,8 @@
                     <div class="p-4 border-b border-gray-100 bg-gray-50 rounded-t-lg font-bold text-gray-800">Perbarui Status</div>
                     <div class="p-4 space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Status Publikasi</label>
-                            <select name="status" class="w-full bg-white border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-200 focus:border-blue-500">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Status Publikasi <span class="text-red-500">*</span></label>
+                            <select name="status" required class="w-full bg-white border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-200 focus:border-blue-500">
                                 <option value="Draft" {{ old('status', $informasi->status) == 'Draft' ? 'selected' : '' }}>Konsep (Draft)</option>
                                 <option value="Terbit" {{ old('status', $informasi->status) == 'Terbit' ? 'selected' : '' }}>Terbitkan</option>
                             </select>
@@ -78,39 +155,55 @@
                             Terakhir diubah: {{ \Carbon\Carbon::parse($informasi->updated_at)->format('d M Y, H:i') }}
                         </div>
                         <button type="submit" class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 transition-colors">
-                            Perbarui Berita
+                            Perbarui Informasi
                         </button>
                     </div>
                 </div>
 
-                <!-- Box Gambar Thumbnail -->
+                <!-- Box Thumbnail -->
                 <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
-                    <div class="p-4 border-b border-gray-100 bg-gray-50 rounded-t-lg font-bold text-gray-800">Thumbnail Berita</div>
+                    <div class="p-4 border-b border-gray-100 bg-gray-50 rounded-t-lg font-bold text-gray-800">Thumbnail Informasi</div>
                     <div class="p-4">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Unggah Thumbnail Baru</label>
                         <input type="file" name="thumbnail" id="inputThumbnail" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 bg-white border border-gray-300 rounded-md">
-                        <p class="text-xs text-gray-500 mt-2 mb-4">Maksimal ukuran 10MB (JPG, PNG, WEBP).</p>
+                        <p class="text-xs text-amber-600 mt-1 font-medium">* Disarankan rasio gambar 16:9 (contoh: 1280x720 / 1920x1080 px).</p>
 
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi Gambar (Caption)</label>
-                        <!-- Pastikan kolom 'caption_thumbnail' ada di tabel database berita Anda -->
+                        <label class="block text-sm font-medium text-gray-700 mt-4 mb-1">Deskripsi Gambar (Caption)</label>
                         <input type="text" id="inputCaption" name="caption_thumbnail" maxlength="150" value="{{ old('caption_thumbnail', $informasi->caption_thumbnail) }}" placeholder="Tulis caption gambar di sini (Maks. 150 karakter)..." class="w-full text-sm p-2 bg-white border border-gray-300 rounded-md focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
 
-                        <!-- Tampilkan thumbnail saat ini jika ada -->
                         @if($informasi->thumbnail)
                         <div class="mt-4 pt-4 border-t border-gray-100">
                             <span class="block text-xs font-semibold text-gray-600 mb-2">Thumbnail Saat Ini:</span>
-                            <img src="{{ asset('storage/' . $informasi->thumbnail) }}" alt="Current Thumbnail" class="w-full h-auto rounded border border-gray-200">
+                            <div class="relative aspect-video overflow-hidden rounded border border-gray-200 bg-gray-50 flex items-center justify-center p-2">
+                                <img src="{{ asset('storage/' . $informasi->thumbnail) }}" alt="Current Thumbnail" class="max-h-full max-w-full object-contain rounded">
+                            </div>
                         </div>
                         @endif
                     </div>
                 </div>
 
-                <!-- Box Lampiran / Media -->
+                <!-- Box Multi-Images -->
+                <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <div class="p-4 border-b border-gray-100 bg-gray-50 rounded-t-lg font-bold text-gray-800">Tambah Galeri Gambar Baru</div>
+                    <div class="p-4 space-y-3">
+                        <label class="block text-sm font-medium text-gray-700">Pilih File Gambar Baru</label>
+                        <input type="file" id="inputMultiImages" multiple accept="image/*" class="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 bg-white border border-gray-300 rounded-md">
+                        <p class="text-xs text-amber-600 mt-1 font-medium">* Disarankan rasio gambar 16:9 agar tampilan seragam.</p>
+
+                        <input type="file" name="multi_images[]" id="hiddenMultiImages" multiple class="hidden">
+
+                        <div id="multiImageList" class="space-y-2 mt-3 max-h-48 overflow-y-auto pr-1">
+                            <p class="text-xs text-gray-400 italic" id="emptyListNotice">Belum ada gambar baru dipilih.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Box File Lampiran -->
                 <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
                     <div class="p-4 border-b border-gray-100 bg-gray-50 rounded-t-lg font-bold text-gray-800">File Lampiran</div>
                     <div class="p-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">URL Dokumen</label>
-                        <input type="url" name="lampiran_url" value="{{ old('lampiran_url', $informasi->lampiran_url) }}" placeholder="https://drive.google.com/..." class="w-full bg-white border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-200 focus:border-blue-500">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">URL Dokumen (Opsional)</label>
+                        <input type="url" name="lampiran_url" id="inputLampiranUrl" value="{{ old('lampiran_url', $informasi->lampiran_url) }}" placeholder="https://drive.google.com/..." class="w-full bg-white border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-sm">
                         @if($informasi->lampiran_url)
                             <a href="{{ $informasi->lampiran_url }}" target="_blank" class="text-xs text-blue-600 hover:underline mt-2 inline-block font-medium">Buka Tautan Saat Ini &nearr;</a>
                         @endif
@@ -120,7 +213,7 @@
         </div>
     </form>
 
-    <!-- SECTION LIVE PREVIEW -->
+    <!-- LIVE PREVIEW -->
     <div class="border-t-2 border-dashed border-gray-300 pt-8 mt-8">
         <div class="flex items-center gap-2 mb-6 text-gray-700">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
@@ -129,7 +222,7 @@
         
         <article class="bg-white p-6 md:p-10 rounded-xl border border-gray-200 shadow-sm flex flex-col max-w-4xl mx-auto">
             <h1 id="previewJudul" class="text-2xl md:text-4xl font-bold text-gray-900 leading-snug mb-4">
-                {{ old('judul_berita', $informasi->judul_berita) ?: 'Judul Berita Akan Muncul Di Sini...' }}
+                {{ old('judul_berita', $informasi->judul_berita) ?: 'Judul Informasi Akan Muncul Di Sini...' }}
             </h1>
             
             <div class="flex items-center gap-4 text-xs md:text-sm text-gray-500 pb-6 border-b border-gray-100 mb-6">
@@ -138,21 +231,77 @@
                 <span>Admin / Penulis</span>
             </div>
 
-            <!-- Pratinjau Thumbnail -->
-            <div id="previewThumbnailContainer" class="{{ $informasi->thumbnail ? '' : 'hidden' }} mb-8 rounded-lg overflow-hidden border border-gray-100 relative">
-                <img id="previewThumbnailImage" src="{{ $informasi->thumbnail ? asset('storage/' . $informasi->thumbnail) : '' }}" alt="Preview Thumbnail" class="w-full h-auto object-cover max-h-[450px]">
-                <p id="previewThumbnailCaption" class="text-xs text-gray-500 italic p-2 text-center bg-gray-50 border-t border-gray-200">
+            <!-- PREVIEW THUMBNAIL -->
+            <div id="previewThumbnailContainer" class="{{ $informasi->thumbnail ? '' : 'hidden' }} mb-8 rounded-lg overflow-hidden border border-gray-200 relative aspect-video bg-gray-50 flex items-center justify-center">
+                <img id="previewThumbnailImage" src="{{ $informasi->thumbnail ? asset('storage/' . $informasi->thumbnail) : '' }}" alt="Preview Thumbnail" class="relative z-10 max-h-full max-w-full object-contain">
+                <p id="previewThumbnailCaption" class="absolute bottom-0 inset-x-0 z-20 text-xs text-gray-700 italic p-2 text-center bg-gray-100/90 border-t border-gray-200">
                     <span id="captionText">{{ old('caption_thumbnail', $informasi->caption_thumbnail ?? '') ?: 'Deskripsi gambar akan muncul di sini...' }}</span>
                 </p>
             </div>
 
-            <div id="previewKonten" class="space-y-5 text-gray-700 leading-relaxed text-base md:text-lg">
-                {!! old('konten', $informasi->konten) ?: '<p class="text-gray-400 italic">Konten berita akan diperbarui secara otomatis saat Anda mengetik di editor...</p>' !!}
+            <!-- PREVIEW KONTEN INFORMASI -->
+            <div id="previewKonten" class="text-gray-700 leading-relaxed">
+                {!! old('konten', $informasi->konten) ?: '<p class="text-gray-400 italic">Konten informasi akan diperbarui secara otomatis saat Anda mengetik di editor...</p>' !!}
+            </div>
+
+            <!-- PREVIEW LAMPIRAN URL -->
+            <div id="previewLampiranContainer" class="mt-8 pt-6 border-t border-gray-100 hidden">
+                <div class="bg-blue-50/70 border border-blue-200 rounded-lg p-4 flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-blue-100 rounded-lg text-blue-600 shrink-0">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-bold text-gray-800">Dokumen Lampiran Informasi</h4>
+                            <p class="text-xs text-gray-500">Klik tombol di samping untuk mengunduh atau melihat dokumen lampiran.</p>
+                        </div>
+                    </div>
+                    <a id="previewLampiranLink" href="#" target="_blank" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-md flex items-center gap-1.5 transition-colors shrink-0">
+                        <span>Buka Lampiran</span>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    </a>
+                </div>
             </div>
         </article>
     </div>
-
 </div>
+
+<!-- FLOAT WINDOW MODAL MULTI-IMAGE -->
+@push('modals')
+<div id="imageModal" class="hidden fixed inset-0 z-50 bg-gray-900/50 flex justify-center items-center backdrop-blur-sm">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl p-6 border border-gray-100">
+        <div class="flex justify-between items-center pb-3 border-b border-gray-100 mb-4">
+            <h3 class="text-lg font-bold text-gray-800">Pilih Gambar Dari Galeri</h3>
+            <button type="button" onclick="closeImageModal()" class="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+        </div>
+        <p class="text-xs text-gray-500 mb-3">Pilih gambar tersimpan di server atau gambar baru yang siap di-upload untuk disisipkan ke editor.</p>
+        
+        <div class="mb-4 bg-blue-50/50 p-3 rounded-lg border border-blue-100">
+            <label class="block text-xs font-bold text-gray-700 mb-1">Alternatif Teks / Alt Text Gambar (Opsional)</label>
+            <input type="text" id="modalAltText" placeholder="Masukkan deskripsi gambar untuk atribut alt..." class="w-full text-xs p-2 bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-200 focus:border-blue-500">
+            <p class="text-[11px] text-gray-400 mt-1">Teks ini akan otomatis dimasukkan ke dalam <code class="bg-gray-100 px-1 rounded text-red-500">alt="..."</code> pada tag &lt;img&gt;.</p>
+        </div>
+
+        <div id="modalGalleryGrid" class="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-72 overflow-y-auto p-1 border border-gray-100 rounded-lg"></div>
+
+        <div class="mt-5 flex justify-end">
+            <button type="button" onclick="closeImageModal()" class="px-4 py-2 bg-gray-100 text-gray-700 text-xs font-semibold rounded-md hover:bg-gray-200">Tutup</button>
+        </div>
+    </div>
+</div>
+
+<div id="deleteImageModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm">
+    <div class="relative w-full max-w-sm bg-white rounded-lg shadow-xl p-6">
+        <h3 class="text-lg font-bold text-gray-900 mb-2">Hapus Gambar Galeri</h3>
+        <p class="text-sm text-gray-600 mb-6">Yakin ingin menghapus gambar <strong id="delete_image_name" class="text-gray-900"></strong> dari server?</p>
+        <div class="flex justify-end gap-3">
+            <button type="button" onclick="closeDeleteImageModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded hover:bg-gray-200 transition">Batal</button>
+            <button type="button" id="btnConfirmDeleteImage" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded hover:bg-red-700 transition">Ya, Hapus</button>
+        </div>
+    </div>
+</div>
+@endpush
+
 @endsection
 
 @push('scripts')
@@ -162,40 +311,62 @@
         const inputKonten = document.getElementById('inputKonten');
         const inputThumbnail = document.getElementById('inputThumbnail');
         const inputCaption = document.getElementById('inputCaption');
+        const inputLampiranUrl = document.getElementById('inputLampiranUrl');
         
         const previewJudul = document.getElementById('previewJudul');
         const previewKonten = document.getElementById('previewKonten');
         const previewThumbnailContainer = document.getElementById('previewThumbnailContainer');
         const previewThumbnailImage = document.getElementById('previewThumbnailImage');
         const captionText = document.getElementById('captionText');
+        const previewLampiranContainer = document.getElementById('previewLampiranContainer');
+        const previewLampiranLink = document.getElementById('previewLampiranLink');
 
-        function hapusGambarDariString(htmlString) {
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = htmlString;
-            const images = tempDiv.querySelectorAll('img, picture, figure, image, svg');
-            images.forEach(img => img.remove());
-            return tempDiv.innerHTML;
+        const localBlobMap = new Map();
+
+        let serverImages = [
+            @foreach($galleryImages as $imgPath)
+                { url: "{{ asset('storage/' . $imgPath) }}", name: "{{ basename($imgPath) }}", path: "{{ $imgPath }}" },
+            @endforeach
+        ];
+
+        function updateLivePreview() {
+            let rawText = inputKonten.value.trim();
+            if (rawText !== '') {
+                localBlobMap.forEach((blobUrl, fileName) => {
+                    const regex = new RegExp(fileName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                    rawText = rawText.replace(regex, blobUrl);
+                });
+                previewKonten.innerHTML = rawText;
+            } else {
+                previewKonten.innerHTML = '<p class="text-gray-400 italic">Konten informasi akan diperbarui secara otomatis saat Anda mengetik di editor...</p>';
+            }
         }
 
-        const initialImages = previewKonten.querySelectorAll('img, picture, figure, image, svg');
-        initialImages.forEach(img => img.remove());
+        function updateLampiranPreview() {
+            if (!inputLampiranUrl || !previewLampiranContainer || !previewLampiranLink) return;
+            const urlVal = inputLampiranUrl.value.trim();
+            if (urlVal !== '') {
+                previewLampiranLink.href = urlVal;
+                previewLampiranContainer.classList.remove('hidden');
+            } else {
+                previewLampiranContainer.classList.add('hidden');
+            }
+        }
 
         inputJudul.addEventListener('input', function() {
-            previewJudul.innerText = this.value.trim() !== '' ? this.value : 'Judul Berita Akan Muncul Di Sini...';
+            previewJudul.innerText = this.value.trim() !== '' ? this.value : 'Judul Informasi Akan Muncul Di Sini...';
         });
 
         inputCaption.addEventListener('input', function() {
             captionText.innerText = this.value.trim() !== '' ? this.value : 'Deskripsi gambar akan muncul di sini...';
         });
 
-        inputKonten.addEventListener('input', function() {
-            if (this.value.trim() !== '') {
-                let kontenBersih = hapusGambarDariString(this.value);
-                previewKonten.innerHTML = kontenBersih.replace(/\n/g, '<br>');
-            } else {
-                previewKonten.innerHTML = '<p class="text-gray-400 italic">Konten berita akan diperbarui secara otomatis saat Anda mengetik di editor...</p>';
-            }
-        });
+        inputKonten.addEventListener('input', updateLivePreview);
+
+        if (inputLampiranUrl) {
+            inputLampiranUrl.addEventListener('input', updateLampiranPreview);
+            updateLampiranPreview();
+        }
 
         if(inputThumbnail) {
             inputThumbnail.addEventListener('change', function() {
@@ -207,13 +378,423 @@
                         previewThumbnailContainer.classList.remove('hidden');
                     }
                     reader.readAsDataURL(file);
-                } else {
-                    if(!previewThumbnailImage.src || previewThumbnailImage.src === window.location.href) {
-                        previewThumbnailContainer.classList.add('hidden');
-                    }
                 }
             });
         }
+
+        const inputMultiImages = document.getElementById('inputMultiImages');
+        const hiddenMultiImages = document.getElementById('hiddenMultiImages');
+        const multiImageList = document.getElementById('multiImageList');
+        const emptyListNotice = document.getElementById('emptyListNotice');
+        
+        let selectedFiles = [];
+
+        inputMultiImages.addEventListener('change', function() {
+            const files = Array.from(this.files);
+            files.forEach(file => {
+                if (!selectedFiles.some(f => f.name === file.name && f.size === file.size)) {
+                    selectedFiles.push(file);
+                    localBlobMap.set(file.name, URL.createObjectURL(file));
+                }
+            });
+            updateMultiImageUI();
+            updateLivePreview();
+            this.value = '';
+        });
+
+        function updateMultiImageUI() {
+            multiImageList.innerHTML = '';
+            if (selectedFiles.length === 0) {
+                if (emptyListNotice) multiImageList.appendChild(emptyListNotice);
+                syncHiddenInput();
+                return;
+            }
+
+            selectedFiles.forEach((file, index) => {
+                const item = document.createElement('div');
+                item.className = 'flex items-center justify-between p-2 bg-blue-50 border border-blue-100 rounded-md text-xs';
+                
+                const fileInfo = document.createElement('div');
+                fileInfo.className = 'flex items-center gap-2 truncate';
+                
+                const img = document.createElement('img');
+                img.className = 'w-7 h-7 object-cover rounded border';
+                img.src = localBlobMap.get(file.name) || '';
+                
+                const spanName = document.createElement('span');
+                spanName.className = 'truncate font-medium text-gray-700';
+                spanName.innerText = file.name;
+
+                fileInfo.appendChild(img);
+                fileInfo.appendChild(spanName);
+
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'text-red-500 hover:text-red-700 font-bold px-1 text-sm';
+                removeBtn.innerHTML = '&times;';
+                removeBtn.onclick = function() {
+                    localBlobMap.delete(selectedFiles[index].name);
+                    selectedFiles.splice(index, 1);
+                    updateMultiImageUI();
+                    updateLivePreview();
+                };
+
+                item.appendChild(fileInfo);
+                item.appendChild(removeBtn);
+                multiImageList.appendChild(item);
+            });
+
+            syncHiddenInput();
+        }
+
+        function syncHiddenInput() {
+            const dt = new DataTransfer();
+            selectedFiles.forEach(file => dt.items.add(file));
+            hiddenMultiImages.files = dt.files;
+        }
+
+        function applyTextReplacement(replacementText, selectStart, selectEnd) {
+            inputKonten.focus();
+            if (typeof inputKonten.setRangeText === 'function') {
+                inputKonten.setRangeText(replacementText, selectStart, selectEnd, 'select');
+            } else {
+                inputKonten.setSelectionRange(selectStart, selectEnd);
+                document.execCommand('insertText', false, replacementText);
+            }
+        }
+
+        window.formatText = function(tagStart, tagEnd) {
+            const start = inputKonten.selectionStart;
+            const end = inputKonten.selectionEnd;
+            const text = inputKonten.value;
+            const selectedText = text.substring(start, end);
+
+            const cleanStartTag = tagStart.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const cleanEndTag = tagEnd.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const selfWrappedRegex = new RegExp('^' + cleanStartTag + '([\\s\\S]*)' + cleanEndTag + '$', 'i');
+
+            const prefixTag = text.substring(Math.max(0, start - tagStart.length), start);
+            const suffixTag = text.substring(end, end + tagEnd.length);
+
+            if (selfWrappedRegex.test(selectedText)) {
+                const unWrapped = selectedText.replace(selfWrappedRegex, '$1');
+                applyTextReplacement(unWrapped, start, end);
+                inputKonten.setSelectionRange(start, start + unWrapped.length);
+            } else if (prefixTag.toLowerCase() === tagStart.toLowerCase() && suffixTag.toLowerCase() === tagEnd.toLowerCase()) {
+                const replaceStart = start - tagStart.length;
+                const replaceEnd = end + tagEnd.length;
+                applyTextReplacement(selectedText, replaceStart, replaceEnd);
+                inputKonten.setSelectionRange(replaceStart, replaceStart + selectedText.length);
+            } else {
+                const wrapped = tagStart + selectedText + tagEnd;
+                applyTextReplacement(wrapped, start, end);
+                if (selectedText.length === 0) {
+                    const caretPos = start + tagStart.length;
+                    inputKonten.setSelectionRange(caretPos, caretPos);
+                } else {
+                    inputKonten.setSelectionRange(start, start + wrapped.length);
+                }
+            }
+
+            inputKonten.dispatchEvent(new Event('input'));
+        };
+
+        window.applyHeader = function() {
+            const select = document.getElementById('formatHeader');
+            const headerTag = select.value;
+            if (!headerTag) return;
+
+            const start = inputKonten.selectionStart;
+            const end = inputKonten.selectionEnd;
+            const text = inputKonten.value;
+            const selectedText = text.substring(start, end);
+
+            const innerHeadingRegex = /^<h[1-6][^>]*>([\s\S]*)<\/h[1-6]>$/i;
+
+            if (innerHeadingRegex.test(selectedText)) {
+                const innerText = selectedText.replace(innerHeadingRegex, '$1');
+                const currentTagMatch = selectedText.match(/^<(h[1-6])/i);
+                const currentTag = currentTagMatch ? currentTagMatch[1].toLowerCase() : '';
+
+                if (currentTag === headerTag.toLowerCase()) {
+                    applyTextReplacement(innerText, start, end);
+                    inputKonten.setSelectionRange(start, start + innerText.length);
+                } else {
+                    const newWrapped = `<${headerTag}>${innerText}</${headerTag}>`;
+                    applyTextReplacement(newWrapped, start, end);
+                    inputKonten.setSelectionRange(start, start + newWrapped.length);
+                }
+            } else {
+                const before = text.substring(0, start);
+                const after = text.substring(end);
+                const outerMatchBefore = before.match(/<h([1-6])>[^<]*$/i);
+                const outerMatchAfter = after.match(/^[^<]*<\/h([1-6])>/i);
+
+                if (outerMatchBefore && outerMatchAfter && outerMatchBefore[1] === outerMatchAfter[1]) {
+                    const oldTagNum = outerMatchBefore[1];
+                    const oldTagStart = `<h${oldTagNum}>`;
+                    const oldTagEnd = `</h${oldTagNum}>`;
+
+                    const fullStartPos = before.lastIndexOf(oldTagStart);
+                    const fullEndPos = end + after.indexOf(oldTagEnd) + oldTagEnd.length;
+                    const fullHeadingText = text.substring(fullStartPos, fullEndPos);
+                    const innerText = fullHeadingText.replace(new RegExp(`^<h${oldTagNum}>([\\s\\S]*)</h${oldTagNum}>$`, 'i'), '$1');
+
+                    if (`h${oldTagNum}` === headerTag.toLowerCase()) {
+                        applyTextReplacement(innerText, fullStartPos, fullEndPos);
+                        inputKonten.setSelectionRange(fullStartPos, fullStartPos + innerText.length);
+                    } else {
+                        const newWrapped = `<${headerTag}>${innerText}</${headerTag}>`;
+                        applyTextReplacement(newWrapped, fullStartPos, fullEndPos);
+                        inputKonten.setSelectionRange(fullStartPos, fullStartPos + newWrapped.length);
+                    }
+                } else {
+                    const newWrapped = `<${headerTag}>${selectedText}</${headerTag}>`;
+                    applyTextReplacement(newWrapped, start, end);
+                    if (selectedText.length === 0) {
+                        const caretPos = start + `<${headerTag}>`.length;
+                        inputKonten.setSelectionRange(caretPos, caretPos);
+                    } else {
+                        inputKonten.setSelectionRange(start, start + newWrapped.length);
+                    }
+                }
+            }
+
+            select.value = "";
+            inputKonten.dispatchEvent(new Event('input'));
+        };
+
+        window.applyList = function() {
+            const select = document.getElementById('formatList');
+            const val = select.value;
+            if (!val) return;
+
+            let tagStart = '', tagEnd = '';
+            if (val === 'ul') {
+                tagStart = '<ul>\n  <li>';
+                tagEnd = '</li>\n</ul>';
+            } else if (val === 'ol-1') {
+                tagStart = '<ol style="list-style-type: decimal;">\n  <li>';
+                tagEnd = '</li>\n</ol>';
+            } else if (val === 'ol-a') {
+                tagStart = '<ol style="list-style-type: lower-alpha;">\n  <li>';
+                tagEnd = '</li>\n</ol>';
+            } else if (val === 'ol-i') {
+                tagStart = '<ol style="list-style-type: lower-roman;">\n  <li>';
+                tagEnd = '</li>\n</ol>';
+            }
+
+            formatText(tagStart, tagEnd);
+            select.value = "";
+        };
+
+        window.insertImageTagToContent = function(srcUrl, altText) {
+            const finalAlt = altText || 'Gambar Galeri';
+            const imgTag = `<div class="my-4 flex justify-center">\n  <img src="${srcUrl}" class="max-w-full h-auto rounded-lg border border-gray-200 shadow-sm" alt="${finalAlt}" />\n</div>`;
+            const start = inputKonten.selectionStart;
+            const end = inputKonten.selectionEnd;
+            applyTextReplacement(imgTag, start, end);
+            inputKonten.dispatchEvent(new Event('input'));
+        };
+
+        window.insertImageFromCard = function(srcUrl, defaultAlt) {
+            const userAlt = prompt("Masukkan Alternatif Teks (Alt Text) untuk gambar ini:", defaultAlt || '');
+            if (userAlt === null) return;
+            insertImageTagToContent(srcUrl, userAlt.trim() || defaultAlt);
+        };
+
+        window.openImageModal = function() {
+            const modalGrid = document.getElementById('modalGalleryGrid');
+            const modalAltInput = document.getElementById('modalAltText');
+            modalGrid.innerHTML = '';
+            if (modalAltInput) modalAltInput.value = '';
+
+            if (serverImages.length === 0 && selectedFiles.length === 0) {
+                modalGrid.innerHTML = '<p class="col-span-3 text-center text-xs text-gray-400 py-6">Belum ada gambar di galeri. Tambahkan gambar terlebih dahulu pada panel kanan.</p>';
+            } else {
+                serverImages.forEach(imgData => {
+                    const card = document.createElement('div');
+                    card.className = 'border border-gray-200 rounded-lg p-2 bg-gray-50 flex flex-col items-center gap-2';
+                    
+                    const img = document.createElement('img');
+                    img.src = imgData.url;
+                    img.className = 'w-full h-24 object-contain rounded border bg-white';
+
+                    const badge = document.createElement('span');
+                    badge.className = 'text-[10px] bg-green-100 text-green-700 font-semibold px-1.5 py-0.5 rounded';
+                    badge.innerText = 'Tersimpan';
+
+                    const btnSelect = document.createElement('button');
+                    btnSelect.type = 'button';
+                    btnSelect.className = 'w-full py-1 bg-blue-600 text-white text-xs font-semibold rounded hover:bg-blue-700';
+                    btnSelect.innerText = 'Sisipkan';
+                    btnSelect.onclick = function() {
+                        const customAlt = modalAltInput ? modalAltInput.value.trim() : '';
+                        insertImageTagToContent(imgData.url, customAlt || imgData.name);
+                        closeImageModal();
+                    };
+
+                    card.appendChild(img);
+                    card.appendChild(badge);
+                    card.appendChild(btnSelect);
+                    modalGrid.appendChild(card);
+                });
+
+                selectedFiles.forEach(file => {
+                    const card = document.createElement('div');
+                    card.className = 'border border-gray-200 rounded-lg p-2 bg-gray-50 flex flex-col items-center gap-2';
+                    
+                    const img = document.createElement('img');
+                    img.src = localBlobMap.get(file.name) || '';
+                    img.className = 'w-full h-24 object-contain rounded border bg-white';
+
+                    const badge = document.createElement('span');
+                    badge.className = 'text-[10px] bg-amber-100 text-amber-700 font-semibold px-1.5 py-0.5 rounded';
+                    badge.innerText = 'Baru';
+
+                    const btnSelect = document.createElement('button');
+                    btnSelect.type = 'button';
+                    btnSelect.className = 'w-full py-1 bg-blue-600 text-white text-xs font-semibold rounded hover:bg-blue-700';
+                    btnSelect.innerText = 'Sisipkan';
+                    btnSelect.onclick = function() {
+                        const customAlt = modalAltInput ? modalAltInput.value.trim() : '';
+                        insertImageTagToContent(file.name, customAlt || file.name);
+                        closeImageModal();
+                    };
+
+                    card.appendChild(img);
+                    card.appendChild(badge);
+                    card.appendChild(btnSelect);
+                    modalGrid.appendChild(card);
+                });
+            }
+
+            document.getElementById('imageModal').classList.remove('hidden');
+        };
+
+        window.closeImageModal = function() {
+            document.getElementById('imageModal').classList.add('hidden');
+        };
+
+        let alertTimeout = null;
+        function showGalleryAlert(message, type = 'success') {
+            const alertBox = document.getElementById('galleryAlert');
+            if (!alertBox) return;
+
+            if (alertTimeout) clearTimeout(alertTimeout);
+
+            if (type === 'success') {
+                alertBox.className = "mb-3 p-3 rounded-md text-xs font-semibold bg-green-50 border border-green-200 text-green-700 flex items-center justify-between";
+            } else {
+                alertBox.className = "mb-3 p-3 rounded-md text-xs font-semibold bg-red-50 border border-red-200 text-red-700 flex items-center justify-between";
+            }
+
+            alertBox.innerHTML = `<span>${message}</span><button type="button" onclick="document.getElementById('galleryAlert').classList.add('hidden')" class="font-bold ml-2 hover:opacity-75">&times;</button>`;
+            alertBox.classList.remove('hidden');
+
+            alertTimeout = setTimeout(() => {
+                alertBox.classList.add('hidden');
+            }, 3500);
+        }
+
+        let activeDeletePath = null;
+        let activeDeleteCardElement = null;
+
+        window.openDeleteImageModal = function(filePath, fileName, buttonEl) {
+            activeDeletePath = filePath;
+            activeDeleteCardElement = buttonEl ? buttonEl.closest('.img-card-item') : null;
+
+            document.getElementById('delete_image_name').innerText = fileName;
+            document.getElementById('deleteImageModal').classList.remove('hidden');
+        };
+
+        window.closeDeleteImageModal = function() {
+            activeDeletePath = null;
+            activeDeleteCardElement = null;
+            document.getElementById('deleteImageModal').classList.add('hidden');
+        };
+
+        document.getElementById('btnConfirmDeleteImage').addEventListener('click', function() {
+            if (!activeDeletePath) return;
+
+            const deleteUrl = "{{ route('admin.informasi.delete-image', $informasi->id_berita) }}";
+            const targetCard = activeDeleteCardElement;
+            const targetPath = activeDeletePath;
+
+            fetch(deleteUrl, {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify({ file_path: targetPath })
+            })
+            .then(async res => {
+                const contentType = res.headers.get("content-type");
+                let data = {};
+                if (contentType && contentType.includes("application/json")) {
+                    data = await res.json();
+                }
+
+                return { ok: res.ok, status: res.status, data: data };
+            })
+            .then(({ ok, status, data }) => {
+                closeDeleteImageModal();
+
+                const isAlreadyDeleted = data.message && data.message.toLowerCase().includes("tidak ditemukan");
+
+                if (ok || isAlreadyDeleted) {
+                    if (targetCard && targetCard.parentNode) {
+                        targetCard.remove();
+                    } else if (targetPath) {
+                        const normPath = targetPath.replace(/\\/g, '/');
+                        document.querySelectorAll('.img-card-item').forEach(el => {
+                            const pathAttr = el.getAttribute('data-path');
+                            if (pathAttr && pathAttr.replace(/\\/g, '/') === normPath) {
+                                el.remove();
+                            }
+                        });
+                    }
+
+                    if (targetPath) {
+                        const normDeletePath = targetPath.replace(/\\/g, '/');
+                        const fileName = normDeletePath.split('/').pop();
+
+                        // Hapus HANYA tag <img> gambar ini di inputKonten tanpa mengganggu tag atau alt text gambar lain
+                        if (fileName && inputKonten) {
+                            const escapeFileName = fileName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                            const imgPattern = new RegExp('<div[^>]*>\\s*<img[^>]*src="[^"]*' + escapeFileName + '"[^>]*>\\s*</div>|<img[^>]*src="[^"]*' + escapeFileName + '"[^>]*>', 'gi');
+                            inputKonten.value = inputKonten.value.replace(imgPattern, '');
+                        }
+
+                        serverImages = serverImages.filter(img => img.path.replace(/\\/g, '/') !== normDeletePath);
+                    }
+
+                    updateLivePreview();
+
+                    if (ok) {
+                        showGalleryAlert(data.message || "Gambar berhasil dihapus dari server!", 'success');
+                    } else {
+                        showGalleryAlert("Gambar sudah terhapus dari server. Daftar telah diperbarui.", 'success');
+                    }
+
+                    const remainingCards = document.querySelectorAll('.img-card-item');
+                    if (remainingCards.length === 0) {
+                        const wrapper = document.getElementById('galleryWrapper');
+                        if (wrapper) {
+                            wrapper.innerHTML = '<p class="text-xs text-gray-400 italic" id="emptyGalleryNotice">Belum ada gambar tambahan yang tersimpan di galeri informasi ini.</p>';
+                        }
+                    }
+                } else {
+                    showGalleryAlert(data.message || "Gagal menghapus gambar.", 'error');
+                }
+            })
+            .catch(err => {
+                closeDeleteImageModal();
+                showGalleryAlert("Terjadi kesalahan koneksi server.", 'error');
+            });
+        });
     });
 </script>
 @endpush

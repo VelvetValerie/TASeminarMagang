@@ -12,6 +12,27 @@
     </a>
 </div>
 
+<!-- ALERT FEEDBACK NOTIFIKASI BERHASIL / GAGAL -->
+@if (session('success'))
+    <div class="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm font-semibold flex items-center justify-between shadow-sm">
+        <div class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-green-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            <span>{{ session('success') }}</span>
+        </div>
+        <button type="button" onclick="this.parentElement.remove()" class="text-green-700 hover:text-green-900 font-bold ml-2">&times;</button>
+    </div>
+@endif
+
+@if (session('error'))
+    <div class="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm font-semibold flex items-center justify-between shadow-sm">
+        <div class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-red-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            <span>{{ session('error') }}</span>
+        </div>
+        <button type="button" onclick="this.parentElement.remove()" class="text-red-700 hover:text-red-900 font-bold ml-2">&times;</button>
+    </div>
+@endif
+
 <!-- KOTAK PENCARIAN & FILTER -->
 <div class="bg-white border border-gray-200 rounded-lg shadow-sm mb-4 p-4 flex flex-wrap items-center justify-between gap-3">
     <h2 class="text-sm font-semibold text-gray-700">Daftar Informasi Resmi</h2>
