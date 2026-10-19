@@ -115,18 +115,4 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/informasi/{id}', [AdminInformasiController::class, 'destroy'])->name('informasi.destroy');
         });
     });
-
-    // 4. KHUSUS ROLE ADMIN
-    Route::middleware(['role:admin'])->group(function () {
-        Route::get('/riwayat-kerja', [MasterDataController::class, 'riwayatKerja'])->name('riwayat-kerja');
-        Route::get('/jenis-kegiatan', [MasterDataController::class, 'jenisKegiatan'])->name('jenis-kegiatan');
-        Route::get('/titik-lokasi', [MasterDataController::class, 'titikLokasi'])->name('titik-lokasi');
-        Route::get('/instansi', [MasterDataController::class, 'instansi'])->name('instansi');
-        Route::get('/riwayat-kegiatan', [KegiatanController::class, 'riwayatKegiatan'])->name('riwayat-kegiatan');
-
-        Route::get('/master-user', [UserController::class, 'index'])->name('master-user');
-        Route::post('/master-user', [UserController::class, 'store'])->name('master-user.store');
-        Route::put('/master-user/{id}', [UserController::class, 'update'])->name('master-user.update');
-        Route::delete('/master-user/{id}', [UserController::class, 'destroy'])->name('master-user.destroy');
-    });
 });
