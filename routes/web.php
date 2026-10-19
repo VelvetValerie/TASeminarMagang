@@ -92,27 +92,18 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/informasi/{id}', [AdminInformasiController::class, 'destroy'])->name('informasi.destroy');
         });
     });
+    
+    // 4. KHUSUS ROLE ADMIN
+    Route::middleware(['role:admin'])->group(function () {
+        Route::get('/riwayat-kerja', [MasterDataController::class, 'riwayatKerja'])->name('riwayat-kerja');
+        Route::get('/jenis-kegiatan', [MasterDataController::class, 'jenisKegiatan'])->name('jenis-kegiatan');
+        Route::get('/titik-lokasi', [MasterDataController::class, 'titikLokasi'])->name('titik-lokasi');
+        Route::get('/instansi', [MasterDataController::class, 'instansi'])->name('instansi');
+        Route::get('/riwayat-kegiatan', [KegiatanController::class, 'riwayatKegiatan'])->name('riwayat-kegiatan');
 
-    Route::middleware(['role:pegawai_humas'])->group(function () {
-        // CRUD Admin Berita & Informasi
-        Route::prefix('admin')->name('admin.')->group(function () {
-            // Admin Berita
-            Route::get('/berita', [AdminBeritaController::class, 'index'])->name('berita.index');
-            Route::get('/berita/create', [AdminBeritaController::class, 'create'])->name('berita.create');
-            Route::post('/berita', [AdminBeritaController::class, 'store'])->name('berita.store');
-            Route::get('/berita/{slug}/edit', [AdminBeritaController::class, 'edit'])->name('berita.edit');
-            Route::put('/berita/{slug}', [AdminBeritaController::class, 'update'])->name('berita.update');
-            Route::post('/berita/{id}/delete-image', [AdminBeritaController::class, 'deleteImage'])->name('berita.delete-image');
-            Route::delete('/berita/{id}', [AdminBeritaController::class, 'destroy'])->name('berita.destroy');
-
-            // Admin Informasi Resmi
-            Route::get('/informasi', [AdminInformasiController::class, 'index'])->name('informasi.index');
-            Route::get('/informasi/create', [AdminInformasiController::class, 'create'])->name('informasi.create');
-            Route::post('/informasi', [AdminInformasiController::class, 'store'])->name('informasi.store');
-            Route::get('/informasi/{slug}/edit', [AdminInformasiController::class, 'edit'])->name('informasi.edit');
-            Route::put('/informasi/{slug}', [AdminInformasiController::class, 'update'])->name('informasi.update');
-            Route::post('/informasi/{id}/delete-image', [AdminInformasiController::class, 'deleteImage'])->name('informasi.delete-image');
-            Route::delete('/informasi/{id}', [AdminInformasiController::class, 'destroy'])->name('informasi.destroy');
-        });
+        Route::get('/master-user', [UserController::class, 'index'])->name('master-user');
+        Route::post('/master-user', [UserController::class, 'store'])->name('master-user.store');
+        Route::put('/master-user/{id}', [UserController::class, 'update'])->name('master-user.update');
+        Route::delete('/master-user/{id}', [UserController::class, 'destroy'])->name('master-user.destroy');
     });
 });
