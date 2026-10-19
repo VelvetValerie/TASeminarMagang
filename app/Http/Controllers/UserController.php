@@ -20,13 +20,13 @@ class UserController extends Controller
             'username' => 'required|string|max:50|unique:users,username',
             'nip'      => 'nullable|string|max:18|unique:users,nip',
             'email'    => 'required|email|max:150|unique:users,email',
-            'role'     => 'required|in:pegawai,pimpinan', 
+            'role'     => 'required|in:pegawai_koordinasi,pegawai_humas,pimpinan', 
             'password' => 'required|min:6',
         ], [
             'username.unique' => 'Username sudah digunakan oleh akun lain.',
             'nip.unique'      => 'NIP sudah terdaftar dalam sistem.',
             'email.unique'    => 'Email sudah digunakan.',
-            'role.in'         => 'Penambahan akun dengan Role Admin tidak diizinkan.',
+            'role.in'         => 'Role yang dipilih tidak valid atau penambahan akun Admin tidak diizinkan.',
             'password.min'    => 'Password minimal terdiri dari 6 karakter.',
         ]);
 
@@ -53,7 +53,9 @@ class UserController extends Controller
             'username' => 'required|string|max:50|unique:users,username,'.$id.',id_user',
             'nip'      => 'nullable|string|max:18|unique:users,nip,'.$id.',id_user',
             'email'    => 'required|email|max:150|unique:users,email,'.$id.',id_user',
-            'role'     => 'required|in:pegawai,pimpinan',
+            'role'     => 'required|in:pegawai_koordinasi,pegawai_humas,pimpinan',
+        ], [
+            'role.in' => 'Role yang dipilih tidak valid atau penambahan akun Admin tidak diizinkan.',
         ]);
 
         $user->username = $request->username;

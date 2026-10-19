@@ -53,7 +53,7 @@
 <body class="h-full flex overflow-hidden text-slate-800 antialiased">
 
     @php
-        $userRole = Auth::user()->role ?? 'pegawai';
+        $userRole = Auth::user()->role ?? 'pegawai_koordinasi';
     @endphp
 
     <!-- OVERLAY MOBILE BACKDROP -->
@@ -83,7 +83,7 @@
         <!-- Menu Links Container -->
         <div class="flex-1 overflow-y-auto px-4 py-5 space-y-6">
             
-            <!-- Group 1: Utama -->
+            <!-- Group 1: Utama (Bisa Diakses Semua Role) -->
             <div>
                 <p class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">Utama</p>
                 <nav class="space-y-1">
@@ -107,57 +107,59 @@
                 </nav>
             </div>
 
-            <!-- Group 2: Pelaksanaan & Laporan -->
-            <div>
-                <p class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">Pelaksanaan & Laporan</p>
-                <nav class="space-y-1">
-                    
-                    <!-- 1. Menu Perencanaan Kegiatan (Sembunyi khusus Pimpinan) -->
-                    @if($userRole !== 'pimpinan')
-                        <a href="{{ url('/kegiatan') }}" 
-                           class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('kegiatan') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                            <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->is('kegiatan') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 022 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+            <!-- Group 2: Pelaksanaan & Laporan (Akses Admin, Pimpinan, dan Pegawai Koordinator) -->
+            @if(in_array($userRole, ['admin', 'pimpinan', 'pegawai_koordinasi']))
+                <div>
+                    <p class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">Pelaksanaan & Laporan</p>
+                    <nav class="space-y-1">
+                        
+                        <!-- 1. Perencanaan Kegiatan (Tidak tampil untuk Pimpinan) -->
+                        @if($userRole !== 'pimpinan')
+                            <a href="{{ url('/kegiatan') }}" 
+                               class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('kegiatan') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->is('kegiatan') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 022 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                                </svg>
+                                Kegiatan
+                            </a>
+                        @endif
+
+                        <!-- 2. Riwayat Kerja (Khusus Admin) -->
+                        @if($userRole === 'admin')
+                            <a href="{{ url('/riwayat-kerja') }}" 
+                               class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('riwayat-kerja') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->is('riwayat-kerja') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                                </svg>
+                                Riwayat Kerja
+                            </a>
+                        @endif
+
+                        <!-- 3. Laporan Kegiatan -->
+                        <a href="{{ url('/laporan-kegiatan') }}" 
+                           class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('laporan-kegiatan') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                            <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->is('laporan-kegiatan') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>
-                            Kegiatan
+                            Laporan Kegiatan
                         </a>
-                    @endif
+                        
+                        <!-- 4. Manajemen Data User (Khusus Admin) -->
+                        @if($userRole === 'admin')
+                            <a href="{{ route('master-user') }}" 
+                               class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->routeIs('master-user*') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->routeIs('master-user*') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                                Manajemen Data User
+                            </a>
+                        @endif
 
-                    <!-- 2. Menu Riwayat Kerja (Khusus Admin) -->
-                    @if($userRole === 'admin')
-                        <a href="{{ url('/riwayat-kerja') }}" 
-                           class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('riwayat-kerja') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                            <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->is('riwayat-kerja') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                            </svg>
-                            Riwayat Kerja
-                        </a>
-                    @endif
+                    </nav>
+                </div>
+            @endif
 
-                    <!-- 3. Laporan Kegiatan (Tampil untuk Semua Role termasuk Pimpinan) -->
-                    <a href="{{ url('/laporan-kegiatan') }}" 
-                       class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('laporan-kegiatan') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                        <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->is('laporan-kegiatan') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                        Laporan Kegiatan
-                    </a>
-                    
-                    <!-- 4. Manajemen Data User (Khusus Admin) -->
-                    @if(Auth::check() && Auth::user()->role === 'admin')
-                        <a href="{{ route('master-user') }}" 
-                           class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->routeIs('master-user*') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                            <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->routeIs('master-user*') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                            </svg>
-                            Manajemen Data User
-                        </a>
-                    @endif
-
-                </nav>
-            </div>
-
-            <!-- Group 3: Dropdown Manajemen Data Kegiatan (Khusus Admin saja) -->
+            <!-- Group 3: Dropdown Manajemen Master Data Kegiatan (Khusus Admin) -->
             @if($userRole === 'admin')
                 <div class="pt-2">
                     <details class="group rounded-xl border border-slate-700/80 bg-slate-900/60 overflow-hidden transition"
@@ -193,15 +195,15 @@
                 </div>
             @endif
 
-            <!-- Group 4: Umum (Dropdown Manajemen Informasi - Khusus Admin dan Humas) -->
-            @if(Auth::check() && Auth::user()->role === 'admin' || Auth::user()->role === 'pegawai_humas')
+            <!-- Group 4: Kehumasan & Berita (Akses Admin dan Pegawai Humas) -->
+            @if(in_array($userRole, ['admin', 'pegawai_humas']))
                 <div>
-                    <p class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">Umum</p>
+                    <p class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">Kehumasan & Publikasi</p>
                     <details class="group rounded-xl border border-slate-700/80 bg-slate-900/60 overflow-hidden transition"
                              {{ request()->is('informasi', 'admin/berita*') ? 'open' : '' }}>
                         <summary class="flex items-center justify-between px-4 py-3 text-xs sm:text-sm font-bold text-white bg-slate-800 hover:bg-slate-750 cursor-pointer transition list-none select-none">
                             <span class="w-full text-center leading-tight">
-                                Manajemen<br>Informasi
+                                Manajemen<br>Informasi & Berita
                             </span>
                             <svg class="w-4 h-4 text-slate-400 transition-transform duration-200 group-open:rotate-180 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
@@ -224,7 +226,7 @@
 
         </div>
 
-        <!-- Footer -->
+        <!-- Footer Sidebar -->
         <div class="p-4 border-t border-slate-800 bg-slate-950/20 space-y-2">
             <a href="/" class="flex items-center justify-center space-x-2 w-full px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -271,7 +273,7 @@
                         @elseif(request()->is('instansi')) Daftar Instansi Mitra Terdaftar
                         @elseif(request()->is('riwayat-kegiatan')) Riwayat Kegiatan
                         @elseif(request()->routeIs('master-user*')) Manajemen Data Pengguna
-                        @elseif(request()->is('pusat-informasi')) Pusat Informasi Publik
+                        @elseif(request()->is('informasi')) Pusat Informasi
                         @elseif(request()->routeIs('admin.berita.*')) Daftar Berita & Publikasi
                         @else Sistem Informasi BKN
                         @endif
@@ -282,52 +284,54 @@
             <!-- Right Profile Info & Notifikasi -->
             <div class="flex items-center gap-3 pl-4 border-l border-slate-250">
                 
-                <!-- PENGINGAT NOTIFIKASI KOORDINATOR HARI INI -->
-                @php
-                    $todayStr = \Carbon\Carbon::today()->toDateString();
-                    $loggedUser = Auth::user()->username ?? '';
-                    
-                    $tugasKoordinatorToday = \App\Models\Kegiatan::with(['lokasi', 'instansi', 'koordinator'])
-                        ->whereNotIn('status', ['Selesai', 'Dibatalkan'])
-                        ->whereDate('tanggal_mulai', '<=', $todayStr)
-                        ->whereRaw("IFNULL(tanggal_selesai, tanggal_mulai) >= ?", [$todayStr])
-                        ->get()
-                        ->filter(function($keg) use ($loggedUser) {
-                            $namaKoor = strtolower($keg->koordinator->nama_karyawan ?? '');
-                            $uName = strtolower($loggedUser);
-                            return !empty($uName) && !empty($namaKoor) && (str_contains($namaKoor, $uName) || str_contains($uName, $namaKoor));
-                        });
-                @endphp
+                <!-- PENGINGAT NOTIFIKASI KOORDINATOR HARI INI (Khusus Admin & Pegawai Koordinator) -->
+                @if(in_array($userRole, ['admin', 'pegawai_koordinasi']))
+                    @php
+                        $todayStr = \Carbon\Carbon::today()->toDateString();
+                        $loggedUser = Auth::user()->username ?? '';
+                        
+                        $tugasKoordinatorToday = \App\Models\Kegiatan::with(['lokasi', 'instansi', 'koordinator'])
+                            ->whereNotIn('status', ['Selesai', 'Dibatalkan'])
+                            ->whereDate('tanggal_mulai', '<=', $todayStr)
+                            ->whereRaw("IFNULL(tanggal_selesai, tanggal_mulai) >= ?", [$todayStr])
+                            ->get()
+                            ->filter(function($keg) use ($loggedUser) {
+                                $namaKoor = strtolower($keg->koordinator->nama_karyawan ?? '');
+                                $uName = strtolower($loggedUser);
+                                return !empty($uName) && !empty($namaKoor) && (str_contains($namaKoor, $uName) || str_contains($uName, $namaKoor));
+                            });
+                    @endphp
 
-                @if($tugasKoordinatorToday->count() > 0)
-                    <div class="relative group">
-                        <button type="button" class="relative p-2 text-amber-600 hover:text-amber-700 bg-amber-50 hover:bg-amber-100 rounded-xl border border-amber-300 transition cursor-pointer flex items-center gap-1.5">
-                            <svg class="w-5 h-5 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                            </svg>
-                            <span class="text-xs font-extrabold hidden sm:inline">
-                                {{ $tugasKoordinatorToday->count() }} Tugas Hari Ini
-                            </span>
-                            <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-600 rounded-full border-2 border-white"></span>
-                        </button>
+                    @if($tugasKoordinatorToday->count() > 0)
+                        <div class="relative group">
+                            <button type="button" class="relative p-2 text-amber-600 hover:text-amber-700 bg-amber-50 hover:bg-amber-100 rounded-xl border border-amber-300 transition cursor-pointer flex items-center gap-1.5">
+                                <svg class="w-5 h-5 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                                </svg>
+                                <span class="text-xs font-extrabold hidden sm:inline">
+                                    {{ $tugasKoordinatorToday->count() }} Tugas Hari Ini
+                                </span>
+                                <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-600 rounded-full border-2 border-white"></span>
+                            </button>
 
-                        <div class="hidden group-hover:block absolute right-0 top-full mt-2 w-72 sm:w-80 bg-white border-2 border-black p-3 shadow-2xl z-50 text-xs">
-                            <div class="font-extrabold text-gray-900 border-b border-black pb-1.5 mb-2 flex justify-between items-center">
-                                <span>⚠️ Tugas Koordinator Hari Ini</span>
-                                <span class="bg-amber-200 text-amber-900 px-1.5 py-0.5 rounded font-bold">{{ $tugasKoordinatorToday->count() }}</span>
-                            </div>
-                            <div class="space-y-2 max-h-60 overflow-y-auto">
-                                @foreach($tugasKoordinatorToday as $kegNotif)
-                                    <div class="p-2 border border-black bg-amber-50 rounded">
-                                        <p class="font-bold text-gray-900">{{ $kegNotif->nama_keg }}</p>
-                                        <p class="text-[11px] text-gray-700 mt-0.5">
-                                            Lokasi: <b>{{ $kegNotif->lokasi->nm_lokasi ?? '-' }}</b>
-                                        </p>
-                                    </div>
-                                @endforeach
+                            <div class="hidden group-hover:block absolute right-0 top-full mt-2 w-72 sm:w-80 bg-white border-2 border-black p-3 shadow-2xl z-50 text-xs">
+                                <div class="font-extrabold text-gray-900 border-b border-black pb-1.5 mb-2 flex justify-between items-center">
+                                    <span>⚠️ Tugas Koordinator Hari Ini</span>
+                                    <span class="bg-amber-200 text-amber-900 px-1.5 py-0.5 rounded font-bold">{{ $tugasKoordinatorToday->count() }}</span>
+                                </div>
+                                <div class="space-y-2 max-h-60 overflow-y-auto">
+                                    @foreach($tugasKoordinatorToday as $kegNotif)
+                                        <div class="p-2 border border-black bg-amber-50 rounded">
+                                            <p class="font-bold text-gray-900">{{ $kegNotif->nama_keg }}</p>
+                                            <p class="text-[11px] text-gray-700 mt-0.5">
+                                                Lokasi: <b>{{ $kegNotif->lokasi->nm_lokasi ?? '-' }}</b>
+                                            </p>
+                                        </div>
+                                    @endforeach
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    @endif
                 @endif
 
                 <!-- Inisial Avatar -->
@@ -335,13 +339,17 @@
                     {{ substr(Auth::user()->username ?? 'AD', 0, 2) }}
                 </div>
                 
-                <!-- Teks Akun -->
+                <!-- Teks Akun & Label Role -->
                 <div class="hidden sm:flex flex-col justify-center leading-tight">
                     <span class="text-xs font-bold text-slate-900">
                         {{ Auth::user()->username ?? 'Administrator' }}
                     </span>
-                    <span class="text-[11px] text-slate-500 capitalize">
-                        {{ Auth::user()->role ?? 'Admin' }} Kanreg VIII
+                    <span class="text-[11px] text-slate-500 font-medium">
+                        @if($userRole === 'pegawai_humas') Pegawai Humas
+                        @elseif($userRole === 'pegawai_koordinasi') Pegawai Koordinator
+                        @elseif($userRole === 'pimpinan') Pimpinan
+                        @else Admin
+                        @endif
                     </span>
                 </div>
             </div>
@@ -374,6 +382,7 @@
             mobileBackdrop.addEventListener('click', toggleSidebar);
         }
     </script>
+    
     <!-- Stack untuk menampung semua modal -->
     @stack('modals')
     
