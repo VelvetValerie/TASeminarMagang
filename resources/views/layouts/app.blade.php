@@ -193,8 +193,8 @@
                 </div>
             @endif
 
-            <!-- Group 4: Umum (Dropdown Manajemen Informasi - Khusus Admin) -->
-            @if(Auth::check() && Auth::user()->role === 'admin')
+            <!-- Group 4: Umum (Dropdown Manajemen Informasi - Khusus Admin dan Humas) -->
+            @if(Auth::check() && Auth::user()->role === 'admin' || Auth::user()->role === 'pegawai_humas')
                 <div>
                     <p class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">Umum</p>
                     <details class="group rounded-xl border border-slate-700/80 bg-slate-900/60 overflow-hidden transition"
