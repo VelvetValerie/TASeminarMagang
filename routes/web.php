@@ -79,6 +79,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/berita', [AdminBeritaController::class, 'store'])->name('berita.store');
         Route::get('/berita/{slug}/edit', [AdminBeritaController::class, 'edit'])->name('berita.edit');
         Route::put('/berita/{slug}', [AdminBeritaController::class, 'update'])->name('berita.update');
+        Route::post('/berita/{id}/delete-image', [AdminBeritaController::class, 'deleteImage'])->name('berita.delete-image');
         Route::delete('/berita/{id}', [AdminBeritaController::class, 'destroy'])->name('berita.destroy');
 
         // CRUD Informasi Resmi
@@ -87,6 +88,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/informasi', [AdminInformasiController::class, 'store'])->name('informasi.store');
         Route::get('/informasi/{slug}/edit', [AdminInformasiController::class, 'edit'])->name('informasi.edit');
         Route::put('/informasi/{slug}', [AdminInformasiController::class, 'update'])->name('informasi.update');
+        Route::post('/informasi/{id}/delete-image', [AdminInformasiController::class, 'deleteImage'])->name('informasi.delete-image');
         Route::delete('/informasi/{id}', [AdminInformasiController::class, 'destroy'])->name('informasi.destroy');
     });
 

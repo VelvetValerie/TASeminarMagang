@@ -15,6 +15,10 @@
     div#previewKonten p, #previewKonten p { margin-bottom: 0.75rem !important; font-size: 1rem !important; line-height: 1.625 !important; }
 </style>
 
+@php
+    $userRole = Auth::user()->role;
+@endphp
+
 <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-8">
     <div class="flex justify-between items-center mb-6">
         <a href="{{ route('admin.informasi.index') }}" class="text-sm font-medium text-gray-500 hover:text-gray-900 flex items-center gap-1">
@@ -146,9 +150,17 @@
                     <div class="p-4 space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Status Publikasi <span class="text-red-500">*</span></label>
-                            <select name="status" required class="w-full bg-white border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-200 focus:border-blue-500">
-                                <option value="Draft" {{ old('status', $informasi->status) == 'Draft' ? 'selected' : '' }}>Konsep (Draft)</option>
-                                <option value="Terbit" {{ old('status', $informasi->status) == 'Terbit' ? 'selected' : '' }}>Terbitkan</option>
+                            <select name="status" required class="w-full bg-white border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-200 focus:border-blue-500" {{ $userRole == 'pegawai_humas' ? 'disabled' : '' }}>
+                                @if($userRole == 'admin')
+                                    <option value="Draft" {{ old('status', $berita->status) == 'Draft' ? 'selected' : '' }}>Konsep (Draft)</option>
+                                    <option value="Terbit" {{ old('status', $berita->status) == 'Terbit' ? 'selected' : '' }}>Terbitkan</option>
+                                @else
+                                    @if(old('status', $berita->status) == 'Draft')
+                                        <option value="Draft" {{ old('status', $berita->status) == 'Draft' ? 'selected' : '' }}>Konsep (Draft)</option>
+                                    @elseif(old('status', $berita->status) == 'Terbit')
+                                        <option value="Terbit" {{ old('status', $berita->status) == 'Terbit' ? 'selected' : '' }}>Terbitkan</option>
+                                    @endif
+                                @endif
                             </select>
                         </div>
                         <div class="text-xs text-gray-500 bg-gray-50 p-2 rounded border border-gray-100">
