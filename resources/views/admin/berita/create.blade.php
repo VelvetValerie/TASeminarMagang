@@ -107,7 +107,7 @@
                     <div class="p-4 space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Status <span class="text-red-500">*</span></label>
-                            <select name="status" required class="w-full bg-white border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-200 focus:border-blue-500" {{ $userRole == 'pegawai_humas' ? 'disabled' : '' }}>
+                            <select name="status" required class="w-full bg-white border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-200 focus:border-blue-500">
                                 <option value="Draft" {{ old('status') == 'Draft' ? 'selected' : '' }}>Konsep (Draft)</option>
                                 @if($userRole != 'pegawai_humas')
                                     <option value="Terbit" {{ old('status') == 'Terbit' ? 'selected' : '' }}>Terbitkan</option>
