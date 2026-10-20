@@ -162,6 +162,7 @@
             <!-- Group 3: Dropdown Manajemen Master Data Kegiatan (Khusus Admin) -->
             @if($userRole === 'admin')
                 <div class="pt-2">
+                     <p class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">Data Umum</p>
                     <details class="group rounded-xl border border-slate-700/80 bg-slate-900/60 overflow-hidden transition"
                              {{ request()->is('jenis-kegiatan', 'titik-lokasi', 'instansi', 'riwayat-kegiatan') ? 'open' : '' }}>
                         <summary class="flex items-center justify-between px-4 py-3 text-xs sm:text-sm font-bold text-white bg-slate-800 hover:bg-slate-750 cursor-pointer transition list-none select-none">
@@ -198,29 +199,26 @@
             <!-- Group 4: Kehumasan & Berita (Akses Admin dan Pegawai Humas) -->
             @if(in_array($userRole, ['admin', 'pegawai_humas']))
                 <div>
-                    <p class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">Kehumasan & Publikasi</p>
-                    <details class="group rounded-xl border border-slate-700/80 bg-slate-900/60 overflow-hidden transition"
-                             {{ request()->is('informasi', 'admin/berita*') ? 'open' : '' }}>
-                        <summary class="flex items-center justify-between px-4 py-3 text-xs sm:text-sm font-bold text-white bg-slate-800 hover:bg-slate-750 cursor-pointer transition list-none select-none">
-                            <span class="w-full text-center leading-tight">
-                                Manajemen<br>Informasi & Berita
-                            </span>
-                            <svg class="w-4 h-4 text-slate-400 transition-transform duration-200 group-open:rotate-180 shrink-0 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                    <p class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">Humas & Publikasi</p>
+                    <nav class="space-y-1">
+                        <!-- 1. Pusat Informasi -->
+                        <a href="{{ route('admin.informasi.index') }}" 
+                        class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('informasi*', 'admin/informasi*') || request()->routeIs('admin.informasi.*') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                            <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->is('informasi*', 'admin/informasi*') || request()->routeIs('admin.informasi.*') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
-                        </summary>
+                            Pusat Informasi
+                        </a>
 
-                        <div class="divide-y divide-slate-700/70 border-t border-slate-700 bg-slate-950/40">
-                            <a href="{{ route('admin.informasi.index') }}" 
-                               class="block py-2.5 px-4 text-center text-xs font-semibold transition {{ request()->is('informasi') ? 'bg-sky-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                                Pusat Informasi
-                            </a>
-                            <a href="{{ route('admin.berita.index') }}" 
-                               class="block py-2.5 px-4 text-center text-xs font-semibold transition {{ request()->routeIs('admin.berita.*') ? 'bg-sky-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                                Daftar Berita
-                            </a>
-                        </div>
-                    </details>
+                        <!-- 2. Daftar Berita -->
+                        <a href="{{ route('admin.berita.index') }}" 
+                        class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->routeIs('admin.berita.*') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                            <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->routeIs('admin.berita.*') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                            </svg>
+                            Daftar Berita
+                        </a>
+                    </nav>
                 </div>
             @endif
 
