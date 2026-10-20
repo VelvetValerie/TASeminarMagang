@@ -152,13 +152,13 @@
                             <label class="block text-sm font-medium text-gray-700 mb-1">Status Publikasi <span class="text-red-500">*</span></label>
                             <select name="status" required class="w-full bg-white border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-200 focus:border-blue-500">
                                 @if($userRole == 'admin')
-                                    <option value="Draft" {{ old('status', $berita->status) == 'Draft' ? 'selected' : '' }}>Konsep (Draft)</option>
-                                    <option value="Terbit" {{ old('status', $berita->status) == 'Terbit' ? 'selected' : '' }}>Terbitkan</option>
+                                    <option value="Draft" {{ old('status', $informasi->status) == 'Draft' ? 'selected' : '' }}>Konsep (Draft)</option>
+                                    <option value="Terbit" {{ old('status', $informasi->status) == 'Terbit' ? 'selected' : '' }}>Terbitkan</option>
                                 @else
-                                    @if(old('status', $berita->status) == 'Draft')
-                                        <option value="Draft" {{ old('status', $berita->status) == 'Draft' ? 'selected' : '' }}>Konsep (Draft)</option>
-                                    @elseif(old('status', $berita->status) == 'Terbit')
-                                        <option value="Terbit" {{ old('status', $berita->status) == 'Terbit' ? 'selected' : '' }}>Terbitkan</option>
+                                    @if(old('status', $informasi->status) == 'Draft')
+                                        <option value="Draft" {{ old('status', $informasi->status) == 'Draft' ? 'selected' : '' }}>Konsep (Draft)</option>
+                                    @elseif(old('status', $informasi->status) == 'Terbit')
+                                        <option value="Terbit" {{ old('status', $informasi->status) == 'Terbit' ? 'selected' : '' }}>Terbitkan</option>
                                     @endif
                                 @endif
                             </select>
