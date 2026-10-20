@@ -14,7 +14,9 @@ use App\Http\Controllers\Api\Public\KalenderController;
 use App\Http\Controllers\Api\Public\BeritaController;
 use App\Http\Controllers\Api\Public\InformasiController;
 
-// Rute Publik Landing Page
+// =========================================================================
+// 1. RUTE PUBLIK (LANDING PAGE & PORTAL)
+// =========================================================================
 Route::get('/', function () {
     $kegiatan = Kegiatan::with(['jenis', 'lokasi', 'koordinator'])->get();
     return view('landing', compact('kegiatan'));
@@ -34,7 +36,9 @@ Route::get('/informasi/timeline', function () {
 Route::get('/informasi/{slug}', [InformasiController::class, 'show'])->name('informasi.show');
 
 
-// Auth Routes (Guest)
+// =========================================================================
+// 2. AUTHENTICATION ROUTES (GUEST)
+// =========================================================================
 Route::middleware(['guest'])->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1')->name('login.perform');
@@ -44,18 +48,21 @@ Route::middleware(['guest'])->group(function () {
     Route::post('/reset-password', [AuthController::class, 'resetPassword'])->middleware('throttle:5,1')->name('password.update');
 });
 
-// Authenticated Routes
+
+// =========================================================================
+// 3. AUTHENTICATED ROUTES (WAJIB LOGIN)
+// =========================================================================
 Route::middleware(['auth'])->group(function () {
     
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // 1. DASHBOARD & KALENDER (Bisa diakses oleh SEMUA ROLE)
+    // --- A. DASHBOARD & KALENDER (Bisa diakses oleh SEMUA ROLE) ---
     Route::middleware(['role:admin,pimpinan,pegawai_koordinasi,pegawai_humas'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
         Route::get('/kalender', [DashboardController::class, 'kalender'])->name('kalender');
     });
 
-    // 2. KEGIATAN & LAPORAN KEGIATAN (Hanya Admin, Pimpinan, dan Pegawai Koordinator)
+    // --- B. KEGIATAN & LAPORAN (Admin, Pimpinan, dan Pegawai Koordinator) ---
     Route::middleware(['role:admin,pimpinan,pegawai_koordinasi'])->group(function () {
         Route::get('/kegiatan', [KegiatanController::class, 'index'])->name('kegiatan');
         Route::post('/kegiatan', [KegiatanController::class, 'store'])->name('kegiatan.store');
@@ -70,8 +77,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/laporan-kegiatan/export-csv', [LaporanKegiatanController::class, 'exportCsv']);
     });
 
-    //3. RUTE KHUSUS YANG BISA DIAKSES OLEH ADMIN DAN PEGAWAI HUMAS
-    Route::middleware(['auth', 'role:admin,pegawai_humas'])->prefix('admin')->name('admin.')->group(function () {
+    // --- C. BERITA & INFORMASI (Dapat diakses oleh Admin & Pegawai Humas) ---
+    Route::middleware(['role:admin,pegawai_humas'])->prefix('admin')->name('admin.')->group(function () {
         
         // CRUD Berita
         Route::get('/berita', [AdminBeritaController::class, 'index'])->name('berita.index');
@@ -92,8 +99,24 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/informasi/{id}', [AdminInformasiController::class, 'destroy'])->name('informasi.destroy');
     });
 
-    //4. RUTE KHUSUS DRAFT BERITA (Hanya Admin)
-    Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-        Route::get('/berita/draft', [AdminBeritaController::class, 'draftIndex'])->name('berita.draft');
+    // --- D. RUTE KHUSUS ROLE ADMIN ---
+    Route::middleware(['role:admin'])->group(function () {
+        
+        // 1. Management Data User
+        Route::get('/master-user', [UserController::class, 'index'])->name('master-user');
+        Route::post('/master-user', [UserController::class, 'store'])->name('master-user.store');
+        Route::put('/master-user/{id}', [UserController::class, 'update'])->name('master-user.update');
+        Route::delete('/master-user/{id}', [UserController::class, 'destroy'])->name('master-user.destroy');
+
+        // 2. Draft Berita & Informasi (Khusus Review Admin)
+        Route::get('/admin/berita/draft', [AdminBeritaController::class, 'draftIndex'])->name('admin.berita.draft');
+
+        // 3. Master Data Kegiatan
+        Route::get('/riwayat-kerja', [MasterDataController::class, 'riwayatKerja'])->name('riwayat-kerja');
+        Route::get('/jenis-kegiatan', [MasterDataController::class, 'jenisKegiatan'])->name('jenis-kegiatan');
+        Route::get('/titik-lokasi', [MasterDataController::class, 'titikLokasi'])->name('titik-lokasi');
+        Route::get('/instansi', [MasterDataController::class, 'instansi'])->name('instansi');
+        Route::get('/riwayat-kegiatan', [KegiatanController::class, 'riwayatKegiatan'])->name('riwayat-kegiatan');
     });
+
 });
