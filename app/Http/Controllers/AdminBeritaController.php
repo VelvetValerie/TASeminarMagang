@@ -159,4 +159,28 @@ class AdminBeritaController extends Controller
         return redirect()->route('admin.berita.index')
                          ->with('success', 'Berita berhasil dihapus!');
     }
+
+    public function draftIndex(Request $request)
+    {
+        $query = Berita::where('status', 'Draft');
+
+        // Filter Pencarian
+        if ($request->filled('search')) {
+            $query->where('judul_berita', 'like', '%' . $request->search . '%');
+        }
+
+        // Urutan Data
+        $sort = $request->input('sort', 'terbaru');
+        if ($sort === 'terlama') {
+            $query->oldest();
+        } elseif ($sort === 'az') {
+            $query->orderBy('judul_berita', 'asc');
+        } else {
+            $query->latest();
+        }
+
+        $drafts = $query->paginate(10);
+
+        return view('admin.berita.draft', compact('drafts', 'sort'));
+    }
 }

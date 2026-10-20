@@ -201,6 +201,7 @@
                 <div>
                     <p class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">Humas & Publikasi</p>
                     <nav class="space-y-1">
+                        
                         <!-- 1. Pusat Informasi -->
                         <a href="{{ route('admin.informasi.index') }}" 
                         class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('informasi*', 'admin/informasi*') || request()->routeIs('admin.informasi.*') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
@@ -210,14 +211,25 @@
                             Pusat Informasi
                         </a>
 
-                        <!-- 2. Daftar Berita -->
+                        <!-- 2. Daftar Berita (Dikecualikan dari Draft) -->
                         <a href="{{ route('admin.berita.index') }}" 
-                        class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->routeIs('admin.berita.*') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                            <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->routeIs('admin.berita.*') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ (request()->routeIs('admin.berita.index', 'admin.berita.create', 'admin.berita.edit') && !request()->routeIs('admin.berita.draft')) ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                            <svg class="w-5 h-5 mr-3 shrink-0 {{ (request()->routeIs('admin.berita.index', 'admin.berita.create', 'admin.berita.edit') && !request()->routeIs('admin.berita.draft')) ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
                             </svg>
                             Daftar Berita
                         </a>
+
+                        <!-- 3. Draft Berita & Informasi (Khusus Admin) -->
+                        @if($userRole === 'admin')
+                            <a href="{{ route('admin.berita.draft') }}" 
+                            class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->routeIs('admin.berita.draft') ? 'bg-amber-600 text-white shadow-sm shadow-amber-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->routeIs('admin.berita.draft') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                                Draft Berita & Informasi
+                            </a>
+                        @endif
                     </nav>
                 </div>
             @endif
