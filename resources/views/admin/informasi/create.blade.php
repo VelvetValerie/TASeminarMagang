@@ -15,6 +15,10 @@
     div#previewKonten p, #previewKonten p { margin-bottom: 0.75rem !important; font-size: 1rem !important; line-height: 1.625 !important; }
 </style>
 
+@php
+    $userRole = Auth::user()->role;
+@endphp
+
 <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-8">
     <div class="flex justify-between items-center mb-6">
         <a href="{{ route('admin.informasi.index') }}" class="text-sm font-medium text-gray-500 hover:text-gray-900 flex items-center gap-1">
@@ -103,9 +107,11 @@
                     <div class="p-4 space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Status <span class="text-red-500">*</span></label>
-                            <select name="status" required class="w-full bg-white border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-200 focus:border-blue-500">
+                            <select name="status" required class="w-full bg-white border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-200 focus:border-blue-500" {{ $userRole == 'pegawai_humas' ? 'disabled' : '' }}>
                                 <option value="Draft" {{ old('status') == 'Draft' ? 'selected' : '' }}>Konsep (Draft)</option>
-                                <option value="Terbit" {{ old('status') == 'Terbit' ? 'selected' : '' }}>Terbitkan</option>
+                                @if($userRole != 'pegawai_humas')
+                                    <option value="Terbit" {{ old('status') == 'Terbit' ? 'selected' : '' }}>Terbitkan</option>
+                                @endif
                             </select>
                         </div>
                         <button type="submit" class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 transition-colors">
