@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 17, 2026 at 03:25 PM
+-- Generation Time: Oct 21, 2026 at 02:11 AM
 -- Server version: 8.0.40
 -- PHP Version: 8.3.28
 
@@ -52,7 +52,8 @@ INSERT INTO `berita` (`id_berita`, `judul_berita`, `slug`, `kategori_publikasi`,
 (3, 'SOP Terbaru Pendaftaran Ujian Dinas', 'sop-terbaru-pendaftaran-ujian-dinas', 'Berita', '<p><strong>Revisi SOP Ujian Dinas:</strong> Mulai bulan depan, pengajuan ujian dinas tingkat I dan II wajib menyertakan dokumen digital yang telah dilegalisir secara elektronik.</p>\r\n<image src=\"/images/samplegambar1.jpg\" alt=\"Slide 1\"></image>', '', '123 abcdef', 'https://drive.google.com/sop-ujian-dinas-v2', 'Draft', 3, '2026-10-13 01:00:00', '2026-10-13 22:47:38'),
 (5, 'Tes Lagi 123', 'tes-lagi-123-M4k7e', 'Berita', 'A ba ta sa ja kha kho', '', '', NULL, 'Terbit', 1, '2026-10-12 17:45:48', '2026-10-12 17:50:53'),
 (8, 'tes', 'tes-KGEl0', 'Berita', '123', 'thumbnails/1rJA8M1hPxyGoZmMqRRXZ12rZMHiUwcW2Y3eQlJI.png', 'cungkai', 'https://drive.google.com/sop-ujian-dinas-v2', 'Draft', 1, '2026-10-13 22:59:58', '2026-10-13 22:59:58'),
-(9, 'tes 123 aja', 'tes-PVm3A', 'Informasi Resmi', '123', 'informasi_thumbnails/hLjxHIcifrs7hQYmZD9RUQ4DRuibLV6GKK2KlwJe.jpg', 'hai 123', 'https://drive.google.com/sop-ujian-dinas-v2', 'Terbit', 1, '2026-10-13 23:00:24', '2026-10-13 23:02:03');
+(9, 'tes 123 aja', 'tes-PVm3A', 'Informasi Resmi', '123', 'informasi_thumbnails/hLjxHIcifrs7hQYmZD9RUQ4DRuibLV6GKK2KlwJe.jpg', 'hai 123', 'https://drive.google.com/sop-ujian-dinas-v2', 'Terbit', 1, '2026-10-13 23:00:24', '2026-10-13 23:02:03'),
+(10, 'tes 123', 'tes-123-hu67b', 'Informasi Resmi', 'Membuat Draft', 'informasi_thumbnails/ldzMWiWS9zYOKcxCPIIl67DW8IjBDPSLlagTFNon.jpg', 'Meletup', NULL, 'Terbit', 1, '2026-10-19 16:48:14', '2026-10-19 16:52:12');
 
 -- --------------------------------------------------------
 
@@ -804,15 +805,15 @@ INSERT INTO `users` (`id_user`, `username`, `nip`, `email`, `password`, `role`, 
 --
 CREATE TABLE `vw_kalender_landing_page` (
 `ID Kegiatan` int unsigned
-,`Nama Kegiatan` varchar(150)
-,`Jenis Kegiatan` varchar(100)
-,`Titik Lokasi` varchar(100)
 ,`Instansi` varchar(150)
-,`Nama Karyawan Koordinator` varchar(100)
+,`Jenis Kegiatan` varchar(100)
 ,`Jumlah Peserta` int unsigned
+,`Nama Karyawan Koordinator` varchar(100)
+,`Nama Kegiatan` varchar(150)
+,`Status` enum('Belum Konfirmasi','Terkonfirmasi','Selesai','Dibatalkan')
 ,`Tanggal Mulai` date
 ,`Tanggal Selesai` date
-,`Status` enum('Belum Konfirmasi','Terkonfirmasi','Selesai','Dibatalkan')
+,`Titik Lokasi` varchar(100)
 );
 
 --
@@ -906,7 +907,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `berita`
 --
 ALTER TABLE `berita`
-  MODIFY `id_berita` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id_berita` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `instansi`

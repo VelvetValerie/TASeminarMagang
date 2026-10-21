@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 11, 2026 at 10:46 AM
+-- Generation Time: Oct 17, 2026 at 03:25 PM
 -- Server version: 8.0.40
 -- PHP Version: 8.3.28
 
@@ -20,6 +20,39 @@ SET time_zone = "+00:00";
 --
 -- Database: `dummy_data`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `berita`
+--
+
+CREATE TABLE `berita` (
+  `id_berita` int UNSIGNED NOT NULL,
+  `judul_berita` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `slug` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `kategori_publikasi` enum('Berita','Informasi Resmi') COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'Berita',
+  `konten` longtext COLLATE utf8mb4_general_ci NOT NULL,
+  `thumbnail` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `caption_thumbnail` varchar(75) COLLATE utf8mb4_general_ci NOT NULL,
+  `lampiran_url` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `status` enum('Draft','Terbit') COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'Draft',
+  `id_penulis` int UNSIGNED NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `berita`
+--
+
+INSERT INTO `berita` (`id_berita`, `judul_berita`, `slug`, `kategori_publikasi`, `konten`, `thumbnail`, `caption_thumbnail`, `lampiran_url`, `status`, `id_penulis`, `created_at`, `updated_at`) VALUES
+(1, 'Jadwal SKD CPNS 2026 Resmi Dirilis', 'jadwal-skd-cpns-2026-resmi-dirilis', 'Berita', '<p>Badan Kepegawaian Negara (BKN) secara resmi telah merilis jadwal pelaksanaan Seleksi Kompetensi Dasar (SKD) untuk CPNS tahun anggaran 2026. Para peserta diimbau untuk mengecek lokasi dan waktu ujian masing-masing melalui portal SSCASN.</p>', '', '', 'https://drive.google.com/dokumen-jadwal-skd-2026', 'Terbit', 1, '2026-10-10 00:30:00', '2026-10-13 00:47:56'),
+(2, 'Pemeliharaan Server CAT Regional VIII', 'pemeliharaan-server-cat-regional-viii', 'Berita', '<p>Diberitahukan kepada seluruh instansi di wilayah kerja Kanreg VIII BKN bahwa akan dilakukan pemeliharaan server CAT (Computer Assisted Test) pada akhir pekan ini. Seluruh kegiatan simulasi <b>dihentikan</b> sementara.</p>', '', '', NULL, 'Terbit', 4, '2026-10-12 06:15:00', '2026-10-12 17:40:15'),
+(3, 'SOP Terbaru Pendaftaran Ujian Dinas', 'sop-terbaru-pendaftaran-ujian-dinas', 'Berita', '<p><strong>Revisi SOP Ujian Dinas:</strong> Mulai bulan depan, pengajuan ujian dinas tingkat I dan II wajib menyertakan dokumen digital yang telah dilegalisir secara elektronik.</p>\r\n<image src=\"/images/samplegambar1.jpg\" alt=\"Slide 1\"></image>', '', '123 abcdef', 'https://drive.google.com/sop-ujian-dinas-v2', 'Draft', 3, '2026-10-13 01:00:00', '2026-10-13 22:47:38'),
+(5, 'Tes Lagi 123', 'tes-lagi-123-M4k7e', 'Berita', 'A ba ta sa ja kha kho', '', '', NULL, 'Terbit', 1, '2026-10-12 17:45:48', '2026-10-12 17:50:53'),
+(8, 'tes', 'tes-KGEl0', 'Berita', '123', 'thumbnails/1rJA8M1hPxyGoZmMqRRXZ12rZMHiUwcW2Y3eQlJI.png', 'cungkai', 'https://drive.google.com/sop-ujian-dinas-v2', 'Draft', 1, '2026-10-13 22:59:58', '2026-10-13 22:59:58'),
+(9, 'tes 123 aja', 'tes-PVm3A', 'Informasi Resmi', '123', 'informasi_thumbnails/hLjxHIcifrs7hQYmZD9RUQ4DRuibLV6GKK2KlwJe.jpg', 'hai 123', 'https://drive.google.com/sop-ujian-dinas-v2', 'Terbit', 1, '2026-10-13 23:00:24', '2026-10-13 23:02:03');
 
 -- --------------------------------------------------------
 
@@ -348,7 +381,8 @@ INSERT INTO `kegiatan` (`id_keg`, `nama_keg`, `id_jeniskeg`, `id_tklokasi`, `id_
 (172, 'Seleksi Lanjutan Wawancara Pemetaan Karier Regional', 6, 2, 1, 3, 65, '2026-12-19', '2026-12-19', 'Terkonfirmasi', 'https://drive.google.com/sample_des_172', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
 (173, 'Seleksi Non-ASN Tenaga IT Helpdesk SIASN', 7, 1, 1, 6, 85, '2026-12-21', '2026-12-21', 'Terkonfirmasi', 'https://drive.google.com/sample_des_173', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
 (174, 'Sertifikasi Tim Pengawas Ujian CAT 2027', 9, 2, 1, 12, 45, '2026-12-23', '2026-12-23', 'Terkonfirmasi', 'https://drive.google.com/sample_des_174', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
-(175, 'Ujian UPKP Penyesuaian Ijazah Pemkab Banjar', 1, 3, 6, 1, 90, '2026-12-27', '2026-12-28', 'Terkonfirmasi', 'https://drive.google.com/sample_des_175', '2026-10-06 03:20:33', '2026-10-06 03:20:33');
+(175, 'Ujian UPKP Penyesuaian Ijazah Pemkab Banjar', 1, 3, 6, 1, 90, '2026-12-27', '2026-12-28', 'Terkonfirmasi', 'https://drive.google.com/sample_des_175', '2026-10-06 03:20:33', '2026-10-06 03:20:33'),
+(176, 'Asesmen Penilaian Potensi dan Kompetensi Pegawai', 2, 1, 3, 1, 100, '2026-10-13', '2026-10-14', 'Selesai', '-', '2026-10-13 00:28:33', '2026-10-15 21:36:43');
 
 -- --------------------------------------------------------
 
@@ -511,6 +545,37 @@ INSERT INTO `laporan_kegiatan` (`id_laporan`, `id_keg`, `peserta_hadir`, `pesert
 (133, 168, 145, 5, 87, 58, 487.00, 302.00, 'https://drive.google.com/file/d/1BKN_LAP_168/view', 'SKB CPNS Analis Kepegawaian lancar.', '2026-12-08 09:00:00', '2026-10-07 03:19:26'),
 (134, 169, 368, 12, 257, 111, 480.00, 286.00, 'https://drive.google.com/file/d/1BKN_LAP_169/view', 'PPPK Akhir Tahun Banjarbaru sukses.', '2026-12-11 09:00:00', '2026-10-07 03:19:26'),
 (135, 170, 632, 18, 0, 0, 495.00, 270.00, 'https://drive.google.com/file/d/1BKN_LAP_170/view', 'Simulasi CAT Akhir Tahun ramai lancar.', '2026-12-14 09:00:00', '2026-10-06 03:20:33');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `migrations`
+--
+
+CREATE TABLE `migrations` (
+  `id` int UNSIGNED NOT NULL,
+  `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `batch` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `migrations`
+--
+
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
+(1, '2026_10_13_014357_create_password_reset_tokens_table', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `password_reset_tokens`
+--
+
+CREATE TABLE `password_reset_tokens` (
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -705,7 +770,7 @@ CREATE TABLE `users` (
   `nip` varchar(18) DEFAULT NULL,
   `email` varchar(150) DEFAULT NULL,
   `password` varchar(255) NOT NULL,
-  `role` enum('admin','pegawai','pimpinan') NOT NULL DEFAULT 'pegawai',
+  `role` enum('admin','pimpinan','pegawai_humas','pegawai_koordinasi') NOT NULL DEFAULT 'pegawai_koordinasi',
   `id_karyawan` int UNSIGNED DEFAULT NULL,
   `remember_token` varchar(100) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
@@ -717,18 +782,19 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id_user`, `username`, `nip`, `email`, `password`, `role`, `id_karyawan`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'admin_bkn', '199001012015011001', 'rafifadillah420@gmail.com', '$2y$12$f4uxTB55wiGjExcJeAU/Q.iOWPxpJwmwLpsP98.bq2ivxYizCYWNe', 'admin', NULL, NULL, '2026-09-01 17:37:19', '2026-10-08 18:50:23'),
-(2, 'budi_santoso', '199203042018021002', 'budi.santoso@bkn.go.id', '$2y$12$hKicAGqcuggCLStODtdohOVWnbCHXv.wv1hRtfoedAvzbWFRhsLlG', 'pegawai', 1, NULL, '2026-09-03 01:14:01', '2026-09-23 23:12:41'),
-(3, 'siti_rahma', '199505062020032001', 'siti.rahma@bkn.go.id', '$2y$12$azWdf4/Q8jWKkWVkEEWQp.Ic1W5D2tkOnuHsUMRYDwVzSC/oa9Bza', 'pegawai', 2, NULL, '2026-09-03 01:14:01', '2026-09-22 00:48:29'),
+(1, 'admin_bkn', '199001012015011001', 'rafifadillah420@gmail.com', '$2y$12$hgOxnSejUG3iYiFxdzoUSecULJLjrNfIGSGDXJUdQqLX3qic4ilSy', 'admin', NULL, NULL, '2026-09-01 17:37:19', '2026-10-12 18:01:27'),
+(2, 'budi_santoso', '199203042018021002', 'budi.santoso@bkn.go.id', '$2y$12$hKicAGqcuggCLStODtdohOVWnbCHXv.wv1hRtfoedAvzbWFRhsLlG', 'pegawai_koordinasi', 1, NULL, '2026-09-03 01:14:01', '2026-10-17 09:55:15'),
+(3, 'siti_rahma', '199505062020032001', 'siti.rahma@bkn.go.id', '$2y$12$azWdf4/Q8jWKkWVkEEWQp.Ic1W5D2tkOnuHsUMRYDwVzSC/oa9Bza', 'pegawai_koordinasi', 2, NULL, '2026-09-03 01:14:01', '2026-10-17 09:55:15'),
 (4, 'pimpinan_bkn', '198507082010041003', 'pimpinan01@bkn.go.id', '$2y$12$8QEpJWSFi5KwPdHEMFGiauiWo/ZdNGr3Uo/WBHbdHesRbYNWK3mFS', 'pimpinan', NULL, NULL, '2026-09-03 01:14:01', '2026-10-04 20:35:33'),
-(5, 'ahmad_dani', '199301152019031001', 'ahmad.dani@bkn.go.id', '$2y$12$okaDUSmKUh0zptVVzXkiXOGAkoeHKRMR26y.ks307F6OQu9ZQBnV.', 'pegawai', 3, NULL, '2026-09-22 02:41:28', '2026-09-21 18:42:22'),
-(6, 'hendra_pratama', '198804202012011002', 'hendra.pratama@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai', 4, NULL, '2026-09-22 02:41:28', '2026-09-22 02:41:28'),
-(7, 'nur_hidayah', '199408122020012003', 'nur.hidayah@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai', 5, NULL, '2026-09-22 02:41:28', '2026-09-22 02:41:28'),
-(8, 'fajar_ramadhan', '199602282021021001', 'fajar.ramadhan@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai', 6, NULL, '2026-09-22 02:41:28', '2026-09-22 02:41:28'),
-(10, 'rahmat_hidayat', '199009142014021003', 'rahmat.hidayat@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai', 9, NULL, '2026-09-22 02:41:28', '2026-09-22 02:41:28'),
-(11, 'rina_aprilia', '199504182020022001', 'rina.aprilia@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai', 10, NULL, '2026-09-22 02:41:28', '2026-09-22 02:41:28'),
-(12, 'eko_prasetyo', '199207222018011004', 'eko.prasetyo@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai', 11, NULL, '2026-09-22 02:41:28', '2026-09-22 02:41:28'),
-(13, 'maya_kartika', '199310102019022002', 'maya.kartika@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai', 12, NULL, '2026-09-22 02:41:28', '2026-09-22 02:41:28');
+(5, 'ahmad_dani', '199301152019031001', 'ahmad.dani@bkn.go.id', '$2y$12$okaDUSmKUh0zptVVzXkiXOGAkoeHKRMR26y.ks307F6OQu9ZQBnV.', 'pegawai_koordinasi', 3, NULL, '2026-09-22 02:41:28', '2026-10-17 09:55:15'),
+(6, 'hendra_pratama', '198804202012011002', 'hendra.pratama@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai_koordinasi', 4, NULL, '2026-09-22 02:41:28', '2026-10-17 09:55:15'),
+(7, 'nur_hidayah', '199408122020012003', 'nur.hidayah@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai_koordinasi', 5, NULL, '2026-09-22 02:41:28', '2026-10-17 09:55:15'),
+(8, 'fajar_ramadhan', '199602282021021001', 'fajar.ramadhan@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai_koordinasi', 6, NULL, '2026-09-22 02:41:28', '2026-10-17 09:55:15'),
+(10, 'rahmat_hidayat', '199009142014021003', 'rahmat.hidayat@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai_koordinasi', 9, NULL, '2026-09-22 02:41:28', '2026-10-17 09:55:15'),
+(11, 'rina_aprilia', '199504182020022001', 'rina.aprilia@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai_koordinasi', 10, NULL, '2026-09-22 02:41:28', '2026-10-17 09:55:15'),
+(12, 'eko_prasetyo', '199207222018011004', 'eko.prasetyo@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai_koordinasi', 11, NULL, '2026-09-22 02:41:28', '2026-10-17 09:55:15'),
+(13, 'maya_kartika', '199310102019022002', 'maya.kartika@bkn.go.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pegawai_koordinasi', 12, NULL, '2026-09-22 02:41:28', '2026-10-17 09:55:15'),
+(16, 'humas_satu', '199501012022031001', 'humas1@bkn.go.id', '$2y$12$nXl5513o3ePYkGbXhIIBoeu46snoAaIdC1vFCQTMgm78kvcmBKFL6', 'pegawai_humas', NULL, NULL, '2026-10-17 10:16:29', '2026-10-17 02:26:03');
 
 -- --------------------------------------------------------
 
@@ -752,6 +818,14 @@ CREATE TABLE `vw_kalender_landing_page` (
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `berita`
+--
+ALTER TABLE `berita`
+  ADD PRIMARY KEY (`id_berita`),
+  ADD UNIQUE KEY `slug` (`slug`),
+  ADD KEY `id_penulis` (`id_penulis`);
 
 --
 -- Indexes for table `instansi`
@@ -789,6 +863,18 @@ ALTER TABLE `laporan_kegiatan`
   ADD UNIQUE KEY `uk_laporan_kegiatan` (`id_keg`);
 
 --
+-- Indexes for table `migrations`
+--
+ALTER TABLE `migrations`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `password_reset_tokens`
+--
+ALTER TABLE `password_reset_tokens`
+  ADD PRIMARY KEY (`email`);
+
+--
 -- Indexes for table `rekam_kj`
 --
 ALTER TABLE `rekam_kj`
@@ -817,6 +903,12 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `berita`
+--
+ALTER TABLE `berita`
+  MODIFY `id_berita` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
 -- AUTO_INCREMENT for table `instansi`
 --
 ALTER TABLE `instansi`
@@ -838,13 +930,19 @@ ALTER TABLE `karyawan`
 -- AUTO_INCREMENT for table `kegiatan`
 --
 ALTER TABLE `kegiatan`
-  MODIFY `id_keg` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=176;
+  MODIFY `id_keg` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=177;
 
 --
 -- AUTO_INCREMENT for table `laporan_kegiatan`
 --
 ALTER TABLE `laporan_kegiatan`
   MODIFY `id_laporan` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=136;
+
+--
+-- AUTO_INCREMENT for table `migrations`
+--
+ALTER TABLE `migrations`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `rekam_kj`
@@ -862,7 +960,7 @@ ALTER TABLE `titik_lokasi`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_user` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id_user` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 -- --------------------------------------------------------
 
@@ -876,6 +974,12 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `berita`
+--
+ALTER TABLE `berita`
+  ADD CONSTRAINT `fk_berita_penulis` FOREIGN KEY (`id_penulis`) REFERENCES `karyawan` (`id_karyawan`) ON UPDATE CASCADE;
 
 --
 -- Constraints for table `kegiatan`
