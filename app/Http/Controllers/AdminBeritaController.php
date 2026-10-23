@@ -72,6 +72,25 @@ class AdminBeritaController extends Controller
             $thumbnailPath = $request->file('thumbnail')->store('thumbnails', 'public');
         }
 
+        $konten = $request->konten;
+
+        $folderPath = "berita/{$slug}";
+
+        $multiImagesPaths = [];
+
+        if ($request->hasFile('multi_images')) {
+            foreach ($request->file('multi_images') as $file) {
+                $originalName = $file->getClientOriginalName();
+                $fileName = time() . '_' . Str::slug(pathinfo($originalName, PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs("{$folderPath}/gallery", $fileName, 'public');
+
+                $multiImagesPaths[] = $path;
+
+                $publicUrl = asset('storage/' . $path);
+                $konten = str_replace($originalName, $publicUrl, $konten);
+            }
+        }
+
         Berita::create([
             'judul_berita' => $request->judul_berita,
             'slug'         => $slug,
@@ -79,6 +98,7 @@ class AdminBeritaController extends Controller
             'status'       => $request->status,
             'thumbnail'    => $thumbnailPath,
             'caption_thumbnail'  => $request->caption_thumbnail,
+            'multi_images'       => !empty($multiImagesPaths) ? array_values($multiImagesPaths) : null,
             'lampiran_url' => $request->lampiran_url,
             'id_penulis'   => Auth::id(),
         ]);
@@ -109,8 +129,12 @@ class AdminBeritaController extends Controller
             'caption_thumbnail' => 'nullable|string|max:75', // Batas caption yang sudah kita sepakati
             'lampiran_url'   => 'nullable|url',
             // Thumbnail dibuat NULLABLE atau SOMETIMES (hanya divalidasi jika ada isinya)
-            'thumbnail'      => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240', 
+            'thumbnail'      => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
+            'multi_images.*'    => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
         ]);
+
+        $folderPath = "berita/{$berita->slug}";
+        $konten = $request->konten;
 
         // 3. Siapkan data yang akan diupdate
         $dataUpdate = [
@@ -135,6 +159,33 @@ class AdminBeritaController extends Controller
         // JIKA TIDAK ADA file yang diunggah, key 'thumbnail' tidak dimasukkan ke $dataUpdate,
         // sehingga thumbnail lama di database tetap aman dan tidak tertimpa/hilang.
 
+        $existingMultiImages = $berita->multi_images;
+        if (is_string($existingMultiImages)) {
+            $existingMultiImages = json_decode($existingMultiImages, true) ?? [];
+        }
+        if (!is_array($existingMultiImages)) {
+            $existingMultiImages = [];
+        }
+
+        // 5. Lakukan update ke database
+        // Upload Multi-Images Baru
+        if ($request->hasFile('multi_images')) {
+            foreach ($request->file('multi_images') as $file) {
+                $originalName = $file->getClientOriginalName();
+                $fileName = time() . '_' . Str::slug(pathinfo($originalName, PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs("{$folderPath}/gallery", $fileName, 'public');
+
+                $existingMultiImages[] = $path;
+
+                $publicUrl = asset('storage/' . $path);
+                $konten = str_replace($originalName, $publicUrl, $konten);
+            }
+        }
+
+        // Simpan sebagai array murni (dikarenakan Eloquent $casts = ['multi_images' => 'array'])
+        $dataUpdate['multi_images'] = !empty($existingMultiImages) ? array_values($existingMultiImages) : null;
+        $dataUpdate['konten'] = $konten;
+
         // 5. Lakukan update ke database
         $berita->update($dataUpdate);
 
@@ -149,9 +200,9 @@ class AdminBeritaController extends Controller
     {
         $berita = Berita::where('id_berita', $id)->firstOrFail();
 
-        // Hapus file thumbnail fisik dari storage jika ada
-        if ($berita->thumbnail && Storage::disk('public')->exists($berita->thumbnail)) {
-            Storage::disk('public')->delete($berita->thumbnail);
+        $folderPath = "berita/{$berita->slug}";
+        if (Storage::disk('public')->exists($folderPath)) {
+            Storage::disk('public')->deleteDirectory($folderPath);
         }
 
         $berita->delete();
@@ -182,5 +233,54 @@ class AdminBeritaController extends Controller
         $drafts = $query->paginate(10);
 
         return view('admin.berita.draft', compact('drafts', 'sort'));
+    }
+
+    public function deleteImage(Request $request, $id)
+    {
+        $berita = Berita::where('id_berita', $id)
+                           ->where('kategori_publikasi', 'Informasi Resmi')
+                           ->firstOrFail();
+
+        $filePath = $request->input('file_path');
+
+        $images = $berita->multi_images;
+        if (is_string($images)) {
+            $images = json_decode($images, true) ?? [];
+        }
+        if (!is_array($images)) {
+            $images = [];
+        }
+
+        $targetPath = str_replace('\\', '/', $filePath);
+        $foundKey = null;
+
+        foreach ($images as $key => $img) {
+            if (str_replace('\\', '/', $img) === $targetPath) {
+                $foundKey = $key;
+                break;
+            }
+        }
+
+        if ($foundKey !== null) {
+            unset($images[$foundKey]);
+
+            if (Storage::disk('public')->exists($filePath)) {
+                Storage::disk('public')->delete($filePath);
+            }
+
+            $remainingImages = array_values($images);
+            $berita->multi_images = !empty($remainingImages) ? $remainingImages : null;
+            $berita->save();
+
+            return response()->json([
+                'success' => true, 
+                'message' => 'Gambar berhasil dihapus dari galeri!'
+            ]);
+        }
+
+        return response()->json([
+            'success' => false, 
+            'message' => 'Gambar tidak ditemukan di basis data!'
+        ], 404);
     }
 }
