@@ -17,6 +17,31 @@ class AdminBeritaController extends Controller
             abort(403, 'Anda tidak memiliki hak akses untuk halaman ini.');
         }
     }
+
+    /**
+     * Menampilkan seluruh berita & informasi resmi yang masih berstatus 'Draft'
+     * Khusus untuk peninjauan Admin
+     */
+    public function draftIndex(Request $request)
+    {
+        $query = Berita::where('status', 'Draft');
+
+        if ($request->filled('search')) {
+            $query->where('judul_berita', 'like', '%' . $request->search . '%');
+        }
+
+        $sort = $request->input('sort', 'terbaru');
+        if ($sort === 'terlama') {
+            $query->oldest();
+        } elseif ($sort === 'az') {
+            $query->orderBy('judul_berita', 'asc');
+        } else {
+            $query->latest();
+        }
+
+        $drafts = $query->paginate(10);
+        return view('admin.berita.draft', compact('drafts', 'sort'));
+    }
     
     public function index(Request $request)
     {
@@ -170,6 +195,11 @@ class AdminBeritaController extends Controller
         $dataUpdate['konten'] = $konten;
 
         $berita->update($dataUpdate);
+
+        // Jika perubahan dilakukan dari halaman draft, kembalikan ke peninjauan draft
+        if ($request->input('from_page') === 'draft' || str_contains(url()->previous(), 'draft')) {
+            return redirect()->route('admin.berita.draft')->with('success', 'Status draft berita berhasil diperbarui!');
+        }
 
         return redirect()->route('admin.berita.index')->with('success', 'Berita berhasil diperbarui!');
     }
