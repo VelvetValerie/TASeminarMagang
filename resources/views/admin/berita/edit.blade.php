@@ -10,6 +10,8 @@
     div#previewKonten blockquote, #previewKonten blockquote { border-left: 4px solid #3b82f6 !important; padding-left: 1rem !important; font-style: italic !important; color: #4b5563 !important; margin: 1rem 0 !important; display: block !important; }
     div#previewKonten ul, #previewKonten ul { list-style-type: disc !important; padding-left: 1.5rem !important; margin: 0.75rem 0 !important; display: block !important; }
     div#previewKonten ol, #previewKonten ol { list-style-type: decimal !important; padding-left: 1.5rem !important; margin: 0.75rem 0 !important; display: block !important; }
+    div#previewKonten ol[style*="lower-alpha"], #previewKonten ol[style*="lower-alpha"] { list-style-type: lower-alpha !important; }
+    div#previewKonten ol[style*="lower-roman"], #previewKonten ol[style*="lower-roman"] { list-style-type: lower-roman !important; }
     div#previewKonten li, #previewKonten li { margin-bottom: 0.25rem !important; display: list-item !important; }
     div#previewKonten img, #previewKonten img { max-width: 100% !important; height: auto !important; border-radius: 0.5rem !important; margin: 1rem auto !important; display: block !important; }
     div#previewKonten p, #previewKonten p { margin-bottom: 0.75rem !important; font-size: 1rem !important; line-height: 1.625 !important; }
@@ -31,7 +33,10 @@
                 Lihat di Portal Publik &rarr;
             </a>
         @else
-            <span class="text-sm font-medium text-gray-400 italic">Cek Live Preview di bawah &darr;</span>
+            <button type="button" onclick="openPreviewModal()" class="text-sm font-medium text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                Buka Live Preview
+            </button>
         @endif
     </div>
 
@@ -101,10 +106,18 @@
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                             Image Galeri
                         </button>
+                        
+                        <div class="w-px h-6 bg-gray-300 mx-1 my-auto"></div>
+
+                        <!-- TOMBOL PREVIEW BARU (Porting dari Create) -->
+                        <button type="button" onclick="openPreviewModal()" class="px-2.5 py-1 bg-emerald-50 border border-emerald-300 text-emerald-700 rounded hover:bg-emerald-100 flex items-center gap-1 text-xs font-semibold" title="Live Preview">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                            Preview Tampilan
+                        </button>
                     </div>
 
-                    <textarea name="konten" id="inputKonten" rows="15" placeholder="Mulai menulis konten di sini..." 
-                        class="w-full p-4 bg-white border border-gray-300 rounded-b-md rounded-t-none border-t-0 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-gray-700 resize-y" required>{{ old('konten', $berita->konten) }}</textarea>
+                    <textarea name="konten" id="inputKonten" rows="25" placeholder="Mulai menulis konten di sini..." 
+                        class="w-full p-4 bg-white border border-gray-300 rounded-b-md rounded-t-none border-t-0 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-gray-700 resize-y min-h-[720px]" required>{{ old('konten', $berita->konten) }}</textarea>
                 </div>
 
                 <!-- MANAJEMEN GAMBAR TERLAMPIR -->
@@ -224,62 +237,68 @@
             </div>
         </div>
     </form>
+</div>
 
-    <!-- LIVE PREVIEW -->
-    <div class="border-t-2 border-dashed border-gray-300 pt-8 mt-8">
-        <div class="flex items-center gap-2 mb-6 text-gray-700">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-            <h2 class="text-xl font-bold">Live Preview (Tampilan Portal)</h2>
+@push('modals')
+<!-- MODAL LIVE PREVIEW BARU (Porting dari Create) -->
+<div id="previewModal" class="hidden fixed inset-0 z-50 bg-gray-900/75 flex justify-center items-center backdrop-blur-sm p-4 sm:p-8">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-5xl h-full max-h-[90vh] flex flex-col border border-gray-100">
+        <!-- Header Modal -->
+        <div class="flex justify-between items-center p-4 border-b border-gray-100 shrink-0">
+            <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                Live Preview Tampilan
+            </h3>
+            <button type="button" onclick="closePreviewModal()" class="text-gray-400 hover:text-gray-600 text-3xl font-bold leading-none">&times;</button>
         </div>
         
-        <article class="bg-white p-6 md:p-10 rounded-xl border border-gray-200 shadow-sm flex flex-col max-w-4xl mx-auto">
-            <h1 id="previewJudul" class="text-2xl md:text-4xl font-bold text-gray-900 leading-snug mb-4">
-                {{ old('judul_berita', $berita->judul_berita) ?: 'Judul Berita Akan Muncul Di Sini...' }}
-            </h1>
-            
-            <div class="flex items-center gap-4 text-xs md:text-sm text-gray-500 pb-6 border-b border-gray-100 mb-6">
-                <span>{{ \Carbon\Carbon::parse($berita->created_at)->translatedFormat('d F Y') }}</span>
-                <span>•</span>
-                <span>Admin / Penulis</span>
-            </div>
-
-            <!-- PREVIEW THUMBNAIL -->
-            <div id="previewThumbnailContainer" class="{{ $berita->thumbnail ? '' : 'hidden' }} mb-8 rounded-lg overflow-hidden border border-gray-200 relative aspect-video bg-gray-50 flex items-center justify-center">
-                <img id="previewThumbnailImage" src="{{ $berita->thumbnail ? asset('storage/' . $berita->thumbnail) : '' }}" alt="Preview Thumbnail" class="relative z-10 max-h-full max-w-full object-contain">
-                <p id="previewThumbnailCaption" class="absolute bottom-0 inset-x-0 z-20 text-xs text-gray-700 italic p-2 text-center bg-gray-100/90 border-t border-gray-200">
-                    <span id="captionText">{{ old('caption_thumbnail', $berita->caption_thumbnail ?? '') ?: 'Deskripsi gambar akan muncul di sini...' }}</span>
-                </p>
-            </div>
-
-            <!-- PREVIEW KONTEN BERITA -->
-            <div id="previewKonten" class="text-gray-700 leading-relaxed">
-                {!! old('konten', $berita->konten) ?: '<p class="text-gray-400 italic">Konten berita akan diperbarui secara otomatis saat Anda mengetik di editor...</p>' !!}
-            </div>
-
-            <!-- PREVIEW LAMPIRAN URL -->
-            <div id="previewLampiranContainer" class="mt-8 pt-6 border-t border-gray-100 hidden">
-                <div class="bg-blue-50/70 border border-blue-200 rounded-lg p-4 flex items-center justify-between gap-4">
-                    <div class="flex items-center gap-3">
-                        <div class="p-2 bg-blue-100 rounded-lg text-blue-600 shrink-0">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        </div>
-                        <div>
-                            <h4 class="text-sm font-bold text-gray-800">Dokumen Lampiran Berita</h4>
-                            <p class="text-xs text-gray-500">Klik tombol di samping untuk mengunduh atau melihat dokumen lampiran.</p>
-                        </div>
-                    </div>
-                    <a id="previewLampiranLink" href="#" target="_blank" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-md flex items-center gap-1.5 transition-colors shrink-0">
-                        <span>Buka Lampiran</span>
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                    </a>
+        <!-- Konten Preview -->
+        <div class="p-6 md:p-10 overflow-y-auto flex-1 bg-gray-50/30">
+            <article class="bg-white p-6 md:p-10 rounded-xl border border-gray-200 shadow-sm flex flex-col max-w-4xl mx-auto">
+                <h1 id="previewJudul" class="text-2xl md:text-4xl font-bold text-gray-900 leading-snug mb-4">
+                    {{ old('judul_berita', $berita->judul_berita) ?: 'Judul Berita Akan Muncul Di Sini...' }}
+                </h1>
+                
+                <div class="flex items-center gap-4 text-xs md:text-sm text-gray-500 pb-6 border-b border-gray-100 mb-6">
+                    <span>{{ \Carbon\Carbon::parse($berita->created_at)->translatedFormat('d F Y') }}</span>
+                    <span>•</span>
+                    <span>Admin / Penulis</span>
                 </div>
-            </div>
-        </article>
+
+                <div id="previewThumbnailContainer" class="{{ $berita->thumbnail ? '' : 'hidden' }} mb-8 rounded-lg overflow-hidden border border-gray-200 relative aspect-video bg-gray-50 flex items-center justify-center">
+                    <img id="previewThumbnailImage" src="{{ $berita->thumbnail ? asset('storage/' . $berita->thumbnail) : '' }}" alt="Preview Thumbnail" class="relative z-10 max-h-full max-w-full object-contain">
+                    <p id="previewThumbnailCaption" class="absolute bottom-0 inset-x-0 z-20 text-xs text-gray-700 italic p-2 text-center bg-gray-100/90 border-t border-gray-200">
+                        <span id="captionText">{{ old('caption_thumbnail', $berita->caption_thumbnail ?? '') ?: 'Deskripsi gambar akan muncul di sini...' }}</span>
+                    </p>
+                </div>
+
+                <div id="previewKonten" class="text-gray-700 leading-relaxed">
+                    {!! old('konten', $berita->konten) ?: '<p class="text-gray-400 italic">Konten berita akan diperbarui secara otomatis saat Anda mengetik di editor...</p>' !!}
+                </div>
+
+                <div id="previewLampiranContainer" class="mt-8 pt-6 border-t border-gray-100 hidden">
+                    <div class="bg-blue-50/70 border border-blue-200 rounded-lg p-4 flex items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 bg-blue-100 rounded-lg text-blue-600 shrink-0">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-gray-800">Dokumen Lampiran Berita</h4>
+                                <p class="text-xs text-gray-500">Klik tombol di samping untuk mengunduh atau melihat dokumen lampiran.</p>
+                            </div>
+                        </div>
+                        <a id="previewLampiranLink" href="#" target="_blank" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-md flex items-center gap-1.5 transition-colors shrink-0">
+                            <span>Buka Lampiran</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            </article>
+        </div>
     </div>
 </div>
 
 <!-- FLOAT WINDOW MODAL MULTI-IMAGE -->
-@push('modals')
 <div id="imageModal" class="hidden fixed inset-0 z-50 bg-gray-900/50 flex justify-center items-center backdrop-blur-sm">
     <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl p-6 border border-gray-100">
         <div class="flex justify-between items-center pb-3 border-b border-gray-100 mb-4">
@@ -373,8 +392,6 @@
             captionText.innerText = this.value.trim() !== '' ? this.value : 'Deskripsi gambar akan muncul di sini...';
         });
 
-        inputKonten.addEventListener('input', updateLivePreview);
-
         if (inputLampiranUrl) {
             inputLampiranUrl.addEventListener('input', updateLampiranPreview);
             updateLampiranPreview();
@@ -454,6 +471,7 @@
                         const escapeFileName = removedFileName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
                         const imgPattern = new RegExp('<div[^>]*>\\s*<img[^>]*src="[^"]*' + escapeFileName + '"[^>]*>\\s*</div>|<img[^>]*src="[^"]*' + escapeFileName + '"[^>]*>', 'gi');
                         inputKonten.value = inputKonten.value.replace(imgPattern, '');
+                        saveHistory(); // Save the removal to history
                     }
 
                     updateMultiImageUI();
@@ -474,6 +492,78 @@
             hiddenMultiImages.files = dt.files;
         }
 
+        // ---- 1. SETUP UNDO / REDO HISTORY STACK (Porting dari Create) ----
+        let historyStack = [];
+        let historyIndex = -1;
+        let isUndoRedoAction = false;
+        let typingTimer;
+
+        function saveHistory() {
+            if (isUndoRedoAction) return;
+            const state = {
+                value: inputKonten.value,
+                selectionStart: inputKonten.selectionStart,
+                selectionEnd: inputKonten.selectionEnd
+            };
+            
+            // Cegah duplikasi mutlak beruntun
+            if (historyStack.length > 0 && historyStack[historyIndex].value === state.value) return; 
+
+            // Potong history kedepan jika user melakukan perubahan setelah Undo
+            if (historyIndex < historyStack.length - 1) {
+                historyStack = historyStack.slice(0, historyIndex + 1);
+            }
+
+            historyStack.push(state);
+            historyIndex++;
+            
+            // Limitasi Memory
+            if (historyStack.length > 50) {
+                historyStack.shift();
+                historyIndex--;
+            }
+        }
+
+        function applyHistoryState(state) {
+            if (!state) return;
+            isUndoRedoAction = true;
+            inputKonten.value = state.value;
+            inputKonten.setSelectionRange(state.selectionStart, state.selectionEnd);
+            updateLivePreview(); // Sinkronkan ke Preview
+            isUndoRedoAction = false;
+        }
+
+        // Simpan titik mula (data awal saat edit dibuka)
+        saveHistory();
+
+        // Event listener Undo / Redo
+        inputKonten.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key.toLowerCase() === 'z') {
+                e.preventDefault();
+                if (historyIndex > 0) {
+                    historyIndex--;
+                    applyHistoryState(historyStack[historyIndex]);
+                }
+            } else if (e.ctrlKey && e.key.toLowerCase() === 'y') {
+                e.preventDefault();
+                if (historyIndex < historyStack.length - 1) {
+                    historyIndex++;
+                    applyHistoryState(historyStack[historyIndex]);
+                }
+            }
+        });
+
+        // Trigger Typing Delay agar history tersimpan saat ngetik normal
+        inputKonten.addEventListener('input', function() {
+            if (!isUndoRedoAction) {
+                clearTimeout(typingTimer);
+                typingTimer = setTimeout(saveHistory, 500); 
+            }
+            updateLivePreview();
+        });
+
+
+        // ---- 2. MODIFIKASI FUNGSI TEKS REPLACEMENT (SYNC HISTORY) ----
         function applyTextReplacement(replacementText, selectStart, selectEnd) {
             inputKonten.focus();
             if (typeof inputKonten.setRangeText === 'function') {
@@ -482,6 +572,7 @@
                 inputKonten.setSelectionRange(selectStart, selectEnd);
                 document.execCommand('insertText', false, replacementText);
             }
+            saveHistory(); // Simpan history setiap kali tombol toolbox digunakan
         }
 
         window.formatText = function(tagStart, tagEnd) {
@@ -590,22 +681,78 @@
             const val = select.value;
             if (!val) return;
 
-            let tagStart = '', tagEnd = '';
+            const start = inputKonten.selectionStart;
+            const end = inputKonten.selectionEnd;
+            let selectedText = inputKonten.value.substring(start, end);
+
+            let listType = 'ul';
+            let styleAttr = '';
+            
             if (val === 'ul') {
-                tagStart = '<ul>\n  <li>';
-                tagEnd = '</li>\n</ul>';
+                listType = 'ul';
+                styleAttr = ' style="list-style-type: disc;"';
             } else if (val === 'ol-1') {
-                tagStart = '<ol style="list-style-type: decimal;">\n  <li>';
-                tagEnd = '</li>\n</ol>';
+                listType = 'ol';
+                styleAttr = ' style="list-style-type: decimal;"';
             } else if (val === 'ol-a') {
-                tagStart = '<ol style="list-style-type: lower-alpha;">\n  <li>';
-                tagEnd = '</li>\n</ol>';
+                listType = 'ol';
+                styleAttr = ' style="list-style-type: lower-alpha;"';
             } else if (val === 'ol-i') {
-                tagStart = '<ol style="list-style-type: lower-roman;">\n  <li>';
-                tagEnd = '</li>\n</ol>';
+                listType = 'ol';
+                styleAttr = ' style="list-style-type: lower-roman;"';
             }
 
-            formatText(tagStart, tagEnd);
+            let newHtml = '';
+            const listRegex = /^<(ul|ol)([^>]*)>([\s\S]*)<\/\1>$/i;
+            
+            if (listRegex.test(selectedText.trim())) {
+                const match = selectedText.trim().match(listRegex);
+                const currentTag = match[1].toLowerCase();
+                const currentAttr = match[2].toLowerCase();
+                const innerContent = match[3].trim();
+                
+                let currentFormat = '';
+                if (currentTag === 'ul') {
+                    currentFormat = 'ul';
+                } else if (currentTag === 'ol') {
+                    if (currentAttr.includes('lower-alpha')) currentFormat = 'ol-a';
+                    else if (currentAttr.includes('lower-roman')) currentFormat = 'ol-i';
+                    else currentFormat = 'ol-1';
+                }
+
+                if (currentFormat === val) {
+                    newHtml = innerContent
+                        .replace(/<li[^>]*>([\s\S]*?)<\/li>/gi, '$1')
+                        .split('\n')
+                        .map(line => line.trim())
+                        .filter(line => line !== '')
+                        .join('\n');
+                } else {
+                    newHtml = `<${listType}${styleAttr}>\n  ${innerContent}\n</${listType}>`;
+                }
+            } else {
+                const lines = selectedText.split(/\r?\n/);
+                let liItems = '';
+                
+                lines.forEach(line => {
+                    const trimmedLine = line.trim();
+                    if (trimmedLine.length > 0) {
+                        if (/^<li>.*<\/li>$/i.test(trimmedLine)) {
+                            liItems += `  ${trimmedLine}\n`;
+                        } else {
+                            liItems += `  <li>${trimmedLine}</li>\n`;
+                        }
+                    }
+                });
+
+                if (liItems === '') liItems = '  <li></li>\n';
+                newHtml = `<${listType}${styleAttr}>\n${liItems}</${listType}>`;
+            }
+
+            applyTextReplacement(newHtml, start, end);
+            inputKonten.setSelectionRange(start, start + newHtml.length);
+            inputKonten.dispatchEvent(new Event('input'));
+            
             select.value = "";
         };
 
@@ -619,7 +766,7 @@
         };
 
         window.insertImageFromCard = function(srcUrl, defaultAlt) {
-            const userAlt = prompt("Masukkan Alternatif Teks (Alt Text) untuk gambar ini:", defaultAlt || '');
+            const userAlt = defaultAlt;
             if (userAlt === null) return;
             insertImageTagToContent(srcUrl, userAlt.trim() || defaultAlt);
         };
@@ -695,6 +842,17 @@
 
         window.closeImageModal = function() {
             document.getElementById('imageModal').classList.add('hidden');
+        };
+
+        // ---- 3. FUNGSI PEMBUKA/PENUTUP PREVIEW MODAL ----
+        window.openPreviewModal = function() {
+            document.getElementById('previewModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Kunci scroll layar utama
+        };
+
+        window.closePreviewModal = function() {
+            document.getElementById('previewModal').classList.add('hidden');
+            document.body.style.overflow = '';
         };
 
         let alertTimeout = null;
@@ -787,6 +945,7 @@
                             const escapeFileName = fileName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
                             const imgPattern = new RegExp('<div[^>]*>\\s*<img[^>]*src="[^"]*' + escapeFileName + '"[^>]*>\\s*</div>|<img[^>]*src="[^"]*' + escapeFileName + '"[^>]*>', 'gi');
                             inputKonten.value = inputKonten.value.replace(imgPattern, '');
+                            saveHistory(); // Save the removal to history
                         }
 
                         serverImages = serverImages.filter(img => img.path.replace(/\\/g, '/') !== normDeletePath);
