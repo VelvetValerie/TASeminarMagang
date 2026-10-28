@@ -13,6 +13,7 @@ use App\Models\Kegiatan;
 use App\Http\Controllers\Api\Public\KalenderController;
 use App\Http\Controllers\Api\Public\BeritaController;
 use App\Http\Controllers\Api\Public\InformasiController;
+use App\Http\Controllers\ProfileController;
 
 // =========================================================================
 // 1. RUTE PUBLIK (LANDING PAGE & PORTAL)
@@ -60,6 +61,9 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:admin,pimpinan,pegawai_koordinasi,pegawai_humas'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
         Route::get('/kalender', [DashboardController::class, 'kalender'])->name('kalender');
+        Route::get('/profil', [ProfileController::class, 'index'])->name('profile.index');
+        Route::put('/profil', [ProfileController::class, 'update'])->name('profile.update');
+        Route::put('/profil/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
     });
 
     // --- B. KEGIATAN & LAPORAN (Admin, Pimpinan, dan Pegawai Koordinator) ---

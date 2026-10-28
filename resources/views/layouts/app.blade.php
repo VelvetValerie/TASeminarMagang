@@ -285,6 +285,7 @@
                         @elseif(request()->routeIs('master-user*')) Manajemen Data Pengguna
                         @elseif(request()->is('informasi')) Pusat Informasi
                         @elseif(request()->routeIs('admin.berita.*')) Daftar Berita & Publikasi
+                        @elseif(request()->is('profil')) Pengaturan Profil Saya
                         @else Sistem Informasi BKN
                         @endif
                     </h2>
@@ -344,24 +345,38 @@
                     @endif
                 @endif
 
-                <!-- Inisial Avatar -->
-                <div class="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold text-xs shadow-xs uppercase shrink-0">
-                    {{ substr(Auth::user()->username ?? 'AD', 0, 2) }}
-                </div>
-                
-                <!-- Teks Akun & Label Role -->
-                <div class="hidden sm:flex flex-col justify-center leading-tight">
-                    <span class="text-xs font-bold text-slate-900">
-                        {{ Auth::user()->username ?? 'Administrator' }}
-                    </span>
-                    <span class="text-[11px] text-slate-500 font-medium">
-                        @if($userRole === 'pegawai_humas') Pegawai Humas
-                        @elseif($userRole === 'pegawai_koordinasi') Pegawai Koordinator
-                        @elseif($userRole === 'pimpinan') Pimpinan
-                        @else Admin
+                <!-- TOMBOL PROFIL PENGGUNA (POJOK KANAN ATAS) -->
+                <a href="{{ route('profile.index') }}" 
+                   class="flex items-center gap-3 p-1.5 rounded-xl hover:bg-slate-100 transition cursor-pointer group"
+                   title="Klik untuk membuka Pengaturan Profil">
+                    
+                    <!-- Foto / Inisial Avatar -->
+                    <div class="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold text-xs shadow-xs uppercase shrink-0 overflow-hidden border border-slate-700 group-hover:scale-105 transition">
+                        @if(Auth::user()->foto)
+                            <img src="{{ asset('storage/' . Auth::user()->foto) }}" 
+                                alt="Foto Profil" 
+                                class="w-full h-full object-cover"
+                                onerror="this.onerror=null; this.parentElement.innerHTML='{{ substr(Auth::user()->username ?? 'AD', 0, 2) }}';">
+                        @else
+                            {{ substr(Auth::user()->username ?? 'AD', 0, 2) }}
                         @endif
-                    </span>
-                </div>
+                    </div>
+
+                    <!-- Teks Akun & Label Role -->
+                    <div class="hidden sm:flex flex-col justify-center leading-tight text-left">
+                        <span class="text-xs font-bold text-slate-900 group-hover:text-sky-600 transition">
+                            {{ Auth::user()->name ?? Auth::user()->username ?? 'Administrator' }}
+                        </span>
+                        <span class="text-[11px] text-slate-500 font-medium">
+                            @if($userRole === 'pegawai_humas') Pegawai Humas
+                            @elseif($userRole === 'pegawai_koordinasi') Pegawai Koordinator
+                            @elseif($userRole === 'pimpinan') Pimpinan
+                            @else Admin
+                            @endif
+                        </span>
+                    </div>
+                </a>
+
             </div>
         </header>
 
@@ -396,13 +411,13 @@
     <!-- Library SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- Elemen Penampung Notifikasi (Aman dari Linter VS Code) -->
+    <!-- Elemen Penampung Notifikasi -->
     <div id="swal-flash-data"
-        data-success="{{ session('success') }}"
-        data-error="{{ session('error') }}">
+         data-success="{{ session('success') }}"
+         data-error="{{ session('error') }}">
     </div>
 
-    <!-- Script Notifikasi Clean JS -->
+    <!-- Script Notifikasi SweetAlert2 -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const flashElem = document.getElementById('swal-flash-data');
