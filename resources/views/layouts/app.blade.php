@@ -393,6 +393,44 @@
         }
     </script>
     
+    <!-- Library SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Elemen Penampung Notifikasi (Aman dari Linter VS Code) -->
+    <div id="swal-flash-data"
+        data-success="{{ session('success') }}"
+        data-error="{{ session('error') }}">
+    </div>
+
+    <!-- Script Notifikasi Clean JS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const flashElem = document.getElementById('swal-flash-data');
+            if (!flashElem) return;
+
+            const successMessage = flashElem.getAttribute('data-success');
+            const errorMessage = flashElem.getAttribute('data-error');
+
+            if (successMessage) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: successMessage,
+                    confirmButtonColor: '#000000'
+                });
+            }
+
+            if (errorMessage) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: errorMessage,
+                    confirmButtonColor: '#000000'
+                });
+            }
+        });
+    </script>
+
     <!-- Stack untuk menampung semua modal -->
     @stack('modals')
     

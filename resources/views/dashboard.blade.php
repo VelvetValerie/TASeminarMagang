@@ -2,74 +2,6 @@
 
 <title>Kantor Regional BKN - Dashboard</title>
 
-@section('sidebar-header')
-    <div class="border-2 border-black bg-white p-2.5 text-center font-bold text-gray-900">
-        Kantor Regional BKN
-    </div>
-@endsection
-
-@section('sidebar-menu')
-    <div class="space-y-4">
-        <!-- Grup 1: Menu Utama -->
-        <div class="space-y-2">
-            <a href="{{ url('/dashboard') }}" class="block border-2 border-black bg-gray-500 text-white font-semibold py-2 px-4 text-center hover:bg-gray-600 transition">
-                Menu Dasboard
-            </a>
-            <a href="{{ url('/kalender') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center hover:bg-gray-100 transition">
-                Kalender
-            </a>
-        </div>
-
-        <!-- Grup 2: Operasional -->
-        <div class="space-y-2 pt-2">
-            <a href="{{ url('/kegiatan') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center hover:bg-gray-100 transition">
-                Kegiatan
-            </a>
-            <a href="{{ url('/riwayat-kerja') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center hover:bg-gray-100 transition">
-                Rekam Kerja
-            </a>
-        </div>
-
-        <!-- Grup 3: Master Data & Dropdown -->
-        <div class="space-y-2 pt-2">
-            <a href="{{ url('/jenis-kegiatan') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center text-sm hover:bg-gray-100 transition">
-                Jenis Kegiatan
-            </a>
-            <a href="{{ url('/titik-lokasi') }}" 
-               class="block py-2 px-4 text-center text-sm font-semibold transition {{ request()->is('titik-lokasi') ? 'bg-gray-400 text-gray-900' : 'text-gray-800 hover:bg-gray-100' }}">
-                Titik Lokasi
-            </a>
-            <a href="{{ url('/instansi') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center text-sm hover:bg-gray-100 transition">
-                Instansi
-            </a>
-            <a href="{{ url('/riwayat-kegiatan') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center text-sm hover:bg-gray-100 transition">
-                Status
-            </a>
-
-            <!-- Dropdown Manajemen -->
-            <details class="group border-2 border-black bg-white">
-                <summary class="list-none py-2 px-4 font-semibold text-gray-900 flex items-center justify-between text-sm cursor-pointer hover:bg-gray-100 transition">
-                    <span>Manajemen</span>
-                    <svg class="w-4 h-4 transition-transform duration-200 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </summary>
-                <div class="border-t-2 border-black bg-white">
-                    <a href="{{ url('/master-user') }}" class="block py-2 px-4 text-center text-sm font-medium text-gray-800 border-b-2 border-black hover:bg-gray-100 transition">
-                        User
-                    </a>
-                    <a href="{{ url('/master-kegiatan') }}" class="block py-2 px-4 text-center text-sm font-medium text-gray-800 border-b-2 border-black hover:bg-gray-100 transition">
-                        Kegiatan
-                    </a>
-                    <a href="{{ url('/master-lokasi') }}" class="block py-2 px-4 text-center text-sm font-medium text-gray-800 hover:bg-gray-100 transition">
-                        Lokasi
-                    </a>
-                </div>
-            </details>
-        </div>
-    </div>
-@endsection
-
 @section('navbar-left')
     <div class="border-2 border-black bg-white px-6 py-1.5 font-bold text-gray-900">
         Dashboard User
@@ -85,7 +17,36 @@
 @section('content')
     <?php $todayDate = \Carbon\Carbon::today()->toDateString(); ?>
 
-    <!-- BANNER NOTIFIKASI KOORDINATOR HARI INI + TOMBOL SURAT TUGAS & DETAIL -->
+    <!-- TOMBOL AKSES CEPAT (QUICK ACTIONS) -->
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+        <div class="flex flex-wrap gap-2.5">
+            @if(in_array(Auth::user()->role, ['admin', 'pegawai_koordinasi']))
+                <a href="{{ url('/kegiatan') }}" class="border-2 border-black bg-amber-400 hover:bg-amber-500 font-bold px-4 py-2 text-xs uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition inline-flex items-center gap-1.5">
+                    ➕ Kelola Kegiatan
+                </a>
+            @endif
+
+            @if(in_array(Auth::user()->role, ['admin', 'pimpinan', 'pegawai_koordinasi']))
+                <a href="{{ url('/laporan-kegiatan') }}" class="border-2 border-black bg-blue-500 hover:bg-blue-600 font-bold px-4 py-2 text-xs uppercase tracking-wider text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition inline-flex items-center gap-1.5">
+                    📊 Laporan & Cetak PDF
+                </a>
+            @endif
+
+            @if(in_array(Auth::user()->role, ['admin', 'pegawai_humas']))
+                <a href="{{ url('/admin/berita') }}" class="border-2 border-black bg-emerald-500 hover:bg-emerald-600 font-bold px-4 py-2 text-xs uppercase tracking-wider text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition inline-flex items-center gap-1.5">
+                    📰 Kelola Publikasi
+                </a>
+            @endif
+        </div>
+
+        @if(isset($laporanPendingCount) && $laporanPendingCount > 0)
+            <a href="{{ url('/laporan-kegiatan') }}" class="border-2 border-black bg-rose-100 border-rose-600 text-rose-900 font-bold px-3 py-1.5 text-xs rounded transition flex items-center gap-2 animate-bounce">
+                <span>⚠️ Ada <strong>{{ $laporanPendingCount }}</strong> kegiatan selesai yang belum diisi laporannya!</span>
+            </a>
+        @endif
+    </div>
+
+    <!-- BANNER NOTIFIKASI KOORDINATOR HARI INI -->
     <?php if (isset($notifTugas) && count($notifTugas) > 0): ?>
         <div class="mb-6 border-2 border-black bg-amber-100 p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <div class="flex items-center justify-between pb-2 border-b-2 border-black mb-3">
@@ -132,7 +93,6 @@
                             </p>
                         </div>
                         
-                        <!-- GRUP TOMBOL AKSI: LAMPIRAN & DETAIL -->
                         <div class="flex items-center gap-2 self-end sm:self-center shrink-0">
                             <?php if ($kegNotif->lampiran && $kegNotif->lampiran !== '-'): ?>
                                 <a href="<?php echo $kegNotif->lampiran; ?>" 
@@ -182,9 +142,6 @@
             </div>
             <div class="mt-4 pt-3 border-t border-gray-200 flex items-center justify-between text-xs text-gray-600">
                 <span class="flex items-center text-emerald-700 font-semibold">
-                    <svg class="w-4 h-4 mr-1 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-                    </svg>
                     Instansi Aktif
                 </span>
                 <span class="font-medium text-gray-500">Regional BKN</span>
@@ -195,7 +152,9 @@
         <div class="relative overflow-hidden bg-white border-2 border-black rounded-xl p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 transition duration-200">
             <div class="flex items-center justify-between">
                 <div class="space-y-1">
-                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Jumlah Peserta</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500">
+                        {{ Auth::user()->role === 'pegawai_koordinasi' ? 'Peserta Saya' : 'Total Peserta' }}
+                    </span>
                     <div class="flex items-baseline space-x-2">
                         <span class="text-3xl font-extrabold text-gray-900 tracking-tight">
                             {{ number_format($stats['peserta'] ?? 0) }}
@@ -219,7 +178,9 @@
         <div class="relative overflow-hidden bg-white border-2 border-black rounded-xl p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 transition duration-200">
             <div class="flex items-center justify-between">
                 <div class="space-y-1">
-                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Jumlah Kegiatan</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500">
+                        {{ Auth::user()->role === 'pegawai_koordinasi' ? 'Kegiatan Saya' : 'Total Kegiatan' }}
+                    </span>
                     <div class="flex items-baseline space-x-2">
                         <span class="text-3xl font-extrabold text-gray-900 tracking-tight">
                             {{ $stats['kegiatan'] ?? 0 }}
@@ -503,15 +464,6 @@
                 } catch(e) {
                     console.error("Gagal parse JSON dari data-payload:", e);
                 }
-            }
-        }
-
-        function openDetailModal(encodedJson) {
-            try {
-                const item = JSON.parse(decodeURIComponent(encodedJson));
-                renderAndShowModal(item);
-            } catch(e) {
-                console.error("Gagal memuat detail kegiatan:", e);
             }
         }
 
