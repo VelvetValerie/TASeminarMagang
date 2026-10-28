@@ -123,6 +123,7 @@
     @endpush
 
     <!-- LOGIKA JAVASCRIPT: MODAL, SEARCH, & SORTING -->
+    @push('scripts')
     <script>
         const searchInput = document.getElementById('searchInput');
         const sortDropdownBtn = document.getElementById('sortDropdownBtn');
@@ -211,4 +212,5 @@
             if (e.target === infoModal) closeModal();
         });
     </script>
+    @endpush
 @endsection

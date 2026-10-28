@@ -381,6 +381,7 @@
     </div>
 
     <!-- POPUP MODAL: DETAIL KEGIATAN -->
+    @push('modals')
     <div id="eventDetailModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
         <div class="relative w-full max-w-xl bg-white border-2 border-black p-5 shadow-2xl">
             <button type="button" onclick="closeDetailModal()" class="absolute top-2 right-2 p-1 text-red-600 hover:text-red-800 transition cursor-pointer" title="Tutup">
@@ -406,8 +407,10 @@
             </div>
         </div>
     </div>
+    @endpush
 
     <!-- SCRIPT DASHBOARD -->
+    @push('scripts')
     <script>
         document.getElementById('searchInput').addEventListener('input', function() {
             const val = this.value.toLowerCase().trim();
@@ -494,4 +497,5 @@
             if (e.target === detailModal) closeDetailModal();
         });
     </script>
+    @endpush
 @endsection
