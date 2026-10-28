@@ -246,7 +246,7 @@
 
     <!-- POPUP MODAL 1: RINGKASAN RIWAYAT KERJA -->
     @push('modals')
-    <div id="modal1" class="hidden fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
+    <div id="modal1" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
         <div class="relative w-full max-w-xl bg-white border-2 border-black p-5 shadow-2xl">
             
             <!-- Close Silang Merah -->
@@ -462,6 +462,8 @@
 
         // Buka Modal 2 (Lihat Semua Kegiatan Karyawan)
         function openModal2(btn) {
+            modal1.classList.add('hidden');
+
             document.getElementById('modal2Title').innerText = `Daftar Riwayat Kerja ${currentKaryawanName}`;
             
             const listFullContainer = document.getElementById('modal2ListFull');
@@ -505,10 +507,13 @@
                 activeLihatSemuaBtn.classList.add('bg-gray-400', 'text-gray-900');
                 activeLihatSemuaBtn = null;
             }
+            modal1.classList.remove('hidden');
         }
 
         // Buka Modal 3 (Rincian Detail Kegiatan)
         function openModal3(encodedJson) {
+            modal2.classList.add('hidden');
+
             const item = JSON.parse(decodeURIComponent(encodedJson));
             document.getElementById('dtJudulModal').innerText = `Detail ${item.nama}`;
             document.getElementById('dtNamaKeg').innerText = item.nama;
@@ -528,6 +533,8 @@
 
         function closeModal3() {
             modal3.classList.add('hidden');
+
+            modal2.classList.remove('hidden');
         }
 
         // Klik di luar modal untuk menutup
