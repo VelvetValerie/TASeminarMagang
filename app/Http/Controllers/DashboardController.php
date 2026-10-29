@@ -8,17 +8,14 @@ use App\Models\Kegiatan;
 use App\Models\Instansi;
 use App\Models\LaporanKegiatan;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    /**
-     * Memperbarui status kegiatan yang telah melewati tanggal selesai secara otomatis.
-     */
     private function autoUpdateStatusSelesai()
     {
         $today = Carbon::today()->toDateString();
 
-        // Hanya jalankan update jika ada kegiatan yang memang belum berstatus Selesai/Dibatalkan
         Kegiatan::whereNotIn('status', ['Selesai', 'Dibatalkan'])
             ->where(function ($query) use ($today) {
                 $query->whereRaw("IFNULL(tanggal_selesai, tanggal_mulai) < ?", [$today]);
@@ -39,7 +36,6 @@ class DashboardController extends Controller
         if ($user) {
             $username = strtolower(trim($user->username ?? ''));
             
-            // Pengingat kegiatan berjalan hari ini khusus koordinator
             $notifTugas = Kegiatan::with(['jenis', 'lokasi', 'instansi', 'koordinator'])
                 ->whereNotIn('status', ['Selesai', 'Dibatalkan'])
                 ->whereDate('tanggal_mulai', '<=', $today)
@@ -58,7 +54,6 @@ class DashboardController extends Controller
                     return false;
                 })->values();
 
-            // Hitung jumlah laporan yang belum diisi jika user adalah pegawai koordinasi
             if ($user->role === 'pegawai_koordinasi' && !empty($user->id_karyawan)) {
                 $kegiatanSelesaiIds = Kegiatan::where('id_karyawan_koor', $user->id_karyawan)
                     ->where('status', 'Selesai')
@@ -107,15 +102,36 @@ class DashboardController extends Controller
                 'peserta'  => Kegiatan::where('id_karyawan_koor', $user->id_karyawan)->sum('jmlh_peserta'),
                 'kegiatan' => Kegiatan::where('id_karyawan_koor', $user->id_karyawan)->count(),
             ];
+            
+            // Data Chart untuk Pegawai Koordinasi
+            $chartStatus = Kegiatan::where('id_karyawan_koor', $user->id_karyawan)
+                ->select('status', DB::raw('count(*) as total'))
+                ->groupBy('status')
+                ->pluck('total', 'status')
+                ->toArray();
         } else {
             $stats = [
                 'instansi' => Instansi::count(),
                 'peserta'  => Kegiatan::sum('jmlh_peserta'),
                 'kegiatan' => Kegiatan::count(),
             ];
+
+            // Data Chart Keseluruhan
+            $chartStatus = Kegiatan::select('status', DB::raw('count(*) as total'))
+                ->groupBy('status')
+                ->pluck('total', 'status')
+                ->toArray();
         }
 
-        return view('dashboard', compact('kegiatan', 'jadwalTerdekat', 'stats', 'notifTugas', 'laporanPendingCount'));
+        // Data Chart Kategori / Jenis Kegiatan Top 5
+        $chartJenis = Kegiatan::join('jenis_keg', 'kegiatan.id_jeniskeg', '=', 'jenis_keg.id_jeniskeg')
+            ->select('jenis_keg.nama_jeniskeg', DB::raw('count(*) as total'))
+            ->groupBy('jenis_keg.nama_jeniskeg')
+            ->orderBy('total', 'desc')
+            ->take(5)
+            ->get();
+
+        return view('dashboard', compact('kegiatan', 'jadwalTerdekat', 'stats', 'notifTugas', 'laporanPendingCount', 'chartStatus', 'chartJenis'));
     }
 
     public function kalender() 

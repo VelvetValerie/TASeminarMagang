@@ -202,6 +202,37 @@
 
     </div>
 
+    <!-- 1.5 PANEL GRAFIK STATISTIK (CHARTS NEO-BRUTALISM) -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6">
+        
+        <!-- Chart 1: Status Kegiatan (Doughnut Chart) -->
+        <div class="border-2 border-black bg-white p-3 md:p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <h3 class="text-xs font-extrabold text-gray-900 uppercase tracking-wider pb-1.5 border-b-2 border-black mb-2 flex items-center justify-between">
+                <span>📈 Status Kegiatan</span>
+                <span class="text-[9px] bg-amber-200 px-1.5 py-0.5 border border-black font-bold">Realtime</span>
+            </h3>
+            <!-- Ukuran diperkecil dari h-56 menjadi h-40 -->
+            <div class="relative h-40 flex items-center justify-center">
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Chart 2: Kategori Kegiatan (Horizontal Bar Chart) -->
+        <div class="lg:col-span-2 border-2 border-black bg-white p-3 md:p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <h3 class="text-xs font-extrabold text-gray-900 uppercase tracking-wider pb-1.5 border-b-2 border-black mb-2 flex items-center justify-between">
+                <span>📊 Top 5 Jenis Kegiatan Terbanyak</span>
+                <span class="text-[9px] bg-sky-200 px-1.5 py-0.5 border border-black font-bold">Agenda 2026</span>
+            </h3>
+            <!-- Ukuran diperkecil dari h-56 menjadi h-40 -->
+            <div class="relative h-40">
+                <canvas id="jenisChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+    </div>
+
     <!-- 2. AREA UTAMA KONTEN -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         
@@ -409,9 +440,85 @@
     </div>
     @endpush
 
-    <!-- SCRIPT DASHBOARD -->
+    <!-- SCRIPT CHART.JS & DASHBOARD LOGIC -->
     @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        // INIT CHART STATUS (DOUGHNUT - RINGKAS)
+        const rawStatusData = @json($chartStatus ?? []);
+        const statusLabels = Object.keys(rawStatusData);
+        const statusValues = Object.values(rawStatusData);
+
+        const ctxStatus = document.getElementById('statusChart').getContext('2d');
+        new Chart(ctxStatus, {
+            type: 'doughnut',
+            data: {
+                labels: statusLabels.length ? statusLabels : ['Belum Ada Data'],
+                datasets: [{
+                    data: statusValues.length ? statusValues : [1],
+                    backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#3b82f6'],
+                    borderColor: '#000000',
+                    borderWidth: 2,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '65%', // Membuat lubang tengah doughnut lebih tipis & rapi
+                plugins: {
+                    legend: {
+                        position: 'right', // Legend dipindah ke kanan agar muat di area h-40
+                        labels: {
+                            font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 10 },
+                            color: '#000000',
+                            boxWidth: 10,
+                            padding: 8
+                        }
+                    }
+                }
+            }
+        });
+
+        // INIT CHART JENIS KEGIATAN (BAR - RINGKAS)
+        const rawJenisData = @json($chartJenis ?? []);
+        const jenisLabels = rawJenisData.map(item => item.nama_jeniskeg);
+        const jenisValues = rawJenisData.map(item => item.total);
+
+        const ctxJenis = document.getElementById('jenisChart').getContext('2d');
+        new Chart(ctxJenis, {
+            type: 'bar',
+            data: {
+                labels: jenisLabels,
+                datasets: [{
+                    label: 'Jumlah Agenda',
+                    data: jenisValues,
+                    backgroundColor: '#38bdf8',
+                    borderColor: '#000000',
+                    borderWidth: 2,
+                    barThickness: 12, // Memperkecil ketebalan batang grafik
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        ticks: { font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 9 }, color: '#000000' },
+                        grid: { color: '#e2e8f0' }
+                    },
+                    y: {
+                        ticks: { font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 9 }, color: '#000000' },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // SEARCH & SORTING LOGIC
         document.getElementById('searchInput').addEventListener('input', function() {
             const val = this.value.toLowerCase().trim();
             document.querySelectorAll('.kegiatan-dash-item').forEach(item => {
