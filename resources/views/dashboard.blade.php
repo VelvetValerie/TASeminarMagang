@@ -200,36 +200,83 @@
 
     </div>
 
-    <!-- 1.5 PANEL GRAFIK STATISTIK (COMPACT & EXTRA MARGIN BOTTOM) -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-8">
+    <!-- 1.5 PANEL GRAFIK STATISTIK (CAROUSEL SLIDER NEO-BRUTALISM) -->
+    <div class="border-2 border-black bg-white p-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] mb-8 relative">
         
-        <!-- Chart 1: Status Kegiatan (Doughnut Chart - Small) -->
-        <div class="border-2 border-black bg-white p-3.5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-            <h3 class="text-xs font-extrabold text-gray-900 uppercase tracking-wider pb-1.5 border-b-2 border-black mb-2 flex items-center justify-between">
-                <span>📈 Status Kegiatan</span>
-                <span class="text-[9px] bg-amber-200 px-1.5 py-0.5 border border-black font-bold">Bulan {{ \Carbon\Carbon::now()->format('F Y') }}</span>
-            </h3>
-            <!-- Tinggi diset h-32 agar sangat padat dan tidak tinggi -->
-            <div class="relative h-32 flex items-center justify-center">
-                <canvas id="statusChart"></canvas>
+        <!-- Header & Navigasi Slider -->
+        <div class="flex items-center justify-between pb-2.5 border-b-2 border-black mb-3">
+            <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 bg-amber-400 border border-black inline-block"></span>
+                <h3 class="text-xs font-extrabold text-gray-900 uppercase tracking-wider">
+                    📊 Visualisasi Analytics & Rekapitulasi Data
+                </h3>
+            </div>
+            <div class="flex items-center gap-2">
+                <span id="slideIndicator" class="text-[10px] font-bold text-gray-900 bg-amber-200 border border-black px-2 py-0.5">
+                    Slide 1 / 2
+                </span>
+                <button type="button" onclick="prevSlide()" class="border border-black bg-white hover:bg-gray-100 px-2 py-0.5 text-[11px] font-bold cursor-pointer transition select-none">
+                    &larr; Prev
+                </button>
+                <button type="button" onclick="nextSlide()" class="border border-black bg-white hover:bg-gray-100 px-2 py-0.5 text-[11px] font-bold cursor-pointer transition select-none">
+                    Next &rarr;
+                </button>
             </div>
         </div>
 
-        <!-- Chart 2: Kategori Kegiatan (Horizontal Bar Chart - Small) -->
-        <div class="lg:col-span-2 border-2 border-black bg-white p-3.5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-            <h3 class="text-xs font-extrabold text-gray-900 uppercase tracking-wider pb-1.5 border-b-2 border-black mb-2 flex items-center justify-between">
-                <span>📊 Jenis Kegiatan Terbanyak</span>
-                <span class="text-[9px] bg-sky-200 px-1.5 py-0.5 border border-black font-bold">Agenda 2026</span>
-            </h3>
-            <!-- Tinggi diset h-32 agar sejajar dengan chart doughnut -->
-            <div class="relative h-32">
-                <canvas id="jenisChart"></canvas>
-            </div>
-        </div>
+        <!-- CONTAINER CAROUSEL -->
+        <div class="relative overflow-hidden">
+            
+            <!-- SLIDE 1: Status (Bulan Ini) & Top Jenis Kegiatan -->
+            <div id="slide1" class="grid grid-cols-1 lg:grid-cols-3 gap-5 transition-all duration-300">
+                <div class="border-2 border-black p-3 bg-white">
+                    <h4 class="text-[11px] font-extrabold text-gray-900 uppercase pb-1 border-b border-gray-300 mb-2 flex justify-between">
+                        <span>📈 Status </span>
+                        <span class="text-[9px] bg-amber-200 px-1 border border-black font-bold"> <?php echo \Carbon\Carbon::now()->translatedFormat('F Y'); ?></span>
+                    </h4>
+                    <div class="relative h-36 flex items-center justify-center">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
 
+                <div class="lg:col-span-2 border-2 border-black p-3 bg-white">
+                    <h4 class="text-[11px] font-extrabold text-gray-900 uppercase pb-1 border-b border-gray-300 mb-2 flex justify-between">
+                        <span>📊 Jenis Kegiatan Terbanyak</span>
+                        <span class="text-[9px] bg-sky-200 px-1 border border-black font-bold">Agenda 2026</span>
+                    </h4>
+                    <div class="relative h-36">
+                        <canvas id="jenisChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 2: Top Instansi & Top Peserta Kegiatan -->
+            <div id="slide2" class="hidden grid-cols-1 lg:grid-cols-2 gap-5 transition-all duration-300">
+                <div class="border-2 border-black p-3 bg-white">
+                    <h4 class="text-[11px] font-extrabold text-gray-900 uppercase pb-1 border-b border-gray-300 mb-2 flex justify-between">
+                        <span>🏢 Instansi Teraktif</span>
+                        <span class="text-[9px] bg-emerald-200 px-1 border border-black font-bold">Mitra BKN</span>
+                    </h4>
+                    <div class="relative h-36">
+                        <canvas id="instansiChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="border-2 border-black p-3 bg-white">
+                    <h4 class="text-[11px] font-extrabold text-gray-900 uppercase pb-1 border-b border-gray-300 mb-2 flex justify-between">
+                        <span>👥 Kegiatan (Jumlah Peserta)</span>
+                        <span class="text-[9px] bg-purple-200 px-1 border border-black font-bold">Terbanyak</span>
+                    </h4>
+                    <div class="relative h-36">
+                        <canvas id="pesertaChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
 
-    <!-- 2. AREA UTAMA KONTEN (DENGAN PEMISAH MB-8 DI ATASNYA) -->
+    <!-- 2. AREA UTAMA KONTEN -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         
         <!-- KOTAK TENGAH: PELAKSANAAN BERJALAN -->
@@ -436,23 +483,28 @@
     </div>
     @endpush
 
-    <!-- SCRIPT CHART.JS & DASHBOARD LOGIC (SKALA SUPER RINGKAS) -->
+    <!-- SCRIPT CHART.JS + DATALABELS PLUGIN + CAROUSEL LOGIC -->
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Plugin untuk Menampilkan Nilai Angka Langsung di Atas Grafik -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
     <script>
-        // INIT CHART STATUS (DOUGHNUT - VERY COMPACT)
+        // Inisialisasi Plugin DataLabels
+        Chart.register(ChartDataLabels);
+
+        // 1. CHART STATUS KEGIATAN (DOUGHNUT - HANYA BULAN INI)
         const rawStatusData = @json($chartStatus ?? []);
         const statusLabels = Object.keys(rawStatusData);
         const statusValues = Object.values(rawStatusData);
 
-        const ctxStatus = document.getElementById('statusChart').getContext('2d');
-        new Chart(ctxStatus, {
+        new Chart(document.getElementById('statusChart'), {
             type: 'doughnut',
             data: {
-                labels: statusLabels.length ? statusLabels : ['Belum Ada Data'],
+                labels: statusLabels.length ? statusLabels : ['Belum Ada Agenda'],
                 datasets: [{
                     data: statusValues.length ? statusValues : [1],
-                    backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#3b82f6'],
+                    backgroundColor: statusValues.length ? ['#10b981', '#f59e0b', '#ef4444', '#3b82f6'] : ['#e2e8f0'],
                     borderColor: '#000000',
                     borderWidth: 2,
                 }]
@@ -460,38 +512,34 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                cutout: '72%', // Lubang tengah dibuat lebih tipis & manis
+                cutout: '65%',
                 plugins: {
                     legend: {
                         position: 'right',
-                        labels: {
-                            font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 9 },
-                            color: '#000000',
-                            boxWidth: 8,
-                            padding: 6
-                        }
+                        labels: { font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 9 }, color: '#000000', boxWidth: 8, padding: 6 }
+                    },
+                    datalabels: {
+                        color: '#000000',
+                        font: { weight: 'bold', size: 10 },
+                        formatter: (value) => value > 0 ? value : ''
                     }
                 }
             }
         });
 
-        // INIT CHART JENIS KEGIATAN (HORIZONTAL BAR - VERY COMPACT)
+        // 2. CHART TOP 5 JENIS KEGIATAN (HORIZONTAL BAR)
         const rawJenisData = @json($chartJenis ?? []);
-        const jenisLabels = rawJenisData.map(item => item.nama_jeniskeg);
-        const jenisValues = rawJenisData.map(item => item.total);
-
-        const ctxJenis = document.getElementById('jenisChart').getContext('2d');
-        new Chart(ctxJenis, {
+        new Chart(document.getElementById('jenisChart'), {
             type: 'bar',
             data: {
-                labels: jenisLabels,
+                labels: rawJenisData.map(item => item.nama_jeniskeg),
                 datasets: [{
                     label: 'Jumlah Agenda',
-                    data: jenisValues,
+                    data: rawJenisData.map(item => item.total),
                     backgroundColor: '#38bdf8',
                     borderColor: '#000000',
                     borderWidth: 2,
-                    barThickness: 8, // Ketebalan bar diperkecil menjadi 8px
+                    barThickness: 10,
                 }]
             },
             options: {
@@ -499,20 +547,117 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { display: false }
+                    legend: { display: false },
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'end',
+                        color: '#000000',
+                        font: { weight: 'bold', size: 9 },
+                        formatter: (value) => value
+                    }
                 },
                 scales: {
-                    x: {
-                        ticks: { font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 8 }, color: '#000000' },
-                        grid: { color: '#f1f5f9' }
-                    },
-                    y: {
-                        ticks: { font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 8 }, color: '#000000' },
-                        grid: { display: false }
-                    }
+                    x: { ticks: { font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 8 }, color: '#000000' }, grid: { color: '#f1f5f9' } },
+                    y: { ticks: { font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 8 }, color: '#000000' }, grid: { display: false } }
                 }
             }
         });
+
+        // 3. CHART TOP 5 INSTANSI TERAKTIF (HORIZONTAL BAR)
+        const rawInstansiData = @json($chartInstansi ?? []);
+        new Chart(document.getElementById('instansiChart'), {
+            type: 'bar',
+            data: {
+                labels: rawInstansiData.map(item => item.nm_instansi),
+                datasets: [{
+                    label: 'Jumlah Kegiatan',
+                    data: rawInstansiData.map(item => item.total),
+                    backgroundColor: '#34d399',
+                    borderColor: '#000000',
+                    borderWidth: 2,
+                    barThickness: 10,
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'end',
+                        color: '#000000',
+                        font: { weight: 'bold', size: 9 },
+                        formatter: (value) => value + ' keg'
+                    }
+                },
+                scales: {
+                    x: { ticks: { font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 8 }, color: '#000000' }, grid: { color: '#f1f5f9' } },
+                    y: { ticks: { font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 8 }, color: '#000000' }, grid: { display: false } }
+                }
+            }
+        });
+
+        // 4. CHART TOP 5 KEGIATAN JUMLAH PESERTA TERBANYAK (VERTICAL BAR)
+        const rawPesertaData = @json($chartPesertaKeg ?? []);
+        new Chart(document.getElementById('pesertaChart'), {
+            type: 'bar',
+            data: {
+                labels: rawPesertaData.map(item => item.nama_keg.length > 18 ? item.nama_keg.substring(0, 18) + '...' : item.nama_keg),
+                datasets: [{
+                    label: 'Jumlah Peserta',
+                    data: rawPesertaData.map(item => item.jmlh_peserta),
+                    backgroundColor: '#c084fc',
+                    borderColor: '#000000',
+                    borderWidth: 2,
+                    barThickness: 12,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'top',
+                        color: '#000000',
+                        font: { weight: 'bold', size: 9 },
+                        formatter: (value) => value.toLocaleString() + ' org'
+                    }
+                },
+                scales: {
+                    x: { ticks: { font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 8 }, color: '#000000' }, grid: { display: false } },
+                    y: { ticks: { font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 8 }, color: '#000000' }, grid: { color: '#f1f5f9' } }
+                }
+            }
+        });
+
+        // LOGIKA SWITCHING CAROUSEL SLIDER
+        let currentSlide = 1;
+        const totalSlides = 2;
+
+        function showSlide(slideNum) {
+            document.getElementById('slide1').classList.add('hidden');
+            document.getElementById('slide1').classList.remove('grid');
+            document.getElementById('slide2').classList.add('hidden');
+            document.getElementById('slide2').classList.remove('grid');
+
+            document.getElementById(`slide${slideNum}`).classList.remove('hidden');
+            document.getElementById(`slide${slideNum}`).classList.add('grid');
+            document.getElementById('slideIndicator').innerText = `Slide ${slideNum} / ${totalSlides}`;
+        }
+
+        function nextSlide() {
+            currentSlide = currentSlide >= totalSlides ? 1 : currentSlide + 1;
+            showSlide(currentSlide);
+        }
+
+        function prevSlide() {
+            currentSlide = currentSlide <= 1 ? totalSlides : currentSlide - 1;
+            showSlide(currentSlide);
+        }
 
         // SEARCH & SORTING LOGIC
         document.getElementById('searchInput').addEventListener('input', function() {

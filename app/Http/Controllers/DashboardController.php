@@ -111,7 +111,7 @@ class DashboardController extends Controller
             ];
         }
 
-        // FILTER GRAFIK STATUS KEGIATAN: HANYA BULAN DAN TAHUN INI
+        // 1. FILTER GRAFIK STATUS KEGIATAN: HANYA BULAN DAN TAHUN INI
         $currentMonth = Carbon::now()->month;
         $currentYear  = Carbon::now()->year;
 
@@ -132,7 +132,7 @@ class DashboardController extends Controller
                 ->toArray();
         }
 
-        // Data Chart Kategori / Jenis Kegiatan Top 5
+        // 2. Data Chart Kategori / Jenis Kegiatan Top 5
         $chartJenis = Kegiatan::join('jenis_keg', 'kegiatan.id_jeniskeg', '=', 'jenis_keg.id_jeniskeg')
             ->select('jenis_keg.nama_jeniskeg', DB::raw('count(*) as total'))
             ->groupBy('jenis_keg.nama_jeniskeg')
@@ -140,7 +140,25 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        return view('dashboard', compact('kegiatan', 'jadwalTerdekat', 'stats', 'notifTugas', 'laporanPendingCount', 'chartStatus', 'chartJenis'));
+        // 3. Data Chart Top 5 Instansi Teraktif (Banyak Kegiatan)
+        $chartInstansi = Kegiatan::join('instansi', 'kegiatan.id_instansi', '=', 'instansi.id_instansi')
+            ->select('instansi.nm_instansi', DB::raw('count(*) as total'))
+            ->groupBy('instansi.nm_instansi')
+            ->orderBy('total', 'desc')
+            ->take(5)
+            ->get();
+
+        // 4. Data Chart Top 5 Kegiatan Terbesar (Jumlah Peserta)
+        $chartPesertaKeg = Kegiatan::select('nama_keg', 'jmlh_peserta')
+            ->orderBy('jmlh_peserta', 'desc')
+            ->take(5)
+            ->get();
+
+        return view('dashboard', compact(
+            'kegiatan', 'jadwalTerdekat', 'stats', 'notifTugas', 
+            'laporanPendingCount', 'chartStatus', 'chartJenis', 
+            'chartInstansi', 'chartPesertaKeg'
+        ));
     }
 
     public function kalender() 
