@@ -69,32 +69,4 @@ class ProfileController extends Controller
 
         return back()->with('success', 'Profil berhasil diperbarui!');
     }
-
-    /**
-     * Proses Pembaruan Kata Sandi / Password
-     */
-    public function updatePassword(Request $request)
-    {
-        $request->validate([
-            'current_password' => 'required',
-            'password'         => 'required|min:6|confirmed',
-        ], [
-            'current_password.required' => 'Password saat ini wajib diisi.',
-            'password.required'         => 'Password baru wajib diisi.',
-            'password.confirmed'        => 'Konfirmasi password baru tidak cocok.',
-            'password.min'              => 'Password minimal 6 karakter.',
-        ]);
-
-        /** @var User $user */
-        $user = Auth::user();
-
-        if (!Hash::check($request->current_password, $user->password)) {
-            return back()->withErrors(['current_password' => 'Password saat ini tidak sesuai.']);
-        }
-
-        $user->password = Hash::make($request->password);
-        $user->save();
-
-        return back()->with('success', 'Password berhasil diperbarui!');
-    }
 }
