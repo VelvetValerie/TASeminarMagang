@@ -6,25 +6,19 @@
     <title>{{ $berita->judul_berita }} | Portal Informasi CAT BKN VIII</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Styling Render Tag HTML di Dalam Konten Berita */
-        .konten-berita h2 { font-size: 1.75rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.5rem; color: #111827; line-height: 1.3; }
-        .konten-berita h3 { font-size: 1.5rem; font-weight: 700; margin-top: 1.25rem; margin-bottom: 0.5rem; color: #1f2937; line-height: 1.35; }
-        .konten-berita h4 { font-size: 1.25rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; color: #374151; line-height: 1.4; }
-        .konten-berita h5 { font-size: 1.125rem; font-weight: 600; margin-top: 0.75rem; margin-bottom: 0.25rem; color: #4b5563; }
-        .konten-berita h6 { font-size: 1rem; font-weight: 600; margin-top: 0.75rem; margin-bottom: 0.25rem; color: #6b7280; }
-        .konten-berita blockquote { border-left: 4px solid #3b82f6; padding-left: 1rem; font-style: italic; color: #4b5563; margin: 1rem 0; }
-        .konten-berita ul { list-style-type: disc; padding-left: 1.5rem; margin: 0.75rem 0; }
-        .konten-berita ol { list-style-type: decimal; padding-left: 1.5rem; margin: 0.75rem 0; }
-        .konten-berita li { margin-bottom: 0.25rem; }
-
-        /* Styling Gambar Responsif Dalam Artikel */
-        .konten-berita img {
-            max-width: 100% !important;
-            height: auto !important;
-            border-radius: 0.5rem;
-            margin: 1rem auto;
-            display: block !important;
-        }
+        div#previewKonten h2, #previewKonten h2 { font-size: 1.75rem !important; font-weight: 700 !important; margin-top: 1.35rem !important; margin-bottom: 0.5rem !important; color: #1f2937 !important; line-height: 1.3 !important; display: block !important; }
+        div#previewKonten h3, #previewKonten h3 { font-size: 1.375rem !important; font-weight: 700 !important; margin-top: 1.15rem !important; margin-bottom: 0.5rem !important; color: #374151 !important; line-height: 1.35 !important; display: block !important; }
+        div#previewKonten h4, #previewKonten h4 { font-size: 1.125rem !important; font-weight: 600 !important; margin-top: 1rem !important; margin-bottom: 0.5rem !important; color: #4b5563 !important; line-height: 1.4 !important; display: block !important; }
+        div#previewKonten h5, #previewKonten h5 { font-size: 1rem !important; font-weight: 600 !important; margin-top: 0.75rem !important; margin-bottom: 0.25rem !important; color: #4b5563 !important; display: block !important; }
+        div#previewKonten h6, #previewKonten h6 { font-size: 0.875rem !important; font-weight: 600 !important; margin-top: 0.75rem !important; margin-bottom: 0.25rem !important; color: #6b7280 !important; display: block !important; }
+        div#previewKonten blockquote, #previewKonten blockquote { border-left: 4px solid #3b82f6 !important; padding-left: 1rem !important; font-style: italic !important; color: #4b5563 !important; margin: 1rem 0 !important; display: block !important; }
+        div#previewKonten ul, #previewKonten ul { list-style-type: disc !important; padding-left: 1.5rem !important; margin: 0.75rem 0 !important; display: block !important; }
+        div#previewKonten ol, #previewKonten ol { list-style-type: decimal !important; padding-left: 1.5rem !important; margin: 0.75rem 0 !important; display: block !important; }
+        div#previewKonten ol[style*="lower-alpha"], #previewKonten ol[style*="lower-alpha"] { list-style-type: lower-alpha !important; }
+        div#previewKonten ol[style*="lower-roman"], #previewKonten ol[style*="lower-roman"] { list-style-type: lower-roman !important; }
+        div#previewKonten li, #previewKonten li { margin-bottom: 0.25rem !important; display: list-item !important; }
+        div#previewKonten img, #previewKonten img { max-width: 100% !important; height: auto !important; border-radius: 0.5rem !important; margin: 1rem auto !important; display: block !important; }
+        div#previewKonten p, #previewKonten p { margin-bottom: 0.75rem !important; font-size: 1rem !important; line-height: 1.625 !important; }
     </style>
 </head>
 <body class="bg-[#F8F9FA] min-h-screen font-sans text-gray-900 flex flex-col pt-24">

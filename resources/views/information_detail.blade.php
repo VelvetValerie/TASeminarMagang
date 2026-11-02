@@ -7,18 +7,19 @@
     <title>{{ $informasi->judul_berita }} | Pusat Informasi CAT BKN VIII</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Styling eksplisit untuk elemen WYSIWYG / HTML Konten */
-        .konten-informasi h2 { font-size: 1.75rem !important; font-weight: 700 !important; margin-top: 1.5rem !important; margin-bottom: 0.75rem !important; color: #1f2937 !important; line-height: 1.3 !important; display: block !important; }
-        .konten-informasi h3 { font-size: 1.375rem !important; font-weight: 700 !important; margin-top: 1.25rem !important; margin-bottom: 0.5rem !important; color: #374151 !important; line-height: 1.35 !important; display: block !important; }
-        .konten-informasi h4 { font-size: 1.125rem !important; font-weight: 600 !important; margin-top: 1rem !important; margin-bottom: 0.5rem !important; color: #4b5563 !important; line-height: 1.4 !important; display: block !important; }
-        .konten-informasi h5 { font-size: 1rem !important; font-weight: 600 !important; margin-top: 0.75rem !important; margin-bottom: 0.25rem !important; color: #4b5563 !important; display: block !important; }
-        .konten-informasi h6 { font-size: 0.875rem !important; font-weight: 600 !important; margin-top: 0.75rem !important; margin-bottom: 0.25rem !important; color: #6b7280 !important; display: block !important; }
-        .konten-informasi blockquote { border-left: 4px solid #3b82f6 !important; padding-left: 1rem !important; font-style: italic !important; color: #4b5563 !important; margin: 1.25rem 0 !important; display: block !important; }
-        .konten-informasi ul { list-style-type: disc !important; padding-left: 1.5rem !important; margin: 0.75rem 0 !important; display: block !important; }
-        .konten-informasi ol { list-style-type: decimal !important; padding-left: 1.5rem !important; margin: 0.75rem 0 !important; display: block !important; }
-        .konten-informasi li { margin-bottom: 0.35rem !important; display: list-item !important; }
-        .konten-informasi img { max-width: 100% !important; height: auto !important; border-radius: 0.5rem !important; margin: 1.5rem auto !important; display: block !important; border: 1px solid #e5e7eb !important; shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important; }
-        .konten-informasi p { margin-bottom: 1rem !important; font-size: 1.05rem !important; line-height: 1.7 !important; color: #374151 !important; }
+        div#previewKonten h2, #previewKonten h2 { font-size: 1.75rem !important; font-weight: 700 !important; margin-top: 1.35rem !important; margin-bottom: 0.5rem !important; color: #1f2937 !important; line-height: 1.3 !important; display: block !important; }
+        div#previewKonten h3, #previewKonten h3 { font-size: 1.375rem !important; font-weight: 700 !important; margin-top: 1.15rem !important; margin-bottom: 0.5rem !important; color: #374151 !important; line-height: 1.35 !important; display: block !important; }
+        div#previewKonten h4, #previewKonten h4 { font-size: 1.125rem !important; font-weight: 600 !important; margin-top: 1rem !important; margin-bottom: 0.5rem !important; color: #4b5563 !important; line-height: 1.4 !important; display: block !important; }
+        div#previewKonten h5, #previewKonten h5 { font-size: 1rem !important; font-weight: 600 !important; margin-top: 0.75rem !important; margin-bottom: 0.25rem !important; color: #4b5563 !important; display: block !important; }
+        div#previewKonten h6, #previewKonten h6 { font-size: 0.875rem !important; font-weight: 600 !important; margin-top: 0.75rem !important; margin-bottom: 0.25rem !important; color: #6b7280 !important; display: block !important; }
+        div#previewKonten blockquote, #previewKonten blockquote { border-left: 4px solid #3b82f6 !important; padding-left: 1rem !important; font-style: italic !important; color: #4b5563 !important; margin: 1rem 0 !important; display: block !important; }
+        div#previewKonten ul, #previewKonten ul { list-style-type: disc !important; padding-left: 1.5rem !important; margin: 0.75rem 0 !important; display: block !important; }
+        div#previewKonten ol, #previewKonten ol { list-style-type: decimal !important; padding-left: 1.5rem !important; margin: 0.75rem 0 !important; display: block !important; }
+        div#previewKonten ol[style*="lower-alpha"], #previewKonten ol[style*="lower-alpha"] { list-style-type: lower-alpha !important; }
+        div#previewKonten ol[style*="lower-roman"], #previewKonten ol[style*="lower-roman"] { list-style-type: lower-roman !important; }
+        div#previewKonten li, #previewKonten li { margin-bottom: 0.25rem !important; display: list-item !important; }
+        div#previewKonten img, #previewKonten img { max-width: 100% !important; height: auto !important; border-radius: 0.5rem !important; margin: 1rem auto !important; display: block !important; }
+        div#previewKonten p, #previewKonten p { margin-bottom: 0.75rem !important; font-size: 1rem !important; line-height: 1.625 !important; }
     </style>
 </head>
 <body class="bg-[#F8F9FA] min-h-screen font-sans text-gray-900 flex flex-col pt-24">
