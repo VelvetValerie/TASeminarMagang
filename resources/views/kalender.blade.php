@@ -12,9 +12,9 @@
     <!-- Grup 1: Menu Utama -->
     <div class="space-y-2">
         <a href="{{ url('/dashboard') }}" class="block border-2 border-black bg-white text-gray-900 font-semibold py-2 px-4 text-center hover:bg-gray-100 transition">
-            Menu Dasboard
+            Menu Dashboard
         </a>
-        <a href="{{ url('/kalender') }}" class="block border-2 border-black bg-gray-500 text-white font-semibold py-2 px-4 text-center shadow-sm">
+        <a href="{{ url('/kalender') }}" class="block border-2 border-black bg-gray-600 text-white font-semibold py-2 px-4 text-center shadow-sm">
             Kalender
         </a>
     </div>
@@ -82,38 +82,49 @@
 @endsection
 
 @section('content')
-    <!-- DUA KOTAK ATAS: LEGENDA & KEGIATAN BERLANGSUNG -->
+    <!-- DUA KOTAK ATAS: LEGENDA & KEGIATAN MINGGU INI -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start mb-6">
         
-        <!-- LEGENDA INDIKATOR -->
+        <!-- LEGENDA INDIKATOR KEGIATAN BKN (WARNA GELAP / MUTED) -->
         <div class="border-2 border-black bg-white shadow-sm flex flex-col">
-            <h3 class="text-sm font-bold text-gray-900 text-center py-1.5 border-b-2 border-black bg-gray-50">
-                Legenda Indikator
+            <h3 class="text-xs sm:text-sm font-bold text-gray-900 text-center py-1.5 border-b-2 border-black bg-gray-100 uppercase tracking-wider">
+                Legenda Kategori Kegiatan
             </h3>
-            <div class="p-4 grid grid-cols-2 gap-x-4 gap-y-3 text-xs sm:text-sm font-medium text-gray-800">
-                <div class="flex items-center space-x-2">
-                    <span class="w-3.5 h-3.5 rounded-full bg-sky-600 border border-black inline-block shrink-0"></span>
-                    <span>Pengembangan Karir</span>
+            <div class="p-3 grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-[11px] font-semibold text-gray-800">
+                <div class="flex items-center space-x-1.5">
+                    <span class="w-3 h-3 rounded bg-slate-700 border border-black shrink-0"></span>
+                    <span class="truncate">Pengembangan Karier</span>
                 </div>
-                <div class="flex items-center space-x-2">
-                    <span class="w-3.5 h-3.5 rounded-full bg-emerald-600 border border-black inline-block shrink-0"></span>
-                    <span>Tes CAT</span>
+                <div class="flex items-center space-x-1.5">
+                    <span class="w-3 h-3 rounded bg-emerald-800 border border-black shrink-0"></span>
+                    <span class="truncate">SKD / SKB CPNS</span>
                 </div>
-                <div class="flex items-center space-x-2">
-                    <span class="w-3.5 h-3.5 rounded-full bg-gray-300 border border-black inline-block shrink-0"></span>
-                    <span>Tes CASN</span>
+                <div class="flex items-center space-x-1.5">
+                    <span class="w-3 h-3 rounded bg-amber-700 border border-black shrink-0"></span>
+                    <span class="truncate">Seleksi PPPK</span>
                 </div>
-                <div class="flex items-center space-x-2">
-                    <span class="w-3.5 h-3.5 rounded-full bg-gray-800 border border-black inline-block shrink-0"></span>
-                    <span>Tes Non-ASN</span>
+                <div class="flex items-center space-x-1.5">
+                    <span class="w-3 h-3 rounded bg-purple-900 border border-black shrink-0"></span>
+                    <span class="truncate">Sekolah Kedinasan</span>
+                </div>
+                <div class="flex items-center space-x-1.5">
+                    <span class="w-3 h-3 rounded bg-indigo-900 border border-black shrink-0"></span>
+                    <span class="truncate">Sertifikasi & CAT</span>
+                </div>
+                <div class="flex items-center space-x-1.5">
+                    <span class="w-3 h-3 rounded bg-rose-900 border border-black shrink-0"></span>
+                    <span class="truncate">Seleksi Non-ASN</span>
                 </div>
             </div>
         </div>
 
-        <!-- KEGIATAN YANG SEDANG BERLANGSUNG (RENTANG 1 MINGGU DARI HARI INI) -->
+        <!-- KEGIATAN MINGGU INI -->
         <div class="border-2 border-black bg-white shadow-sm flex flex-col min-h-[110px]">
-            <h3 class="text-xs sm:text-sm font-bold text-gray-900 px-3 py-1.5 border-b-2 border-black bg-gray-50">
-                Kegiatan Minggu Ini ({{ \Carbon\Carbon::today()->format('d/m/Y') }} - {{ \Carbon\Carbon::today()->addDays(7)->format('d/m/Y') }})
+            <h3 class="text-xs sm:text-sm font-bold text-gray-900 px-3 py-1.5 border-b-2 border-black bg-gray-100 flex items-center justify-between">
+                <span>Agenda Minggu Ini</span>
+                <span class="text-[10px] font-extrabold px-2 py-0.5 border border-black bg-slate-200 text-gray-900">
+                    {{ \Carbon\Carbon::today()->format('d/m/Y') }} - {{ \Carbon\Carbon::today()->addDays(7)->format('d/m/Y') }}
+                </span>
             </h3>
             <div class="p-3 text-xs sm:text-sm space-y-1 font-medium text-gray-800 max-h-32 overflow-y-auto">
                 @php
@@ -130,14 +141,14 @@
 
                 @forelse($kegiatanMingguan as $k)
                     <p class="truncate">
-                        {{ $loop->iteration }}. {{ $k->nama_keg }} ({{ $k->jenis->nama_jeniskeg ?? '-' }}) - 
+                        {{ $loop->iteration }}. <strong>{{ $k->nama_keg }}</strong> ({{ $k->jenis->nama_jeniskeg ?? '-' }}) - 
                         {{ \Carbon\Carbon::parse($k->tanggal_mulai)->format('d/m/Y') }}
                         @if($k->tanggal_selesai && $k->tanggal_selesai !== $k->tanggal_mulai)
                             s/d {{ \Carbon\Carbon::parse($k->tanggal_selesai)->format('d/m/Y') }}
                         @endif
                     </p>
                 @empty
-                    <p class="text-gray-500 italic">Tidak ada kegiatan dalam rentang 1 minggu ke depan.</p>
+                    <p class="text-gray-500 italic">Tidak ada agenda kegiatan dalam rentang 1 minggu ke depan.</p>
                 @endforelse
             </div>
         </div>
@@ -156,12 +167,12 @@
                 <button type="button" onclick="navigateMonth(1)" class="border-2 border-black p-1 hover:bg-gray-100 font-bold px-2.5 text-xs select-none cursor-pointer" title="Bulan Berikutnya">&gt;</button>
             </div>
 
-            <div class="bg-gray-200 border-2 border-black px-6 py-1 font-bold text-xs sm:text-sm text-center grow max-w-sm hidden sm:block">
-                Kalender Jadwal BKN
+            <div class="bg-slate-800 text-white border-2 border-black px-6 py-1 font-extrabold text-xs sm:text-sm text-center uppercase tracking-wider grow max-w-sm hidden sm:block">
+                Kalender Jadwal Kegiatan BKN
             </div>
 
             <!-- Tombol Filter -->
-            <button id="filterCalendarBtn" class="border-2 border-black p-1.5 bg-gray-300 hover:bg-gray-400 text-gray-900 transition cursor-pointer" title="Filter Kalender">
+            <button id="filterCalendarBtn" class="border-2 border-black p-1.5 bg-gray-200 hover:bg-gray-300 text-gray-900 transition cursor-pointer" title="Filter Kalender">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
                 </svg>
@@ -170,27 +181,35 @@
             <!-- Popup Filter -->
             <div id="filterCalendarModal" class="hidden absolute right-0 top-full mt-2 w-80 bg-white border-2 border-black p-4 shadow-2xl z-30">
                 <div class="flex items-center justify-between pb-3 border-b-2 border-black">
-                    <button type="button" onclick="resetCalendarFilter()" class="border-2 border-black bg-gray-300 hover:bg-gray-400 px-3 py-0.5 text-xs font-semibold text-gray-900 cursor-pointer">
+                    <button type="button" onclick="resetCalendarFilter()" class="border-2 border-black bg-gray-200 hover:bg-gray-300 px-3 py-0.5 text-xs font-semibold text-gray-900 cursor-pointer">
                         Reset
                     </button>
-                    <h4 class="font-bold text-sm text-gray-900">Filter Kategori</h4>
+                    <h4 class="font-bold text-sm text-gray-900">Filter Jenis Kegiatan</h4>
                 </div>
-                <div class="mt-4 border-2 border-black p-3 space-y-3 bg-white">
-                    <label class="flex items-center space-x-3 text-xs sm:text-sm font-semibold cursor-pointer">
+                <div class="mt-4 border-2 border-black p-3 space-y-2 bg-white max-h-60 overflow-y-auto">
+                    <label class="flex items-center space-x-3 text-xs font-semibold cursor-pointer">
                         <input type="checkbox" data-filter="pengembangan-karir" checked class="cal-filter-checkbox w-4 h-4 accent-black rounded border-2 border-black">
-                        <span>Pengembangan Karir</span>
+                        <span>Pengembangan Karier</span>
                     </label>
-                    <label class="flex items-center space-x-3 text-xs sm:text-sm font-semibold cursor-pointer">
-                        <input type="checkbox" data-filter="tes-cat" checked class="cal-filter-checkbox w-4 h-4 accent-black rounded border-2 border-black">
-                        <span>Tes CAT</span>
+                    <label class="flex items-center space-x-3 text-xs font-semibold cursor-pointer">
+                        <input type="checkbox" data-filter="cpns" checked class="cal-filter-checkbox w-4 h-4 accent-black rounded border-2 border-black">
+                        <span>SKD / SKB CPNS</span>
                     </label>
-                    <label class="flex items-center space-x-3 text-xs sm:text-sm font-semibold cursor-pointer">
-                        <input type="checkbox" data-filter="tes-casn" checked class="cal-filter-checkbox w-4 h-4 accent-black rounded border-2 border-black">
-                        <span>Tes CASN</span>
+                    <label class="flex items-center space-x-3 text-xs font-semibold cursor-pointer">
+                        <input type="checkbox" data-filter="pppk" checked class="cal-filter-checkbox w-4 h-4 accent-black rounded border-2 border-black">
+                        <span>Seleksi PPPK</span>
                     </label>
-                    <label class="flex items-center space-x-3 text-xs sm:text-sm font-semibold cursor-pointer">
-                        <input type="checkbox" data-filter="tes-non-asn" checked class="cal-filter-checkbox w-4 h-4 accent-black rounded border-2 border-black">
-                        <span>Tes Non-ASN</span>
+                    <label class="flex items-center space-x-3 text-xs font-semibold cursor-pointer">
+                        <input type="checkbox" data-filter="kedinasan" checked class="cal-filter-checkbox w-4 h-4 accent-black rounded border-2 border-black">
+                        <span>Sekolah Kedinasan</span>
+                    </label>
+                    <label class="flex items-center space-x-3 text-xs font-semibold cursor-pointer">
+                        <input type="checkbox" data-filter="cat" checked class="cal-filter-checkbox w-4 h-4 accent-black rounded border-2 border-black">
+                        <span>Sertifikasi & Simulasi CAT</span>
+                    </label>
+                    <label class="flex items-center space-x-3 text-xs font-semibold cursor-pointer">
+                        <input type="checkbox" data-filter="non-asn" checked class="cal-filter-checkbox w-4 h-4 accent-black rounded border-2 border-black">
+                        <span>Seleksi Non-ASN & Lainnya</span>
                     </label>
                 </div>
             </div>
@@ -201,7 +220,7 @@
             <table class="w-full border-collapse border-black min-w-[750px] table-fixed">
                 <thead>
                     <tr class="border-b-2 border-black bg-white text-center font-bold text-sm">
-                        <th class="border-r-2 border-black py-2 w-[14.28%]">Minggu</th>
+                        <th class="border-r-2 border-black py-2 w-[14.28%] text-rose-700">Minggu</th>
                         <th class="border-r-2 border-black py-2 w-[14.28%]">Senin</th>
                         <th class="border-r-2 border-black py-2 w-[14.28%]">Selasa</th>
                         <th class="border-r-2 border-black py-2 w-[14.28%]">Rabu</th>
@@ -257,19 +276,23 @@
         </div>
     </div>
 
-    <!-- SCRIPT LOGIKA KALENDER: BULAN DEFAULT BERJALAN & NON-OVERLAPPING LANE SLOTTING -->
+    <!-- SCRIPT LOGIKA KALENDER: WARNA DARK/MUTED & HIGHLIGHT HARI INI TEDUH -->
     <script>
         @php
             $formattedEvents = $kegiatan->map(function($k, $index) {
                 $namaJenis = strtolower($k->jenis->nama_jeniskeg ?? '');
-                $kategoriSlug = 'tes-non-asn';
+                $kategoriSlug = 'non-asn';
                 
-                if (str_contains($namaJenis, 'karir') || str_contains($namaJenis, 'pengembangan')) {
+                if (str_contains($namaJenis, 'karir') || str_contains($namaJenis, 'pengembangan') || str_contains($namaJenis, 'udin')) {
                     $kategoriSlug = 'pengembangan-karir';
-                } elseif (str_contains($namaJenis, 'cat') || str_contains($namaJenis, 'dinas') || str_contains($namaJenis, 'sekolah')) {
-                    $kategoriSlug = 'tes-cat';
-                } elseif (str_contains($namaJenis, 'casn') || str_contains($namaJenis, 'cpns')) {
-                    $kategoriSlug = 'tes-casn';
+                } elseif (str_contains($namaJenis, 'cpns') || str_contains($namaJenis, 'skd') || str_contains($namaJenis, 'skb')) {
+                    $kategoriSlug = 'cpns';
+                } elseif (str_contains($namaJenis, 'pppk')) {
+                    $kategoriSlug = 'pppk';
+                } elseif (str_contains($namaJenis, 'kedinasan')) {
+                    $kategoriSlug = 'kedinasan';
+                } elseif (str_contains($namaJenis, 'cat')) {
+                    $kategoriSlug = 'cat';
                 }
 
                 $tglMulai = \Carbon\Carbon::parse($k->tanggal_mulai)->format('Y-m-d');
@@ -298,7 +321,6 @@
             });
         @endphp
 
-        // Parsing koleksi data Laravel ke JS Array Object secara bersih
         const dbEvents = @json($formattedEvents);
 
         const monthNames = [
@@ -306,10 +328,9 @@
             'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
         ];
 
-        // INSIALISASI: DEFAULT KE BULAN DAN TAHUN YANG SEDANG BERJALAN SAAT INI
         const todayReal = new Date();
         let calYear = todayReal.getFullYear();
-        let calMonth = todayReal.getMonth(); // 0-indexed
+        let calMonth = todayReal.getMonth();
 
         const monthYearLabel = document.getElementById('calMonthYearLabel');
         const calGridBody = document.getElementById('calGridBody');
@@ -401,21 +422,28 @@
                         td.classList.add('text-gray-400', 'bg-gray-50/50');
                         td.innerHTML = `<span>${info.day}</span>`;
                     } else {
-                        td.classList.add('bg-white', 'relative', 'hover:bg-gray-50', 'cursor-pointer');
-                        td.setAttribute('data-day', info.day);
-                        td.setAttribute('data-date', info.dateStr);
-
                         const isRealToday = (
                             info.day === todayReal.getDate() && 
                             calMonth === todayReal.getMonth() && 
                             calYear === todayReal.getFullYear()
                         );
 
+                        // HIGHLIGHT HARI INI (WARNA TEDUH & ELEGAN)
                         if (isRealToday) {
-                            td.innerHTML = `<span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-black text-white font-bold text-xs">${info.day}</span>`;
+                            td.className += ' bg-slate-100 relative cursor-pointer ring-2 ring-slate-800 ring-inset';
+                            td.innerHTML = `
+                                <div class="flex items-center justify-between">
+                                    <span class="inline-flex items-center justify-center w-6 h-6 rounded border-2 border-black bg-slate-800 text-white font-extrabold text-xs">${info.day}</span>
+                                    <span class="text-[9px] font-extrabold uppercase bg-slate-800 text-white px-1 rounded tracking-tight">HARI INI</span>
+                                </div>
+                            `;
                         } else {
+                            td.className += ' bg-white relative hover:bg-gray-50 cursor-pointer';
                             td.innerHTML = `<span class="font-bold text-gray-900">${info.day}</span>`;
                         }
+
+                        td.setAttribute('data-day', info.day);
+                        td.setAttribute('data-date', info.dateStr);
 
                         const matchingEventsToday = dbEvents.filter(ev => info.dateStr >= ev.startDate && info.dateStr <= ev.endDate);
                         td.addEventListener('click', function(e) {
@@ -436,24 +464,26 @@
                     const spanCols = item.endCol - item.startCol + 1;
                     const targetTd = tdElements[startCol];
 
-                    let bgStyle = 'bg-gray-300 text-gray-900';
-                    if (ev.kategori === 'pengembangan-karir') bgStyle = 'bg-sky-600 text-white';
-                    else if (ev.kategori === 'tes-cat') bgStyle = 'bg-emerald-600 text-white';
-                    else if (ev.kategori === 'tes-casn') bgStyle = 'bg-gray-300 text-gray-900';
-                    else if (ev.kategori === 'tes-non-asn') bgStyle = 'bg-gray-800 text-white';
+                    // PEWARNAAN PALET GELAP / MUTED TONES
+                    let bgStyle = 'bg-rose-900 text-white';
+                    if (ev.kategori === 'pengembangan-karir') bgStyle = 'bg-slate-700 text-white';
+                    else if (ev.kategori === 'cpns') bgStyle = 'bg-emerald-800 text-white';
+                    else if (ev.kategori === 'pppk') bgStyle = 'bg-amber-700 text-white';
+                    else if (ev.kategori === 'kedinasan') bgStyle = 'bg-purple-900 text-white';
+                    else if (ev.kategori === 'cat') bgStyle = 'bg-indigo-900 text-white';
 
-                    const topOffset = 32 + (item.lane * 30);
+                    const topOffset = 34 + (item.lane * 28);
                     const zIndex = 25 - item.lane;
                     const widthPercent = (spanCols * 100) - 10;
 
                     const badge = document.createElement('div');
-                    badge.className = `cal-event absolute left-2 h-6 ${bgStyle} border-2 border-black rounded-full flex items-center justify-center shadow-xs cursor-pointer hover:opacity-90 transition`;
+                    badge.className = `cal-event absolute left-2 h-5.5 ${bgStyle} border-2 border-black rounded flex items-center justify-center shadow-xs cursor-pointer hover:opacity-90 transition`;
                     badge.style.top = `${topOffset}px`;
                     badge.style.width = `${widthPercent}%`;
                     badge.style.zIndex = zIndex;
                     badge.setAttribute('data-category', ev.kategori);
                     badge.setAttribute('title', `${ev.nama} (${ev.startDate} s/d ${ev.endDate})`);
-                    badge.innerHTML = `<span class="text-xs font-bold tracking-wide truncate px-3">${ev.nama}</span>`;
+                    badge.innerHTML = `<span class="text-[11px] font-extrabold tracking-wide truncate px-2">${ev.nama}</span>`;
 
                     badge.addEventListener('click', (e) => handleDirectEventClick(e, ev.id));
                     targetTd.appendChild(badge);
@@ -499,7 +529,7 @@
                     </div>
                     <button type="button" 
                             onclick="handleDirectEventClick(null, ${item.id})" 
-                            class="self-end sm:self-center border-2 border-black bg-gray-500 hover:bg-gray-600 text-white font-semibold px-4 py-1 text-sm transition cursor-pointer">
+                            class="self-end sm:self-center border-2 border-black bg-gray-600 hover:bg-gray-700 text-white font-semibold px-4 py-1 text-sm transition cursor-pointer">
                         Detail
                     </button>
                 `;
@@ -515,7 +545,7 @@
 
         function handleDirectEventClick(e, eventId) {
             if (e) e.stopPropagation();
-            const item = dbEvents.find(x => x.id === eventId);
+            const item = dbEvents.find(x => x.id == eventId);
             if (!item) return;
 
             document.getElementById('dtJudulModal').innerText = `Detail ${item.nama}`;

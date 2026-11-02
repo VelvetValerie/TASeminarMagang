@@ -18,29 +18,29 @@
     <?php $todayDate = \Carbon\Carbon::today()->toDateString(); ?>
 
     <!-- TOMBOL AKSES CEPAT (QUICK ACTIONS) -->
-    <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
         <div class="flex flex-wrap gap-2.5">
             @if(in_array(Auth::user()->role, ['admin', 'pegawai_koordinasi']))
-                <a href="{{ url('/kegiatan') }}" class="border-2 border-black bg-amber-400 hover:bg-amber-500 font-bold px-4 py-2 text-xs uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition inline-flex items-center gap-1.5">
+                <a href="{{ url('/kegiatan') }}" class="border-2 border-black bg-amber-400 hover:bg-amber-500 font-bold px-3.5 py-1.5 text-xs uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition inline-flex items-center gap-1.5">
                     ➕ Kelola Kegiatan
                 </a>
             @endif
 
             @if(in_array(Auth::user()->role, ['admin', 'pimpinan', 'pegawai_koordinasi']))
-                <a href="{{ url('/laporan-kegiatan') }}" class="border-2 border-black bg-blue-500 hover:bg-blue-600 font-bold px-4 py-2 text-xs uppercase tracking-wider text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition inline-flex items-center gap-1.5">
+                <a href="{{ url('/laporan-kegiatan') }}" class="border-2 border-black bg-blue-500 hover:bg-blue-600 font-bold px-3.5 py-1.5 text-xs uppercase tracking-wider text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition inline-flex items-center gap-1.5">
                     📊 Laporan & Cetak PDF
                 </a>
             @endif
 
             @if(in_array(Auth::user()->role, ['admin', 'pegawai_humas']))
-                <a href="{{ url('/admin/berita') }}" class="border-2 border-black bg-emerald-500 hover:bg-emerald-600 font-bold px-4 py-2 text-xs uppercase tracking-wider text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition inline-flex items-center gap-1.5">
+                <a href="{{ url('/admin/berita') }}" class="border-2 border-black bg-emerald-500 hover:bg-emerald-600 font-bold px-3.5 py-1.5 text-xs uppercase tracking-wider text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition inline-flex items-center gap-1.5">
                     📰 Kelola Publikasi
                 </a>
             @endif
         </div>
 
         @if(isset($laporanPendingCount) && $laporanPendingCount > 0)
-            <a href="{{ url('/laporan-kegiatan') }}" class="border-2 border-black bg-rose-100 border-rose-600 text-rose-900 font-bold px-3 py-1.5 text-xs rounded transition flex items-center gap-2 animate-bounce">
+            <a href="{{ url('/laporan-kegiatan') }}" class="border-2 border-black bg-rose-100 border-rose-600 text-rose-900 font-bold px-3 py-1 text-xs rounded transition flex items-center gap-2 animate-bounce">
                 <span>⚠️ Ada <strong>{{ $laporanPendingCount }}</strong> kegiatan selesai yang belum diisi laporannya!</span>
             </a>
         @endif
@@ -48,15 +48,15 @@
 
     <!-- BANNER NOTIFIKASI KOORDINATOR HARI INI -->
     <?php if (isset($notifTugas) && count($notifTugas) > 0): ?>
-        <div class="mb-6 border-2 border-black bg-amber-100 p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-            <div class="flex items-center justify-between pb-2 border-b-2 border-black mb-3">
+        <div class="mb-5 border-2 border-black bg-amber-100 p-3.5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+            <div class="flex items-center justify-between pb-2 border-b-2 border-black mb-2.5">
                 <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 rounded-full bg-rose-600 animate-ping"></span>
-                    <h3 class="font-extrabold text-gray-900 text-sm sm:text-base uppercase tracking-wider">
+                    <span class="w-2.5 h-2.5 rounded-full bg-rose-600 animate-ping"></span>
+                    <h3 class="font-extrabold text-gray-900 text-xs sm:text-sm uppercase tracking-wider">
                         ⚠️ Pengingat Tugas Koordinator Hari Ini (<?php echo \Carbon\Carbon::now()->translatedFormat('d F Y'); ?>)
                     </h3>
                 </div>
-                <span class="text-xs font-bold px-2 py-0.5 border border-black bg-rose-200 text-rose-900">
+                <span class="text-[10px] font-bold px-2 py-0.5 border border-black bg-rose-200 text-rose-900">
                     <?php echo count($notifTugas); ?> Kegiatan
                 </span>
             </div>
@@ -79,15 +79,15 @@
                             'lampiran' => $kegNotif->lampiran ?? '-'
                         ];
                     ?>
-                    <div class="border-2 border-black bg-white p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="border-2 border-black bg-white p-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                         <div>
                             <div class="flex items-center gap-2 flex-wrap">
-                                <p class="font-bold text-gray-900 text-sm sm:text-base"><?php echo $kegNotif->nama_keg; ?></p>
-                                <span class="px-2 py-0.5 text-[10px] font-extrabold uppercase border border-black bg-amber-400 text-black rounded">
+                                <p class="font-bold text-gray-900 text-xs sm:text-sm"><?php echo $kegNotif->nama_keg; ?></p>
+                                <span class="px-1.5 py-0.5 text-[9px] font-extrabold uppercase border border-black bg-amber-400 text-black rounded">
                                     Wajib Diampu Hari Ini
                                 </span>
                             </div>
-                            <p class="text-xs text-gray-700 mt-1">
+                            <p class="text-[11px] text-gray-700 mt-0.5">
                                 Titik Lokasi: <span class="font-semibold text-gray-900"><?php echo $kegNotif->lokasi->nm_lokasi ?? '-'; ?></span> | 
                                 Instansi: <span class="font-semibold text-gray-900"><?php echo $kegNotif->instansi->nm_instansi ?? '-'; ?></span>
                             </p>
@@ -97,11 +97,11 @@
                             <?php if ($kegNotif->lampiran && $kegNotif->lampiran !== '-'): ?>
                                 <a href="<?php echo $kegNotif->lampiran; ?>" 
                                    target="_blank" 
-                                   class="border-2 border-black bg-blue-500 hover:bg-blue-600 text-white font-bold px-3 py-1.5 text-xs transition inline-flex items-center gap-1 shadow-xs">
+                                   class="border-2 border-black bg-blue-500 hover:bg-blue-600 text-white font-bold px-2.5 py-1 text-[11px] transition inline-flex items-center gap-1 shadow-xs">
                                     📄 Lampiran / Surat Tugas
                                 </a>
                             <?php else: ?>
-                                <span class="border-2 border-black bg-gray-200 text-gray-500 font-bold px-3 py-1.5 text-xs cursor-not-allowed" title="Lampiran belum diunggah">
+                                <span class="border-2 border-black bg-gray-200 text-gray-500 font-bold px-2.5 py-1 text-[11px] cursor-not-allowed" title="Lampiran belum diunggah">
                                     📄 Lampiran (-)
                                 </span>
                             <?php endif; ?>
@@ -109,7 +109,7 @@
                             <button type="button" 
                                     data-payload="<?php echo htmlspecialchars(json_encode($detailPayloadNotif), ENT_QUOTES, 'UTF-8'); ?>"
                                     onclick="openDetailModalFromBtn(this)" 
-                                    class="border-2 border-black bg-amber-500 hover:bg-amber-600 text-black font-bold px-4 py-1.5 text-xs transition cursor-pointer">
+                                    class="border-2 border-black bg-amber-500 hover:bg-amber-600 text-black font-bold px-3 py-1 text-[11px] transition cursor-pointer">
                                 Detail
                             </button>
                         </div>
@@ -119,82 +119,80 @@
         </div>
     <?php endif; ?>
 
-    <!-- 1. STATISTIC CARDS -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+    <!-- 1. STATISTIC CARDS (COMPACT) -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
         
         <!-- Kartu Jumlah Instansi -->
-        <div class="relative overflow-hidden bg-white border-2 border-black rounded-xl p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 transition duration-200">
+        <div class="relative overflow-hidden bg-white border-2 border-black rounded-xl p-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 transition duration-200">
             <div class="flex items-center justify-between">
-                <div class="space-y-1">
-                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Jumlah Instansi</span>
+                <div class="space-y-0.5">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-gray-500">Jumlah Instansi</span>
                     <div class="flex items-baseline space-x-2">
-                        <span class="text-3xl font-extrabold text-gray-900 tracking-tight">
+                        <span class="text-2xl font-extrabold text-gray-900 tracking-tight">
                             {{ $stats['instansi'] ?? 0 }}
                         </span>
-                        <span class="text-xs font-semibold text-gray-500">Mitra Terdaftar</span>
+                        <span class="text-[11px] font-semibold text-gray-500">Mitra Terdaftar</span>
                     </div>
                 </div>
-                <div class="w-12 h-12 rounded-lg bg-blue-50 border-2 border-black flex items-center justify-center text-blue-600 shrink-0">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-10 h-10 rounded-lg bg-blue-50 border-2 border-black flex items-center justify-center text-blue-600 shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                     </svg>
                 </div>
             </div>
-            <div class="mt-4 pt-3 border-t border-gray-200 flex items-center justify-between text-xs text-gray-600">
-                <span class="flex items-center text-emerald-700 font-semibold">
-                    Instansi Aktif
-                </span>
+            <div class="mt-3 pt-2 border-t border-gray-200 flex items-center justify-between text-[11px] text-gray-600">
+                <span class="flex items-center text-emerald-700 font-semibold">Instansi Aktif</span>
                 <span class="font-medium text-gray-500">Regional BKN</span>
             </div>
         </div>
 
         <!-- Kartu Jumlah Peserta -->
-        <div class="relative overflow-hidden bg-white border-2 border-black rounded-xl p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 transition duration-200">
+        <div class="relative overflow-hidden bg-white border-2 border-black rounded-xl p-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 transition duration-200">
             <div class="flex items-center justify-between">
-                <div class="space-y-1">
-                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500">
+                <div class="space-y-0.5">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-gray-500">
                         {{ Auth::user()->role === 'pegawai_koordinasi' ? 'Peserta Saya' : 'Total Peserta' }}
                     </span>
                     <div class="flex items-baseline space-x-2">
-                        <span class="text-3xl font-extrabold text-gray-900 tracking-tight">
+                        <span class="text-2xl font-extrabold text-gray-900 tracking-tight">
                             {{ number_format($stats['peserta'] ?? 0) }}
                         </span>
-                        <span class="text-xs font-semibold text-gray-500">Orang</span>
+                        <span class="text-[11px] font-semibold text-gray-500">Orang</span>
                     </div>
                 </div>
-                <div class="w-12 h-12 rounded-lg bg-emerald-50 border-2 border-black flex items-center justify-center text-emerald-600 shrink-0">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-10 h-10 rounded-lg bg-emerald-50 border-2 border-black flex items-center justify-center text-emerald-600 shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                     </svg>
                 </div>
             </div>
-            <div class="mt-4 pt-3 border-t border-gray-200 flex items-center justify-between text-xs text-gray-600">
+            <div class="mt-3 pt-2 border-t border-gray-200 flex items-center justify-between text-[11px] text-gray-600">
                 <span class="text-gray-700 font-semibold">Periode Tahun</span>
                 <span class="font-medium text-gray-500">2026</span>
             </div>
         </div>
 
         <!-- Kartu Jumlah Kegiatan -->
-        <div class="relative overflow-hidden bg-white border-2 border-black rounded-xl p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 transition duration-200">
+        <div class="relative overflow-hidden bg-white border-2 border-black rounded-xl p-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 transition duration-200">
             <div class="flex items-center justify-between">
-                <div class="space-y-1">
-                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500">
+                <div class="space-y-0.5">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-gray-500">
                         {{ Auth::user()->role === 'pegawai_koordinasi' ? 'Kegiatan Saya' : 'Total Kegiatan' }}
                     </span>
                     <div class="flex items-baseline space-x-2">
-                        <span class="text-3xl font-extrabold text-gray-900 tracking-tight">
+                        <span class="text-2xl font-extrabold text-gray-900 tracking-tight">
                             {{ $stats['kegiatan'] ?? 0 }}
                         </span>
-                        <span class="text-xs font-semibold text-gray-500">Agenda</span>
+                        <span class="text-[11px] font-semibold text-gray-500">Agenda</span>
                     </div>
                 </div>
-                <div class="w-12 h-12 rounded-lg bg-rose-50 border-2 border-black flex items-center justify-center text-rose-600 shrink-0">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-10 h-10 rounded-lg bg-rose-50 border-2 border-black flex items-center justify-center text-rose-600 shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                     </svg>
                 </div>
             </div>
-            <div class="mt-4 pt-3 border-t border-gray-200 flex items-center justify-between text-xs text-gray-600">
+            <div class="mt-3 pt-2 border-t border-gray-200 flex items-center justify-between text-[11px] text-gray-600">
                 <span class="text-gray-700 font-semibold">CASN & Kedinasan</span>
                 <span class="font-medium text-gray-500">Terjadwal</span>
             </div>
@@ -202,66 +200,64 @@
 
     </div>
 
-    <!-- 1.5 PANEL GRAFIK STATISTIK (CHARTS NEO-BRUTALISM) -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6">
+    <!-- 1.5 PANEL GRAFIK STATISTIK (COMPACT & EXTRA MARGIN BOTTOM) -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-8">
         
-        <!-- Chart 1: Status Kegiatan (Doughnut Chart) -->
-        <div class="border-2 border-black bg-white p-3 md:p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+        <!-- Chart 1: Status Kegiatan (Doughnut Chart - Small) -->
+        <div class="border-2 border-black bg-white p-3.5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
             <h3 class="text-xs font-extrabold text-gray-900 uppercase tracking-wider pb-1.5 border-b-2 border-black mb-2 flex items-center justify-between">
                 <span>📈 Status Kegiatan</span>
-                <span class="text-[9px] bg-amber-200 px-1.5 py-0.5 border border-black font-bold">Realtime</span>
+                <span class="text-[9px] bg-amber-200 px-1.5 py-0.5 border border-black font-bold">Bulan {{ \Carbon\Carbon::now()->format('F Y') }}</span>
             </h3>
-            <!-- Ukuran diperkecil dari h-56 menjadi h-40 -->
-            <div class="relative h-40 flex items-center justify-center">
+            <!-- Tinggi diset h-32 agar sangat padat dan tidak tinggi -->
+            <div class="relative h-32 flex items-center justify-center">
                 <canvas id="statusChart"></canvas>
             </div>
         </div>
 
-        <!-- Chart 2: Kategori Kegiatan (Horizontal Bar Chart) -->
-        <div class="lg:col-span-2 border-2 border-black bg-white p-3 md:p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+        <!-- Chart 2: Kategori Kegiatan (Horizontal Bar Chart - Small) -->
+        <div class="lg:col-span-2 border-2 border-black bg-white p-3.5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
             <h3 class="text-xs font-extrabold text-gray-900 uppercase tracking-wider pb-1.5 border-b-2 border-black mb-2 flex items-center justify-between">
-                <span>📊 Top 5 Jenis Kegiatan Terbanyak</span>
+                <span>📊 Jenis Kegiatan Terbanyak</span>
                 <span class="text-[9px] bg-sky-200 px-1.5 py-0.5 border border-black font-bold">Agenda 2026</span>
             </h3>
-            <!-- Ukuran diperkecil dari h-56 menjadi h-40 -->
-            <div class="relative h-40">
+            <!-- Tinggi diset h-32 agar sejajar dengan chart doughnut -->
+            <div class="relative h-32">
                 <canvas id="jenisChart"></canvas>
             </div>
         </div>
 
     </div>
 
-    </div>
-
-    <!-- 2. AREA UTAMA KONTEN -->
+    <!-- 2. AREA UTAMA KONTEN (DENGAN PEMISAH MB-8 DI ATASNYA) -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         
         <!-- KOTAK TENGAH: PELAKSANAAN BERJALAN -->
-        <div class="lg:col-span-2 border-2 border-black bg-white p-4 md:p-6 flex flex-col shadow-sm">
-            <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b-2 border-black relative">
-                <h2 class="text-base md:text-lg font-bold text-gray-900">
+        <div class="lg:col-span-2 border-2 border-black bg-white p-4 md:p-5 flex flex-col shadow-sm">
+            <div class="flex flex-wrap items-center justify-between gap-3 pb-2.5 border-b-2 border-black relative">
+                <h2 class="text-base font-extrabold text-gray-900 uppercase tracking-tight">
                     Pelaksanaan Berjalan
                 </h2>
 
                 <div class="flex items-center space-x-2">
-                    <div class="flex items-center border-2 border-black bg-gray-100 px-2 py-1">
-                        <svg class="w-4 h-4 text-gray-700 mr-2 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="flex items-center border-2 border-black bg-gray-100 px-2 py-0.5">
+                        <svg class="w-3.5 h-3.5 text-gray-700 mr-1.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
-                        <input type="text" id="searchInput" placeholder="cari nama kegiatan" class="bg-transparent text-sm focus:outline-none w-28 sm:w-44 text-gray-900">
+                        <input type="text" id="searchInput" placeholder="cari nama kegiatan" class="bg-transparent text-xs focus:outline-none w-28 sm:w-40 text-gray-900">
                     </div>
 
                     <div class="relative">
-                        <button id="sortDropdownBtn" class="border-2 border-black p-1.5 hover:bg-gray-100 block transition" title="Urutkan">
-                            <svg class="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button id="sortDropdownBtn" class="border-2 border-black p-1 hover:bg-gray-100 block transition" title="Urutkan">
+                            <svg class="w-4 h-4 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"></path>
                             </svg>
                         </button>
                         <div id="sortMenu" class="hidden absolute right-0 top-full mt-1 w-32 border-2 border-black bg-white shadow-md z-20">
-                            <button type="button" onclick="sortDashboardItems('terdekat')" class="w-full text-center py-1.5 text-xs sm:text-sm font-semibold text-gray-900 border-b-2 border-black hover:bg-gray-100 block">
+                            <button type="button" onclick="sortDashboardItems('terdekat')" class="w-full text-center py-1 text-xs font-semibold text-gray-900 border-b-2 border-black hover:bg-gray-100 block">
                                 Terdekat
                             </button>
-                            <button type="button" onclick="sortDashboardItems('az')" class="w-full text-center py-1.5 text-xs sm:text-sm font-semibold text-gray-900 hover:bg-gray-100 block">
+                            <button type="button" onclick="sortDashboardItems('az')" class="w-full text-center py-1 text-xs font-semibold text-gray-900 hover:bg-gray-100 block">
                                 A - Z
                             </button>
                         </div>
@@ -270,7 +266,7 @@
             </div>
 
             <!-- List Kegiatan SQL -->
-            <div id="dashboardKegiatanList" class="mt-4 border-2 border-black p-3 md:p-4 max-h-[460px] overflow-y-auto space-y-3">
+            <div id="dashboardKegiatanList" class="mt-3.5 border-2 border-black p-3 md:p-3.5 max-h-[420px] overflow-y-auto space-y-2.5">
                 <?php if (isset($kegiatan) && count($kegiatan) > 0): ?>
                     <?php foreach ($kegiatan as $item): ?>
                         <?php
@@ -299,24 +295,24 @@
                             ];
                         ?>
 
-                        <div class="kegiatan-dash-item border-2 border-black p-3 md:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition <?php echo $isToday ? 'bg-amber-50 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]' : 'bg-white hover:bg-gray-50'; ?>" 
+                        <div class="kegiatan-dash-item border-2 border-black p-2.5 md:p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 transition <?php echo $isToday ? 'bg-amber-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]' : 'bg-white hover:bg-gray-50'; ?>" 
                              data-id="{{ $item->id_keg }}"
                              data-today="<?php echo $isToday ? '1' : '0'; ?>"
                              data-date="{{ $tglMulai }}"
                              data-name="{{ $item->nama_keg }}">
                             <div>
                                 <div class="flex items-center gap-2 flex-wrap">
-                                    <h3 class="text-base md:text-lg font-bold <?php echo $isToday ? 'text-amber-950' : 'text-gray-900'; ?>">
+                                    <h3 class="text-xs sm:text-sm font-bold <?php echo $isToday ? 'text-amber-950' : 'text-gray-900'; ?>">
                                         {{ $item->nama_keg }}
                                     </h3>
                                     <?php if ($isToday): ?>
-                                        <span class="px-2 py-0.5 text-[11px] font-extrabold uppercase border border-black bg-black text-amber-300 rounded-full tracking-wider animate-pulse">
+                                        <span class="px-1.5 py-0.2 text-[9px] font-extrabold uppercase border border-black bg-black text-amber-300 rounded-full tracking-wider animate-pulse">
                                             ● Hari Ini
                                         </span>
                                     <?php endif; ?>
                                 </div>
 
-                                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs md:text-sm font-medium mt-1 <?php echo $isToday ? 'text-amber-900' : 'text-gray-600'; ?>">
+                                <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] font-medium mt-0.5 <?php echo $isToday ? 'text-amber-900' : 'text-gray-600'; ?>">
                                     <span>{{ $item->jenis->nama_jeniskeg ?? '-' }}</span>
                                     <span>&bull;</span>
                                     <span>{{ $item->lokasi->nm_lokasi ?? '-' }}</span>
@@ -326,30 +322,30 @@
                                     </span>
                                 </div>
 
-                                <p class="text-xs md:text-sm text-gray-700 mt-1">
+                                <p class="text-[11px] text-gray-700 mt-0.5">
                                     Koordinator: <span class="font-semibold">{{ $item->koordinator->nama_karyawan ?? '-' }}</span>
                                 </p>
                             </div>
                             <button type="button" 
                                     data-payload="<?php echo htmlspecialchars(json_encode($detailPayload), ENT_QUOTES, 'UTF-8'); ?>"
                                     onclick="openDetailModalFromBtn(this)" 
-                                    class="self-end sm:self-center border-2 border-black <?php echo $isToday ? 'bg-amber-600 hover:bg-amber-700' : 'bg-gray-500 hover:bg-gray-600'; ?> text-white font-semibold px-5 py-1 text-sm transition cursor-pointer">
+                                    class="self-end sm:self-center border-2 border-black <?php echo $isToday ? 'bg-amber-600 hover:bg-amber-700' : 'bg-gray-500 hover:bg-gray-600'; ?> text-white font-semibold px-4 py-1 text-xs transition cursor-pointer">
                                 Detail
                             </button>
                         </div>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <p class="text-center text-gray-500 py-6 text-sm font-medium">Tidak ada pelaksanaan kegiatan aktif saat ini.</p>
+                    <p class="text-center text-gray-500 py-5 text-xs font-medium">Tidak ada pelaksanaan kegiatan aktif saat ini.</p>
                 <?php endif; ?>
             </div>
         </div>
 
         <!-- KOTAK KANAN: JADWAL TERDEKAT -->
-        <div class="border-2 border-black bg-white p-4 md:p-6 flex flex-col shadow-sm">
-            <h2 class="text-base md:text-lg font-bold text-gray-900 pb-3 border-b-2 border-black">
+        <div class="border-2 border-black bg-white p-4 md:p-5 flex flex-col shadow-sm">
+            <h2 class="text-base font-extrabold text-gray-900 pb-2.5 border-b-2 border-black uppercase tracking-tight">
                 Jadwal Terdekat
             </h2>
-            <div class="mt-4 space-y-3">
+            <div class="mt-3.5 space-y-2.5">
                 <?php if (isset($jadwalTerdekat) && count($jadwalTerdekat) > 0): ?>
                     <?php foreach ($jadwalTerdekat as $first): ?>
                         <?php
@@ -376,29 +372,29 @@
                         
                         <div data-payload="<?php echo htmlspecialchars(json_encode($detailUpcoming), ENT_QUOTES, 'UTF-8'); ?>"
                              onclick="openDetailModalFromBtn(this)" 
-                             class="border-2 border-black p-3 transition cursor-pointer <?php echo $isUpcomingToday ? 'bg-amber-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]' : 'bg-white hover:bg-gray-50'; ?>" 
+                             class="border-2 border-black p-2.5 transition cursor-pointer <?php echo $isUpcomingToday ? 'bg-amber-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]' : 'bg-white hover:bg-gray-50'; ?>" 
                              title="Klik untuk melihat detail">
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <div class="flex items-center gap-1.5 flex-wrap">
-                                        <p class="font-bold text-sm <?php echo $isUpcomingToday ? 'text-amber-950' : 'text-gray-900'; ?>">
+                                    <div class="flex items-center gap-1 flex-wrap">
+                                        <p class="font-bold text-xs <?php echo $isUpcomingToday ? 'text-amber-950' : 'text-gray-900'; ?>">
                                             {{ $first->nama_keg }}
                                         </p>
                                         <?php if ($isUpcomingToday): ?>
-                                            <span class="px-1.5 py-0.2 text-[9px] font-extrabold uppercase border border-black bg-black text-amber-300 rounded">
+                                            <span class="px-1 py-0.2 text-[8px] font-extrabold uppercase border border-black bg-black text-amber-300 rounded">
                                                 Hari Ini
                                             </span>
                                         <?php endif; ?>
                                     </div>
-                                    <p class="text-xs <?php echo $isUpcomingToday ? 'text-amber-800' : 'text-gray-600'; ?>">
+                                    <p class="text-[11px] <?php echo $isUpcomingToday ? 'text-amber-800' : 'text-gray-600'; ?>">
                                         {{ $first->jenis->nama_jeniskeg ?? '-' }}
                                     </p>
                                 </div>
-                                <p class="text-[11px] font-semibold <?php echo $isUpcomingToday ? 'text-amber-900 font-bold' : 'text-gray-700'; ?>">
+                                <p class="text-[10px] font-semibold shrink-0 ml-1 <?php echo $isUpcomingToday ? 'text-amber-900 font-bold' : 'text-gray-700'; ?>">
                                     {{ \Carbon\Carbon::parse($first->tanggal_mulai)->translatedFormat('d M Y') }}
                                 </p>
                             </div>
-                            <p class="text-[11px] text-gray-600 mt-2">
+                            <p class="text-[10px] text-gray-600 mt-1">
                                 Koordinator: {{ $first->koordinator->nama_karyawan ?? '-' }}
                             </p>
                         </div>
@@ -440,11 +436,11 @@
     </div>
     @endpush
 
-    <!-- SCRIPT CHART.JS & DASHBOARD LOGIC -->
+    <!-- SCRIPT CHART.JS & DASHBOARD LOGIC (SKALA SUPER RINGKAS) -->
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // INIT CHART STATUS (DOUGHNUT - RINGKAS)
+        // INIT CHART STATUS (DOUGHNUT - VERY COMPACT)
         const rawStatusData = @json($chartStatus ?? []);
         const statusLabels = Object.keys(rawStatusData);
         const statusValues = Object.values(rawStatusData);
@@ -464,22 +460,22 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                cutout: '65%', // Membuat lubang tengah doughnut lebih tipis & rapi
+                cutout: '72%', // Lubang tengah dibuat lebih tipis & manis
                 plugins: {
                     legend: {
-                        position: 'right', // Legend dipindah ke kanan agar muat di area h-40
+                        position: 'right',
                         labels: {
-                            font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 10 },
+                            font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 9 },
                             color: '#000000',
-                            boxWidth: 10,
-                            padding: 8
+                            boxWidth: 8,
+                            padding: 6
                         }
                     }
                 }
             }
         });
 
-        // INIT CHART JENIS KEGIATAN (BAR - RINGKAS)
+        // INIT CHART JENIS KEGIATAN (HORIZONTAL BAR - VERY COMPACT)
         const rawJenisData = @json($chartJenis ?? []);
         const jenisLabels = rawJenisData.map(item => item.nama_jeniskeg);
         const jenisValues = rawJenisData.map(item => item.total);
@@ -495,7 +491,7 @@
                     backgroundColor: '#38bdf8',
                     borderColor: '#000000',
                     borderWidth: 2,
-                    barThickness: 12, // Memperkecil ketebalan batang grafik
+                    barThickness: 8, // Ketebalan bar diperkecil menjadi 8px
                 }]
             },
             options: {
@@ -507,11 +503,11 @@
                 },
                 scales: {
                     x: {
-                        ticks: { font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 9 }, color: '#000000' },
-                        grid: { color: '#e2e8f0' }
+                        ticks: { font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 8 }, color: '#000000' },
+                        grid: { color: '#f1f5f9' }
                     },
                     y: {
-                        ticks: { font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 9 }, color: '#000000' },
+                        ticks: { font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 8 }, color: '#000000' },
                         grid: { display: false }
                     }
                 }

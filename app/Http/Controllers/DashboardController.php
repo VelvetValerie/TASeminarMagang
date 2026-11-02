@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
+    /**
+     * Memperbarui status kegiatan yang telah melewati tanggal selesai secara otomatis.
+     */
     private function autoUpdateStatusSelesai()
     {
         $today = Carbon::today()->toDateString();
@@ -27,8 +30,7 @@ class DashboardController extends Controller
     {
         $this->autoUpdateStatusSelesai();
         
-        $today = Carbon::today()->toDateString();
-        $user = Auth::user();
+        $today = Carbon::today()->toDateString();$user = Auth::user();
 
         $notifTugas = collect();
         $laporanPendingCount = 0;
@@ -36,31 +38,32 @@ class DashboardController extends Controller
         if ($user) {
             $username = strtolower(trim($user->username ?? ''));
             
+            // Pengingat kegiatan berjalan hari ini khusus koordinator
             $notifTugas = Kegiatan::with(['jenis', 'lokasi', 'instansi', 'koordinator'])
                 ->whereNotIn('status', ['Selesai', 'Dibatalkan'])
                 ->whereDate('tanggal_mulai', '<=', $today)
                 ->whereRaw("IFNULL(tanggal_selesai, tanggal_mulai) >= ?", [$today])
                 ->get()
-                ->filter(function($keg) use ($user, $username) {
-                    if (!empty($user->id_karyawan) && $keg->id_karyawan_koor == $user->id_karyawan) {
+                ->filter(function($keg) use ($user,$username) {
+                    if (!empty($user->id_karyawan) && $keg->id_karyawan_koor ==$user->id_karyawan) {
                         return true;
                     }
 
                     $namaKoor = strtolower($keg->koordinator->nama_karyawan ?? '');
                     if (!empty($username) && !empty($namaKoor)) {
-                        return str_contains($namaKoor, $username) || str_contains($username, $namaKoor);
+                        return str_contains($namaKoor,$username) || str_contains($username,$namaKoor);
                     }
 
                     return false;
                 })->values();
 
+            // Hitung jumlah laporan yang belum diisi jika user adalah pegawai koordinasi
             if ($user->role === 'pegawai_koordinasi' && !empty($user->id_karyawan)) {
-                $kegiatanSelesaiIds = Kegiatan::where('id_karyawan_koor', $user->id_karyawan)
+                $kegiatanSelesaiIds = Kegiatan::where('id_karyawan_koor',$user->id_karyawan)
                     ->where('status', 'Selesai')
                     ->pluck('id_keg');
                 
-                $laporanAda = LaporanKegiatan::whereIn('id_keg', $kegiatanSelesaiIds)->pluck('id_keg');
-                $laporanPendingCount = $kegiatanSelesaiIds->diff($laporanAda)->count();
+                $laporanAda = LaporanKegiatan::whereIn('id_keg', $kegiatanSelesaiIds)->pluck('id_keg');$laporanPendingCount = $kegiatanSelesaiIds->diff($laporanAda)->count();
             }
         }
 
@@ -86,8 +89,7 @@ class DashboardController extends Controller
             ->take(3)
             ->get();
 
-        if ($jadwalTerdekat->isEmpty()) {
-            $jadwalTerdekat = Kegiatan::with(['jenis', 'lokasi', 'koordinator'])
+        if ($jadwalTerdekat->isEmpty()) {$jadwalTerdekat = Kegiatan::with(['jenis', 'lokasi', 'koordinator'])
                 ->whereNotIn('status', ['Selesai', 'Dibatalkan'])
                 ->whereRaw("IFNULL(tanggal_selesai, tanggal_mulai) >= ?", [$today])
                 ->orderBy('tanggal_mulai', 'asc')
@@ -96,28 +98,35 @@ class DashboardController extends Controller
         }
 
         // Penyesuaian Statistik Berdasarkan Role
-        if ($user && $user->role === 'pegawai_koordinasi' && !empty($user->id_karyawan)) {
-            $stats = [
+        if ($user &&$user->role === 'pegawai_koordinasi' && !empty($user->id_karyawan)) {$stats = [
                 'instansi' => Instansi::count(),
                 'peserta'  => Kegiatan::where('id_karyawan_koor', $user->id_karyawan)->sum('jmlh_peserta'),
                 'kegiatan' => Kegiatan::where('id_karyawan_koor', $user->id_karyawan)->count(),
             ];
-            
-            // Data Chart untuk Pegawai Koordinasi
-            $chartStatus = Kegiatan::where('id_karyawan_koor', $user->id_karyawan)
-                ->select('status', DB::raw('count(*) as total'))
-                ->groupBy('status')
-                ->pluck('total', 'status')
-                ->toArray();
         } else {
             $stats = [
                 'instansi' => Instansi::count(),
                 'peserta'  => Kegiatan::sum('jmlh_peserta'),
                 'kegiatan' => Kegiatan::count(),
             ];
+        }
 
-            // Data Chart Keseluruhan
-            $chartStatus = Kegiatan::select('status', DB::raw('count(*) as total'))
+        // FILTER GRAFIK STATUS KEGIATAN: HANYA BULAN DAN TAHUN INI
+        $currentMonth = Carbon::now()->month;
+        $currentYear  = Carbon::now()->year;
+
+        if ($user && $user->role === 'pegawai_koordinasi' && !empty($user->id_karyawan)) {
+            $chartStatus = Kegiatan::where('id_karyawan_koor',$user->id_karyawan)
+                ->whereMonth('tanggal_mulai', $currentMonth)
+                ->whereYear('tanggal_mulai', $currentYear)
+                ->select('status', DB::raw('count(*) as total'))
+                ->groupBy('status')
+                ->pluck('total', 'status')
+                ->toArray();
+        } else {
+            $chartStatus = Kegiatan::whereMonth('tanggal_mulai',$currentMonth)
+                ->whereYear('tanggal_mulai', $currentYear)
+                ->select('status', DB::raw('count(*) as total'))
                 ->groupBy('status')
                 ->pluck('total', 'status')
                 ->toArray();
