@@ -234,7 +234,7 @@
                         <span>📈 Rasio Status Kegiatan</span>
                         <span class="text-[9px] bg-amber-200 px-1 border border-black font-bold">Ring Berlapis</span>
                     </h4>
-                    <div class="relative h-40 flex items-center justify-center">
+                    <div class="relative h-48 flex items-center justify-center">
                         <canvas id="statusChart"></canvas>
                     </div>
                 </div>
@@ -244,7 +244,7 @@
                         <span>📊 Jenis Kegiatan (Bulan Ini & Bulan Lalu)</span>
                         <span class="text-[9px] bg-sky-200 px-1 border border-black font-bold">Grouped Bar</span>
                     </h4>
-                    <div class="relative h-40">
+                    <div class="relative h-48">
                         <canvas id="jenisChart"></canvas>
                     </div>
                 </div>
@@ -257,7 +257,7 @@
                         <span>🏢 Instansi Teraktif (Bulan Ini & Bulan Lalu)</span>
                         <span class="text-[9px] bg-emerald-200 px-1 border border-black font-bold">Komparasi Agenda</span>
                     </h4>
-                    <div class="relative h-40">
+                    <div class="relative h-48">
                         <canvas id="instansiChart"></canvas>
                     </div>
                 </div>
@@ -267,7 +267,7 @@
                         <span>👥 Kegiatan dengan Peserta Terbanyak</span>
                         <span class="text-[9px] bg-purple-200 px-1 border border-black font-bold">Skala Terbesar</span>
                     </h4>
-                    <div class="relative h-40">
+                    <div class="relative h-48">
                         <canvas id="pesertaChart"></canvas>
                     </div>
                 </div>
@@ -483,14 +483,19 @@
     </div>
     @endpush
 
-    <!-- SCRIPT CHART.JS + DATALABELS PLUGIN + KONSEP BERLAPIS PERIODE -->
+<!-- SCRIPT CHART.JS + DATALABELS PLUGIN (OPTIMASI AKSESIBILITAS ORANG TUA / TEKS TEGAS) -->
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
     <script>
-        // Register DataLabels Plugin
+        // Inisialisasi Plugin DataLabels
         Chart.register(ChartDataLabels);
+
+        // OPSI DEFAULT UNTUK KONTRAST & READABILITY PENGGUNA SENIOR
+        Chart.defaults.font.family = 'Plus Jakarta Sans, sans-serif';
+        Chart.defaults.font.weight = 'bold';
+        Chart.defaults.color = '#000000';
 
         // 1. CHART STATUS KEGIATAN (DOUGHNUT - 2 RING BERLAPIS)
         const rawStatusCurrent = @json($chartStatusCurrent ?? []);
@@ -505,22 +510,22 @@
             data: {
                 labels: statusLabels,
                 datasets: [
-                    // Ring Luar (Pelapis - Bulan Lalu)
+                    // Ring Luar (Bulan Lalu)
                     {
                         label: 'Bulan Lalu',
                         data: valuesPrev,
                         backgroundColor: ['#047857', '#d97706', '#b91c1c', '#1d4ed8'],
                         borderColor: '#000000',
-                        borderWidth: 1.5,
+                        borderWidth: 2,
                         weight: 0.8
                     },
-                    // Ring Dalam (Utama - Bulan Ini)
+                    // Ring Dalam (Bulan Ini)
                     {
                         label: 'Bulan Ini',
                         data: valuesCurrent,
                         backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#3b82f6'],
                         borderColor: '#000000',
-                        borderWidth: 1.5,
+                        borderWidth: 2,
                         weight: 1.2
                     }
                 ]
@@ -528,18 +533,28 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                cutout: '50%',
+                cutout: '45%',
                 plugins: {
                     legend: {
                         position: 'right',
-                        labels: { font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 8 }, color: '#000000', boxWidth: 6, padding: 4 }
+                        labels: { 
+                            font: { size: 11, weight: '800' }, 
+                            color: '#000000', 
+                            boxWidth: 12, 
+                            padding: 10 
+                        }
                     },
                     datalabels: {
                         color: '#ffffff',
-                        font: { weight: 'bold', size: 8 },
+                        font: { size: 11, weight: '900' },
+                        backgroundColor: '#000000',
+                        borderRadius: 4,
+                        padding: { top: 2, bottom: 2, left: 4, right: 4 },
                         formatter: (val) => val > 0 ? val : ''
                     },
                     tooltip: {
+                        titleFont: { size: 13, weight: 'bold' },
+                        bodyFont: { size: 12 },
                         callbacks: {
                             label: (ctx) => `${ctx.dataset.label} (${ctx.label}): ${ctx.raw} kegiatan`
                         }
@@ -561,18 +576,18 @@
                     {
                         label: 'Bulan Lalu',
                         data: allJenisKeys.map(k => rawJenisPrev[k] || 0),
-                        backgroundColor: '#64748b',
+                        backgroundColor: '#475569', // Slate Dark
                         borderColor: '#000000',
-                        borderWidth: 1.5,
-                        barThickness: 6,
+                        borderWidth: 2,
+                        barThickness: 10,
                     },
                     {
                         label: 'Bulan Ini',
                         data: allJenisKeys.map(k => rawJenisCurrent[k] || 0),
-                        backgroundColor: '#38bdf8',
+                        backgroundColor: '#0284c7', // Sky Blue Pekat
                         borderColor: '#000000',
-                        borderWidth: 1.5,
-                        barThickness: 6,
+                        borderWidth: 2,
+                        barThickness: 10,
                     }
                 ]
             },
@@ -581,18 +596,32 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { position: 'top', labels: { font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 8 }, boxWidth: 8 } },
+                    legend: { 
+                        position: 'top', 
+                        labels: { font: { size: 12, weight: '800' }, color: '#000000', boxWidth: 14 } 
+                    },
                     datalabels: {
                         anchor: 'end',
                         align: 'end',
                         color: '#000000',
-                        font: { weight: 'bold', size: 8 },
+                        backgroundColor: '#fef08a', // Amber Soft Highlight
+                        borderColor: '#000000',
+                        borderWidth: 1,
+                        borderRadius: 3,
+                        padding: { top: 1, bottom: 1, left: 4, right: 4 },
+                        font: { size: 11, weight: '800' },
                         formatter: (val) => val > 0 ? val : ''
                     }
                 },
                 scales: {
-                    x: { ticks: { font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 8 }, color: '#000000' }, grid: { color: '#f1f5f9' } },
-                    y: { ticks: { font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 8 }, color: '#000000' }, grid: { display: false } }
+                    x: { 
+                        ticks: { font: { size: 11, weight: '800' }, color: '#000000' }, 
+                        grid: { color: '#cbd5e1' } 
+                    },
+                    y: { 
+                        ticks: { font: { size: 11, weight: '800' }, color: '#000000' }, 
+                        grid: { display: false } 
+                    }
                 }
             }
         });
@@ -610,18 +639,18 @@
                     {
                         label: 'Bulan Lalu',
                         data: allInstansiKeys.map(k => rawInstansiPrev[k] || 0),
-                        backgroundColor: '#475569',
+                        backgroundColor: '#334155',
                         borderColor: '#000000',
-                        borderWidth: 1.5,
-                        barThickness: 6,
+                        borderWidth: 2,
+                        barThickness: 10,
                     },
                     {
                         label: 'Bulan Ini',
                         data: allInstansiKeys.map(k => rawInstansiCurrent[k] || 0),
-                        backgroundColor: '#34d399',
+                        backgroundColor: '#059669', // Hijau Emerald Pekat
                         borderColor: '#000000',
-                        borderWidth: 1.5,
-                        barThickness: 6,
+                        borderWidth: 2,
+                        barThickness: 10,
                     }
                 ]
             },
@@ -630,18 +659,32 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { position: 'top', labels: { font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 8 }, boxWidth: 8 } },
+                    legend: { 
+                        position: 'top', 
+                        labels: { font: { size: 12, weight: '800' }, color: '#000000', boxWidth: 14 } 
+                    },
                     datalabels: {
                         anchor: 'end',
                         align: 'end',
                         color: '#000000',
-                        font: { weight: 'bold', size: 8 },
+                        backgroundColor: '#ffffff',
+                        borderColor: '#000000',
+                        borderWidth: 1,
+                        borderRadius: 3,
+                        padding: { top: 1, bottom: 1, left: 4, right: 4 },
+                        font: { size: 11, weight: '800' },
                         formatter: (val) => val > 0 ? val + ' keg' : ''
                     }
                 },
                 scales: {
-                    x: { ticks: { font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 8 }, color: '#000000' }, grid: { color: '#f1f5f9' } },
-                    y: { ticks: { font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 8 }, color: '#000000' }, grid: { display: false } }
+                    x: { 
+                        ticks: { font: { size: 11, weight: '800' }, color: '#000000' }, 
+                        grid: { color: '#cbd5e1' } 
+                    },
+                    y: { 
+                        ticks: { font: { size: 11, weight: '800' }, color: '#000000' }, 
+                        grid: { display: false } 
+                    }
                 }
             }
         });
@@ -651,14 +694,14 @@
         new Chart(document.getElementById('pesertaChart'), {
             type: 'bar',
             data: {
-                labels: rawPesertaData.map(item => item.nama_keg.length > 16 ? item.nama_keg.substring(0, 16) + '...' : item.nama_keg),
+                labels: rawPesertaData.map(item => item.nama_keg.length > 15 ? item.nama_keg.substring(0, 15) + '...' : item.nama_keg),
                 datasets: [{
                     label: 'Jumlah Peserta',
                     data: rawPesertaData.map(item => item.jmlh_peserta),
-                    backgroundColor: '#c084fc',
+                    backgroundColor: '#7e22ce', // Ungu Tua High Contrast
                     borderColor: '#000000',
-                    borderWidth: 1.5,
-                    barThickness: 10,
+                    borderWidth: 2,
+                    barThickness: 16,
                 }]
             },
             options: {
@@ -670,13 +713,24 @@
                         anchor: 'end',
                         align: 'top',
                         color: '#000000',
-                        font: { weight: 'bold', size: 8 },
+                        backgroundColor: '#fef08a',
+                        borderColor: '#000000',
+                        borderWidth: 1,
+                        borderRadius: 3,
+                        padding: { top: 2, bottom: 2, left: 5, right: 5 },
+                        font: { size: 11, weight: '800' },
                         formatter: (val) => val.toLocaleString() + ' org'
                     }
                 },
                 scales: {
-                    x: { ticks: { font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 8 }, color: '#000000' }, grid: { display: false } },
-                    y: { ticks: { font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 8 }, color: '#000000' }, grid: { color: '#f1f5f9' } }
+                    x: { 
+                        ticks: { font: { size: 11, weight: '800' }, color: '#000000' }, 
+                        grid: { display: false } 
+                    },
+                    y: { 
+                        ticks: { font: { size: 11, weight: '800' }, color: '#000000' }, 
+                        grid: { color: '#cbd5e1' } 
+                    }
                 }
             }
         });
