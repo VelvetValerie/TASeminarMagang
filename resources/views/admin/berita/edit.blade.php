@@ -120,7 +120,9 @@
                         <div class="flex items-center mt-2 lg:mt-2 p-1 bg-gray-100 rounded-md shrink-0 border border-gray-200">
                             <button type="button" id="btnModeVisual" onclick="switchMode('visual')" class="px-3 py-1.5 bg-white shadow-sm text-xs font-bold rounded text-gray-800 transition-all">Visual Editor</button>
                             <button type="button" onclick="openPreviewModal()" class="px-3 py-1.5 text-emerald-700 text-xs font-bold rounded hover:bg-gray-200 transition-all">Live Preview</button>
-                            <button type="button" id="btnModeRaw" onclick="switchMode('raw')" class="px-3 py-1.5 text-xs font-bold rounded text-gray-600 hover:bg-gray-200 transition-all">Kode HTML</button>
+                            {{-- @if($userRole == 'admin')
+                                <button type="button" id="btnModeRaw" onclick="switchMode('raw')" class="px-3 py-1.5 text-xs font-bold rounded text-gray-600 hover:bg-gray-200 transition-all">Kode HTML</button>
+                            @endif --}}
                         </div>
                     </div>
 
