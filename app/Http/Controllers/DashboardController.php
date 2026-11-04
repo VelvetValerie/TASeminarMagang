@@ -30,7 +30,8 @@ class DashboardController extends Controller
     {
         $this->autoUpdateStatusSelesai();
         
-        $today = Carbon::today()->toDateString();$user = Auth::user();
+        $today = Carbon::today()->toDateString();
+        $user = Auth::user();
 
         $notifTugas = collect();
         $laporanPendingCount = 0;
@@ -44,14 +45,14 @@ class DashboardController extends Controller
                 ->whereDate('tanggal_mulai', '<=', $today)
                 ->whereRaw("IFNULL(tanggal_selesai, tanggal_mulai) >= ?", [$today])
                 ->get()
-                ->filter(function($keg) use ($user,$username) {
-                    if (!empty($user->id_karyawan) && $keg->id_karyawan_koor ==$user->id_karyawan) {
+                ->filter(function($keg) use ($user, $username) {
+                    if (!empty($user->id_karyawan) && $keg->id_karyawan_koor == $user->id_karyawan) {
                         return true;
                     }
 
                     $namaKoor = strtolower($keg->koordinator->nama_karyawan ?? '');
                     if (!empty($username) && !empty($namaKoor)) {
-                        return str_contains($namaKoor,$username) || str_contains($username,$namaKoor);
+                        return str_contains($namaKoor, $username) || str_contains($username, $namaKoor);
                     }
 
                     return false;
@@ -59,11 +60,12 @@ class DashboardController extends Controller
 
             // Hitung jumlah laporan yang belum diisi jika user adalah pegawai koordinasi
             if ($user->role === 'pegawai_koordinasi' && !empty($user->id_karyawan)) {
-                $kegiatanSelesaiIds = Kegiatan::where('id_karyawan_koor',$user->id_karyawan)
+                $kegiatanSelesaiIds = Kegiatan::where('id_karyawan_koor', $user->id_karyawan)
                     ->where('status', 'Selesai')
                     ->pluck('id_keg');
                 
-                $laporanAda = LaporanKegiatan::whereIn('id_keg', $kegiatanSelesaiIds)->pluck('id_keg');$laporanPendingCount = $kegiatanSelesaiIds->diff($laporanAda)->count();
+                $laporanAda = LaporanKegiatan::whereIn('id_keg', $kegiatanSelesaiIds)->pluck('id_keg');
+                $laporanPendingCount = $kegiatanSelesaiIds->diff($laporanAda)->count();
             }
         }
 
@@ -89,7 +91,8 @@ class DashboardController extends Controller
             ->take(3)
             ->get();
 
-        if ($jadwalTerdekat->isEmpty()) {$jadwalTerdekat = Kegiatan::with(['jenis', 'lokasi', 'koordinator'])
+        if ($jadwalTerdekat->isEmpty()) {
+            $jadwalTerdekat = Kegiatan::with(['jenis', 'lokasi', 'koordinator'])
                 ->whereNotIn('status', ['Selesai', 'Dibatalkan'])
                 ->whereRaw("IFNULL(tanggal_selesai, tanggal_mulai) >= ?", [$today])
                 ->orderBy('tanggal_mulai', 'asc')
@@ -98,7 +101,8 @@ class DashboardController extends Controller
         }
 
         // Penyesuaian Statistik Berdasarkan Role
-        if ($user &&$user->role === 'pegawai_koordinasi' && !empty($user->id_karyawan)) {$stats = [
+        if ($user && $user->role === 'pegawai_koordinasi' && !empty($user->id_karyawan)) {
+            $stats = [
                 'instansi' => Instansi::count(),
                 'peserta'  => Kegiatan::where('id_karyawan_koor', $user->id_karyawan)->sum('jmlh_peserta'),
                 'kegiatan' => Kegiatan::where('id_karyawan_koor', $user->id_karyawan)->count(),
@@ -111,44 +115,65 @@ class DashboardController extends Controller
             ];
         }
 
-        // 1. FILTER GRAFIK STATUS KEGIATAN: HANYA BULAN DAN TAHUN INI
-        $currentMonth = Carbon::now()->month;
-        $currentYear  = Carbon::now()->year;
+        // Carbon instances untuk Bulan Ini & Bulan Lalu
+        $now          = Carbon::now();
+        $currentMonth = $now->month;
+        $currentYear  = $now->year;
 
-        if ($user && $user->role === 'pegawai_koordinasi' && !empty($user->id_karyawan)) {
-            $chartStatus = Kegiatan::where('id_karyawan_koor',$user->id_karyawan)
-                ->whereMonth('tanggal_mulai', $currentMonth)
-                ->whereYear('tanggal_mulai', $currentYear)
-                ->select('status', DB::raw('count(*) as total'))
-                ->groupBy('status')
-                ->pluck('total', 'status')
-                ->toArray();
-        } else {
-            $chartStatus = Kegiatan::whereMonth('tanggal_mulai',$currentMonth)
-                ->whereYear('tanggal_mulai', $currentYear)
-                ->select('status', DB::raw('count(*) as total'))
-                ->groupBy('status')
-                ->pluck('total', 'status')
-                ->toArray();
-        }
+        $subMonth     = Carbon::now()->subMonth();
+        $prevMonth    = $subMonth->month;
+        $prevYear     = $subMonth->year;
 
-        // 2. Data Chart Kategori / Jenis Kegiatan Top 5
-        $chartJenis = Kegiatan::join('jenis_keg', 'kegiatan.id_jeniskeg', '=', 'jenis_keg.id_jeniskeg')
+        // 1. DATA STATUS KEGIATAN (RING DALAM: BULAN INI, RING LUAR: BULAN LALU)
+        $chartStatusCurrent = Kegiatan::whereMonth('tanggal_mulai', $currentMonth)
+            ->whereYear('tanggal_mulai', $currentYear)
+            ->select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status')
+            ->toArray();
+
+        $chartStatusPrev = Kegiatan::whereMonth('tanggal_mulai', $prevMonth)
+            ->whereYear('tanggal_mulai', $prevYear)
+            ->select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status')
+            ->toArray();
+
+        // 2. DATA JENIS KEGIATAN TOP 5 (BULAN INI VS BULAN LALU)
+        $chartJenisCurrent = Kegiatan::join('jenis_keg', 'kegiatan.id_jeniskeg', '=', 'jenis_keg.id_jeniskeg')
+            ->whereMonth('tanggal_mulai', $currentMonth)
+            ->whereYear('tanggal_mulai', $currentYear)
             ->select('jenis_keg.nama_jeniskeg', DB::raw('count(*) as total'))
             ->groupBy('jenis_keg.nama_jeniskeg')
-            ->orderBy('total', 'desc')
-            ->take(5)
-            ->get();
+            ->pluck('total', 'jenis_keg.nama_jeniskeg')
+            ->toArray();
 
-        // 3. Data Chart Top 5 Instansi Teraktif (Banyak Kegiatan)
-        $chartInstansi = Kegiatan::join('instansi', 'kegiatan.id_instansi', '=', 'instansi.id_instansi')
+        $chartJenisPrev = Kegiatan::join('jenis_keg', 'kegiatan.id_jeniskeg', '=', 'jenis_keg.id_jeniskeg')
+            ->whereMonth('tanggal_mulai', $prevMonth)
+            ->whereYear('tanggal_mulai', $prevYear)
+            ->select('jenis_keg.nama_jeniskeg', DB::raw('count(*) as total'))
+            ->groupBy('jenis_keg.nama_jeniskeg')
+            ->pluck('total', 'jenis_keg.nama_jeniskeg')
+            ->toArray();
+
+        // 3. DATA INSTANSI TERAKTIF TOP 5 (BULAN INI VS BULAN LALU)
+        $chartInstansiCurrent = Kegiatan::join('instansi', 'kegiatan.id_instansi', '=', 'instansi.id_instansi')
+            ->whereMonth('tanggal_mulai', $currentMonth)
+            ->whereYear('tanggal_mulai', $currentYear)
             ->select('instansi.nm_instansi', DB::raw('count(*) as total'))
             ->groupBy('instansi.nm_instansi')
-            ->orderBy('total', 'desc')
-            ->take(5)
-            ->get();
+            ->pluck('total', 'instansi.nm_instansi')
+            ->toArray();
 
-        // 4. Data Chart Top 5 Kegiatan Terbesar (Jumlah Peserta)
+        $chartInstansiPrev = Kegiatan::join('instansi', 'kegiatan.id_instansi', '=', 'instansi.id_instansi')
+            ->whereMonth('tanggal_mulai', $prevMonth)
+            ->whereYear('tanggal_mulai', $prevYear)
+            ->select('instansi.nm_instansi', DB::raw('count(*) as total'))
+            ->groupBy('instansi.nm_instansi')
+            ->pluck('total', 'instansi.nm_instansi')
+            ->toArray();
+
+        // 4. DATA TOP 5 KEGIATAN PESERTA TERBANYAK
         $chartPesertaKeg = Kegiatan::select('nama_keg', 'jmlh_peserta')
             ->orderBy('jmlh_peserta', 'desc')
             ->take(5)
@@ -156,8 +181,9 @@ class DashboardController extends Controller
 
         return view('dashboard', compact(
             'kegiatan', 'jadwalTerdekat', 'stats', 'notifTugas', 
-            'laporanPendingCount', 'chartStatus', 'chartJenis', 
-            'chartInstansi', 'chartPesertaKeg'
+            'laporanPendingCount', 'chartStatusCurrent', 'chartStatusPrev',
+            'chartJenisCurrent', 'chartJenisPrev', 'chartInstansiCurrent',
+            'chartInstansiPrev', 'chartPesertaKeg'
         ));
     }
 

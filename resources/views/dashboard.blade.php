@@ -200,7 +200,7 @@
 
     </div>
 
-    <!-- 1.5 PANEL GRAFIK STATISTIK (CAROUSEL SLIDER NEO-BRUTALISM) -->
+    <!-- 1.5 PANEL GRAFIK STATISTIK (CAROUSEL SLIDER DENGAN KONSEP BERLAPIS PERIODE) -->
     <div class="border-2 border-black bg-white p-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] mb-8 relative">
         
         <!-- Header & Navigasi Slider -->
@@ -208,7 +208,7 @@
             <div class="flex items-center gap-2">
                 <span class="w-2.5 h-2.5 bg-amber-400 border border-black inline-block"></span>
                 <h3 class="text-xs font-extrabold text-gray-900 uppercase tracking-wider">
-                    📊 Visualisasi Analytics & Rekapitulasi Data
+                    📊 Analisa Tren Kegiatan (Bulan Ini & Bulan Lalu)
                 </h3>
             </div>
             <div class="flex items-center gap-2">
@@ -227,47 +227,47 @@
         <!-- CONTAINER CAROUSEL -->
         <div class="relative overflow-hidden">
             
-            <!-- SLIDE 1: Status (Bulan Ini) & Top Jenis Kegiatan -->
+            <!-- SLIDE 1: Status (2 Ring Doughnut) & Top Jenis Kegiatan (Grouped Bar) -->
             <div id="slide1" class="grid grid-cols-1 lg:grid-cols-3 gap-5 transition-all duration-300">
                 <div class="border-2 border-black p-3 bg-white">
-                    <h4 class="text-[11px] font-extrabold text-gray-900 uppercase pb-1 border-b border-gray-300 mb-2 flex justify-between">
-                        <span>📈 Status </span>
-                        <span class="text-[9px] bg-amber-200 px-1 border border-black font-bold"> <?php echo \Carbon\Carbon::now()->translatedFormat('F Y'); ?></span>
+                    <h4 class="text-[11px] font-extrabold text-gray-900 uppercase pb-1 border-b border-gray-300 mb-2 flex justify-between items-center">
+                        <span>📈 Rasio Status Kegiatan</span>
+                        <span class="text-[9px] bg-amber-200 px-1 border border-black font-bold">Ring Berlapis</span>
                     </h4>
-                    <div class="relative h-36 flex items-center justify-center">
+                    <div class="relative h-40 flex items-center justify-center">
                         <canvas id="statusChart"></canvas>
                     </div>
                 </div>
 
                 <div class="lg:col-span-2 border-2 border-black p-3 bg-white">
-                    <h4 class="text-[11px] font-extrabold text-gray-900 uppercase pb-1 border-b border-gray-300 mb-2 flex justify-between">
-                        <span>📊 Jenis Kegiatan Terbanyak</span>
-                        <span class="text-[9px] bg-sky-200 px-1 border border-black font-bold">Agenda 2026</span>
+                    <h4 class="text-[11px] font-extrabold text-gray-900 uppercase pb-1 border-b border-gray-300 mb-2 flex justify-between items-center">
+                        <span>📊 Jenis Kegiatan (Bulan Ini & Bulan Lalu)</span>
+                        <span class="text-[9px] bg-sky-200 px-1 border border-black font-bold">Grouped Bar</span>
                     </h4>
-                    <div class="relative h-36">
+                    <div class="relative h-40">
                         <canvas id="jenisChart"></canvas>
                     </div>
                 </div>
             </div>
 
-            <!-- SLIDE 2: Top Instansi & Top Peserta Kegiatan -->
+            <!-- SLIDE 2: Instansi Teraktif (Grouped Bar) & Kegiatan dengan Peserta Terbanyak -->
             <div id="slide2" class="hidden grid-cols-1 lg:grid-cols-2 gap-5 transition-all duration-300">
                 <div class="border-2 border-black p-3 bg-white">
-                    <h4 class="text-[11px] font-extrabold text-gray-900 uppercase pb-1 border-b border-gray-300 mb-2 flex justify-between">
-                        <span>🏢 Instansi Teraktif</span>
-                        <span class="text-[9px] bg-emerald-200 px-1 border border-black font-bold">Mitra BKN</span>
+                    <h4 class="text-[11px] font-extrabold text-gray-900 uppercase pb-1 border-b border-gray-300 mb-2 flex justify-between items-center">
+                        <span>🏢 Instansi Teraktif (Bulan Ini & Bulan Lalu)</span>
+                        <span class="text-[9px] bg-emerald-200 px-1 border border-black font-bold">Komparasi Agenda</span>
                     </h4>
-                    <div class="relative h-36">
+                    <div class="relative h-40">
                         <canvas id="instansiChart"></canvas>
                     </div>
                 </div>
 
                 <div class="border-2 border-black p-3 bg-white">
-                    <h4 class="text-[11px] font-extrabold text-gray-900 uppercase pb-1 border-b border-gray-300 mb-2 flex justify-between">
-                        <span>👥 Kegiatan (Jumlah Peserta)</span>
-                        <span class="text-[9px] bg-purple-200 px-1 border border-black font-bold">Terbanyak</span>
+                    <h4 class="text-[11px] font-extrabold text-gray-900 uppercase pb-1 border-b border-gray-300 mb-2 flex justify-between items-center">
+                        <span>👥 Kegiatan dengan Peserta Terbanyak</span>
+                        <span class="text-[9px] bg-purple-200 px-1 border border-black font-bold">Skala Terbesar</span>
                     </h4>
-                    <div class="relative h-36">
+                    <div class="relative h-40">
                         <canvas id="pesertaChart"></canvas>
                     </div>
                 </div>
@@ -483,77 +483,111 @@
     </div>
     @endpush
 
-    <!-- SCRIPT CHART.JS + DATALABELS PLUGIN + CAROUSEL LOGIC -->
+    <!-- SCRIPT CHART.JS + DATALABELS PLUGIN + KONSEP BERLAPIS PERIODE -->
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Plugin untuk Menampilkan Nilai Angka Langsung di Atas Grafik -->
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
     <script>
-        // Inisialisasi Plugin DataLabels
+        // Register DataLabels Plugin
         Chart.register(ChartDataLabels);
 
-        // 1. CHART STATUS KEGIATAN (DOUGHNUT - HANYA BULAN INI)
-        const rawStatusData = @json($chartStatus ?? []);
-        const statusLabels = Object.keys(rawStatusData);
-        const statusValues = Object.values(rawStatusData);
+        // 1. CHART STATUS KEGIATAN (DOUGHNUT - 2 RING BERLAPIS)
+        const rawStatusCurrent = @json($chartStatusCurrent ?? []);
+        const rawStatusPrev    = @json($chartStatusPrev ?? []);
+        const statusLabels     = ['Selesai', 'Terkonfirmasi', 'Belum Konfirmasi', 'Dibatalkan'];
+
+        const valuesCurrent = statusLabels.map(st => rawStatusCurrent[st] || 0);
+        const valuesPrev    = statusLabels.map(st => rawStatusPrev[st] || 0);
 
         new Chart(document.getElementById('statusChart'), {
             type: 'doughnut',
             data: {
-                labels: statusLabels.length ? statusLabels : ['Belum Ada Agenda'],
-                datasets: [{
-                    data: statusValues.length ? statusValues : [1],
-                    backgroundColor: statusValues.length ? ['#10b981', '#f59e0b', '#ef4444', '#3b82f6'] : ['#e2e8f0'],
-                    borderColor: '#000000',
-                    borderWidth: 2,
-                }]
+                labels: statusLabels,
+                datasets: [
+                    // Ring Luar (Pelapis - Bulan Lalu)
+                    {
+                        label: 'Bulan Lalu',
+                        data: valuesPrev,
+                        backgroundColor: ['#047857', '#d97706', '#b91c1c', '#1d4ed8'],
+                        borderColor: '#000000',
+                        borderWidth: 1.5,
+                        weight: 0.8
+                    },
+                    // Ring Dalam (Utama - Bulan Ini)
+                    {
+                        label: 'Bulan Ini',
+                        data: valuesCurrent,
+                        backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#3b82f6'],
+                        borderColor: '#000000',
+                        borderWidth: 1.5,
+                        weight: 1.2
+                    }
+                ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                cutout: '65%',
+                cutout: '50%',
                 plugins: {
                     legend: {
                         position: 'right',
-                        labels: { font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 9 }, color: '#000000', boxWidth: 8, padding: 6 }
+                        labels: { font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 8 }, color: '#000000', boxWidth: 6, padding: 4 }
                     },
                     datalabels: {
-                        color: '#000000',
-                        font: { weight: 'bold', size: 10 },
-                        formatter: (value) => value > 0 ? value : ''
+                        color: '#ffffff',
+                        font: { weight: 'bold', size: 8 },
+                        formatter: (val) => val > 0 ? val : ''
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: (ctx) => `${ctx.dataset.label} (${ctx.label}): ${ctx.raw} kegiatan`
+                        }
                     }
                 }
             }
         });
 
-        // 2. CHART TOP 5 JENIS KEGIATAN (HORIZONTAL BAR)
-        const rawJenisData = @json($chartJenis ?? []);
+        // 2. CHART TOP JENIS KEGIATAN (GROUPED BAR - BULAN INI VS BULAN LALU)
+        const rawJenisCurrent = @json($chartJenisCurrent ?? []);
+        const rawJenisPrev    = @json($chartJenisPrev ?? []);
+        const allJenisKeys    = Array.from(new Set([...Object.keys(rawJenisCurrent), ...Object.keys(rawJenisPrev)])).slice(0, 5);
+
         new Chart(document.getElementById('jenisChart'), {
             type: 'bar',
             data: {
-                labels: rawJenisData.map(item => item.nama_jeniskeg),
-                datasets: [{
-                    label: 'Jumlah Agenda',
-                    data: rawJenisData.map(item => item.total),
-                    backgroundColor: '#38bdf8',
-                    borderColor: '#000000',
-                    borderWidth: 2,
-                    barThickness: 10,
-                }]
+                labels: allJenisKeys.length ? allJenisKeys : ['Pengembangan Karier', 'SKD CPNS', 'PPPK', 'Sekolah Kedinasan', 'CAT'],
+                datasets: [
+                    {
+                        label: 'Bulan Lalu',
+                        data: allJenisKeys.map(k => rawJenisPrev[k] || 0),
+                        backgroundColor: '#64748b',
+                        borderColor: '#000000',
+                        borderWidth: 1.5,
+                        barThickness: 6,
+                    },
+                    {
+                        label: 'Bulan Ini',
+                        data: allJenisKeys.map(k => rawJenisCurrent[k] || 0),
+                        backgroundColor: '#38bdf8',
+                        borderColor: '#000000',
+                        borderWidth: 1.5,
+                        barThickness: 6,
+                    }
+                ]
             },
             options: {
                 indexAxis: 'y',
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { display: false },
+                    legend: { position: 'top', labels: { font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 8 }, boxWidth: 8 } },
                     datalabels: {
                         anchor: 'end',
                         align: 'end',
                         color: '#000000',
-                        font: { weight: 'bold', size: 9 },
-                        formatter: (value) => value
+                        font: { weight: 'bold', size: 8 },
+                        formatter: (val) => val > 0 ? val : ''
                     }
                 },
                 scales: {
@@ -563,33 +597,46 @@
             }
         });
 
-        // 3. CHART TOP 5 INSTANSI TERAKTIF (HORIZONTAL BAR)
-        const rawInstansiData = @json($chartInstansi ?? []);
+        // 3. CHART TOP INSTANSI TERAKTIF (GROUPED BAR - BULAN INI VS BULAN LALU)
+        const rawInstansiCurrent = @json($chartInstansiCurrent ?? []);
+        const rawInstansiPrev    = @json($chartInstansiPrev ?? []);
+        const allInstansiKeys   = Array.from(new Set([...Object.keys(rawInstansiCurrent), ...Object.keys(rawInstansiPrev)])).slice(0, 5);
+
         new Chart(document.getElementById('instansiChart'), {
             type: 'bar',
             data: {
-                labels: rawInstansiData.map(item => item.nm_instansi),
-                datasets: [{
-                    label: 'Jumlah Kegiatan',
-                    data: rawInstansiData.map(item => item.total),
-                    backgroundColor: '#34d399',
-                    borderColor: '#000000',
-                    borderWidth: 2,
-                    barThickness: 10,
-                }]
+                labels: allInstansiKeys.length ? allInstansiKeys : ['Kanreg VIII BKN', 'Pemprov Kalsel', 'Disdik', 'BKN Pusat', 'Dinkes'],
+                datasets: [
+                    {
+                        label: 'Bulan Lalu',
+                        data: allInstansiKeys.map(k => rawInstansiPrev[k] || 0),
+                        backgroundColor: '#475569',
+                        borderColor: '#000000',
+                        borderWidth: 1.5,
+                        barThickness: 6,
+                    },
+                    {
+                        label: 'Bulan Ini',
+                        data: allInstansiKeys.map(k => rawInstansiCurrent[k] || 0),
+                        backgroundColor: '#34d399',
+                        borderColor: '#000000',
+                        borderWidth: 1.5,
+                        barThickness: 6,
+                    }
+                ]
             },
             options: {
                 indexAxis: 'y',
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { display: false },
+                    legend: { position: 'top', labels: { font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 8 }, boxWidth: 8 } },
                     datalabels: {
                         anchor: 'end',
                         align: 'end',
                         color: '#000000',
-                        font: { weight: 'bold', size: 9 },
-                        formatter: (value) => value + ' keg'
+                        font: { weight: 'bold', size: 8 },
+                        formatter: (val) => val > 0 ? val + ' keg' : ''
                     }
                 },
                 scales: {
@@ -604,14 +651,14 @@
         new Chart(document.getElementById('pesertaChart'), {
             type: 'bar',
             data: {
-                labels: rawPesertaData.map(item => item.nama_keg.length > 18 ? item.nama_keg.substring(0, 18) + '...' : item.nama_keg),
+                labels: rawPesertaData.map(item => item.nama_keg.length > 16 ? item.nama_keg.substring(0, 16) + '...' : item.nama_keg),
                 datasets: [{
                     label: 'Jumlah Peserta',
                     data: rawPesertaData.map(item => item.jmlh_peserta),
                     backgroundColor: '#c084fc',
                     borderColor: '#000000',
-                    borderWidth: 2,
-                    barThickness: 12,
+                    borderWidth: 1.5,
+                    barThickness: 10,
                 }]
             },
             options: {
@@ -623,8 +670,8 @@
                         anchor: 'end',
                         align: 'top',
                         color: '#000000',
-                        font: { weight: 'bold', size: 9 },
-                        formatter: (value) => value.toLocaleString() + ' org'
+                        font: { weight: 'bold', size: 8 },
+                        formatter: (val) => val.toLocaleString() + ' org'
                     }
                 },
                 scales: {
