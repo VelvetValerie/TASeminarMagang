@@ -237,7 +237,8 @@
     </div>
 
     <!-- MODAL 1: DAFTAR KEGIATAN HARI TERPILIH -->
-    <div id="dayEventsModal" class="hidden fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
+    @push('modals')
+    <div id="dayEventsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
         <div class="relative w-full max-w-2xl bg-white border-2 border-black p-5 shadow-2xl">
             <button type="button" onclick="closeDayEventsModal()" class="absolute top-2 right-2 p-1 text-red-600 hover:text-red-800 transition cursor-pointer">
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
@@ -250,9 +251,11 @@
             </div>
         </div>
     </div>
+    @endpush
 
     <!-- MODAL 2: RINCIAN DETAIL KEGIATAN LENGKAP -->
-    <div id="eventDetailModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+    @push('modals')
+    <div id="eventDetailModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
         <div class="relative w-full max-w-xl bg-white border-2 border-black p-5 shadow-2xl">
             <button type="button" onclick="closeEventDetailModal()" class="absolute top-2 right-2 p-1 text-red-600 hover:text-red-800 transition cursor-pointer">
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
@@ -275,8 +278,10 @@
             </div>
         </div>
     </div>
+    @endpush
 
     <!-- SCRIPT LOGIKA KALENDER: WARNA DARK/MUTED & HIGHLIGHT HARI INI TEDUH -->
+    @push('scripts')
     <script>
         @php
             $formattedEvents = $kegiatan->map(function($k, $index) {
@@ -562,6 +567,7 @@
             lampiranElem.href = (item.lampiran && item.lampiran !== '-') ? item.lampiran : '#';
 
             detailModal.classList.remove('hidden');
+            dayModal.classList.add('hidden');
         }
 
         function closeEventDetailModal() {
@@ -603,4 +609,5 @@
             renderCalendar();
         });
     </script>
+    @endpush
 @endsection
