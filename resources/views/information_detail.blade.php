@@ -7,19 +7,24 @@
     <title>{{ $informasi->judul_berita }} | Pusat Informasi CAT BKN VIII</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        div#previewKonten h2, #previewKonten h2 { font-size: 1.75rem !important; font-weight: 700 !important; margin-top: 1.35rem !important; margin-bottom: 0.5rem !important; color: #1f2937 !important; line-height: 1.3 !important; display: block !important; }
-        div#previewKonten h3, #previewKonten h3 { font-size: 1.375rem !important; font-weight: 700 !important; margin-top: 1.15rem !important; margin-bottom: 0.5rem !important; color: #374151 !important; line-height: 1.35 !important; display: block !important; }
-        div#previewKonten h4, #previewKonten h4 { font-size: 1.125rem !important; font-weight: 600 !important; margin-top: 1rem !important; margin-bottom: 0.5rem !important; color: #4b5563 !important; line-height: 1.4 !important; display: block !important; }
-        div#previewKonten h5, #previewKonten h5 { font-size: 1rem !important; font-weight: 600 !important; margin-top: 0.75rem !important; margin-bottom: 0.25rem !important; color: #4b5563 !important; display: block !important; }
-        div#previewKonten h6, #previewKonten h6 { font-size: 0.875rem !important; font-weight: 600 !important; margin-top: 0.75rem !important; margin-bottom: 0.25rem !important; color: #6b7280 !important; display: block !important; }
-        div#previewKonten blockquote, #previewKonten blockquote { border-left: 4px solid #3b82f6 !important; padding-left: 1rem !important; font-style: italic !important; color: #4b5563 !important; margin: 1rem 0 !important; display: block !important; }
-        div#previewKonten ul, #previewKonten ul { list-style-type: disc !important; padding-left: 1.5rem !important; margin: 0.75rem 0 !important; display: block !important; }
-        div#previewKonten ol, #previewKonten ol { list-style-type: decimal !important; padding-left: 1.5rem !important; margin: 0.75rem 0 !important; display: block !important; }
-        div#previewKonten ol[style*="lower-alpha"], #previewKonten ol[style*="lower-alpha"] { list-style-type: lower-alpha !important; }
-        div#previewKonten ol[style*="lower-roman"], #previewKonten ol[style*="lower-roman"] { list-style-type: lower-roman !important; }
-        div#previewKonten li, #previewKonten li { margin-bottom: 0.25rem !important; display: list-item !important; }
-        div#previewKonten img, #previewKonten img { max-width: 100% !important; height: auto !important; border-radius: 0.5rem !important; margin: 1rem auto !important; display: block !important; }
-        div#previewKonten p, #previewKonten p { margin-bottom: 0.75rem !important; font-size: 1rem !important; line-height: 1.625 !important; }
+        /* Styling khusus untuk Editor dan Preview agar konsisten */
+        .content-editor-style h2 { font-size: 1.75rem !important; font-weight: 700 !important; margin: 1.35rem 0 0.5rem !important; color: #1f2937 !important; line-height: 1.3 !important; }
+        .content-editor-style h3 { font-size: 1.375rem !important; font-weight: 700 !important; margin: 1.15rem 0 0.5rem !important; color: #374151 !important; line-height: 1.35 !important; }
+        .content-editor-style h4 { font-size: 1.125rem !important; font-weight: 600 !important; margin: 1rem 0 0.5rem !important; color: #4b5563 !important; line-height: 1.4 !important; }
+        .content-editor-style h5 { font-size: 1rem !important; font-weight: 600 !important; margin: 0.75rem 0 0.25rem !important; color: #4b5563 !important; }
+        .content-editor-style h6 { font-size: 0.875rem !important; font-weight: 600 !important; margin: 0.75rem 0 0.25rem !important; color: #6b7280 !important; }
+        .content-editor-style blockquote { border-left: 4px solid #3b82f6 !important; padding-left: 1rem !important; font-style: italic !important; color: #4b5563 !important; margin: 1rem 0 !important; }
+        .content-editor-style ul { list-style-type: disc !important; padding-left: 1.5rem !important; margin: 0.75rem 0 !important; }
+        .content-editor-style ol { list-style-type: decimal !important; padding-left: 1.5rem !important; margin: 0.75rem 0 !important; }
+        .content-editor-style ol[style*="lower-alpha"] { list-style-type: lower-alpha !important; }
+        .content-editor-style ol[style*="lower-roman"] { list-style-type: lower-roman !important; }
+        .content-editor-style li { margin-bottom: 0.25rem !important; }
+        
+        .content-editor-style img { max-width: 100%; height: auto; border-radius: 0.5rem; transition: all 0.2s ease; }
+        .content-editor-style p, .content-editor-style div { margin-bottom: 0.75rem !important; font-size: 1rem !important; line-height: 1.625 !important; }
+        
+        /* Clearfix bantu agar elemen tidak tertimpa float gambar */
+        .clearfix::after { content: ""; clear: both; display: table; }
     </style>
 </head>
 <body class="bg-[#F8F9FA] min-h-screen font-sans text-gray-900 flex flex-col pt-24">
@@ -78,7 +83,7 @@
                 @endif
 
                 <!-- ISI KONTEN WYSIWYG -->
-                <div class="konten-informasi text-gray-700 leading-relaxed mb-8">
+                <div class="konten-informasi content-editor-style clearfix text-gray-700 leading-relaxed mb-8">
                     {!! $informasi->konten !!}
                 </div>
 
