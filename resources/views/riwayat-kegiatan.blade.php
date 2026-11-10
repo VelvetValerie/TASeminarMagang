@@ -223,7 +223,7 @@
                                         data-peserta="{{ number_format($item->jmlh_peserta ?? 0) }}"
                                         data-status="{{ $statusItem }}"
                                         data-lampiran="{{ $item->lampiran ?? '-' }}"
-                                        class="selengkapnya-btn border-2 border-black bg-gray-400 hover:bg-gray-500 text-gray-900 font-semibold px-4 py-1 text-xs sm:text-sm transition cursor-pointer shadow-xs">
+                                        class="selengkapnya-btn border-2 border-black bg-gray-400 hover:bg-blue-600 hover:text-white text-gray-900 font-semibold px-4 py-1 text-xs sm:text-sm transition cursor-pointer shadow-xs">
                                     Selengkapnya
                                 </button>
                             </td>
@@ -335,7 +335,8 @@
     </div>
 
     <!-- POPUP MODAL 1: DAFTAR KEGIATAN DALAM PERIODE -->
-    <div id="daftarModal" class="hidden fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
+    @push('modals')
+    <div id="daftarModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
         <div class="relative w-full max-w-2xl bg-white border-2 border-black p-5 shadow-2xl">
             <button type="button" onclick="handleCloseDaftarModal()" class="absolute top-2 right-2 p-1 text-red-600 hover:text-red-800 transition cursor-pointer" title="Tutup">
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -359,16 +360,18 @@
                     
                     <button type="button" 
                             onclick="handleOpenDetailModal()" 
-                            class="self-end sm:self-center border-2 border-black bg-gray-500 hover:bg-gray-600 text-white font-semibold px-5 py-1.5 text-sm transition cursor-pointer">
+                            class="self-end sm:self-center border-2 border-black bg-gray-500 hover:bg-blue-600 hover:text-white text-white font-semibold px-5 py-1.5 text-sm transition cursor-pointer">
                         Detail
                     </button>
                 </div>
             </div>
         </div>
     </div>
+    @endpush
 
     <!-- POPUP MODAL 2: DETAIL RINCIAN KEGIATAN -->
-    <div id="detailKegiatanModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+    @push('modals')
+    <div id="detailKegiatanModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
         <div class="relative w-full max-w-xl bg-white border-2 border-black p-5 shadow-2xl">
             <button type="button" onclick="handleCloseDetailModal()" class="absolute top-2 right-2 p-1 text-red-600 hover:text-red-800 transition cursor-pointer" title="Kembali">
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -394,8 +397,10 @@
             </div>
         </div>
     </div>
+    @endpush
 
     <!-- LOGIKA JAVASCRIPT: DROPDOWN & POPUP MODAL -->
+    @push('scripts')
     <script>
         const sortDropdownBtn = document.getElementById('sortDropdownBtn');
         const sortMenu = document.getElementById('sortMenu');
@@ -421,6 +426,8 @@
         const daftarModal = document.getElementById('daftarModal');
         const detailModal = document.getElementById('detailKegiatanModal');
 
+        let activeMainBtn = null;
+
         function handleOpenDaftarModal(buttonElement) {
             document.getElementById('modalTitle').innerText = buttonElement.getAttribute('data-title') || 'Daftar Kegiatan';
             document.getElementById('modalNamaKeg').innerText = buttonElement.getAttribute('data-nama') || '-';
@@ -440,19 +447,32 @@
             lampiranElem.innerText = lampiran;
             lampiranElem.href = (lampiran && lampiran !== '-') ? lampiran : '#';
 
+            activeMainBtn = buttonElement;
+
+            activeMainBtn.classList.remove('bg-gray-400', 'text-gray-900');
+            activeMainBtn.classList.add('bg-blue-600', 'text-white');
+
             daftarModal.classList.remove('hidden');
         }
 
         function handleCloseDaftarModal() {
             daftarModal.classList.add('hidden');
+
+            if (activeMainBtn) {
+                activeMainBtn.classList.remove('bg-blue-600', 'text-white');
+                activeMainBtn.classList.add('bg-gray-400', 'text-gray-900');
+                activeMainBtn = null;
+            }
         }
 
         function handleOpenDetailModal() {
             detailModal.classList.remove('hidden');
+            daftarModal.classList.add('hidden');
         }
 
         function handleCloseDetailModal() {
             detailModal.classList.add('hidden');
+            daftarModal.classList.remove('hidden');
         }
 
         daftarModal.addEventListener('click', function(e) {
@@ -462,4 +482,5 @@
             if (e.target === detailModal) handleCloseDetailModal();
         });
     </script>
+    @endpush
 @endsection

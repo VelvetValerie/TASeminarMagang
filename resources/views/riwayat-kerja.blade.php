@@ -502,12 +502,18 @@
 
         function closeModal2() {
             modal2.classList.add('hidden');
+            
             if (activeLihatSemuaBtn) {
                 activeLihatSemuaBtn.classList.remove('bg-blue-600', 'text-white');
                 activeLihatSemuaBtn.classList.add('bg-gray-400', 'text-gray-900');
                 activeLihatSemuaBtn = null;
             }
-            modal1.classList.remove('hidden');
+
+            if (activeMainBtn) {
+                activeMainBtn.classList.remove('bg-blue-600', 'text-white');
+                activeMainBtn.classList.add('bg-gray-400', 'text-gray-900');
+                activeMainBtn = null;
+            }
         }
 
         // Buka Modal 3 (Rincian Detail Kegiatan)
