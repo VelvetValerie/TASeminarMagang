@@ -483,21 +483,21 @@
     </div>
     @endpush
 
-<!-- SCRIPT CHART.JS + DATALABELS PLUGIN (OPTIMASI AKSESIBILITAS ORANG TUA / TEKS TEGAS) -->
+    <!-- SCRIPT CHART.JS + DATALABELS (PERBAIKAN OVERLAPPING, BORDER & VISIBILITAS) -->
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
     <script>
-        // Inisialisasi Plugin DataLabels
+        // Register DataLabels Plugin
         Chart.register(ChartDataLabels);
 
-        // OPSI DEFAULT UNTUK KONTRAST & READABILITY PENGGUNA SENIOR
+        // OPSI GLOBAL: TEKS TEGAS UNTUK PENGGUNA SENIOR
         Chart.defaults.font.family = 'Plus Jakarta Sans, sans-serif';
         Chart.defaults.font.weight = 'bold';
-        Chart.defaults.color = '#000000';
+        Chart.defaults.color = '#1e293b';
 
-        // 1. CHART STATUS KEGIATAN (DOUGHNUT - 2 RING BERLAPIS)
+        // 1. CHART STATUS KEGIATAN (DOUGHNUT 2 RING BERLAPIS)
         const rawStatusCurrent = @json($chartStatusCurrent ?? []);
         const rawStatusPrev    = @json($chartStatusPrev ?? []);
         const statusLabels     = ['Selesai', 'Terkonfirmasi', 'Belum Konfirmasi', 'Dibatalkan'];
@@ -515,46 +515,46 @@
                         label: 'Bulan Lalu',
                         data: valuesPrev,
                         backgroundColor: ['#047857', '#d97706', '#b91c1c', '#1d4ed8'],
-                        borderColor: '#000000',
-                        borderWidth: 2,
-                        weight: 0.8
+                        borderColor: '#ffffff',
+                        borderWidth: 1.5,
+                        weight: 0.85
                     },
                     // Ring Dalam (Bulan Ini)
                     {
                         label: 'Bulan Ini',
                         data: valuesCurrent,
                         backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#3b82f6'],
-                        borderColor: '#000000',
-                        borderWidth: 2,
-                        weight: 1.2
+                        borderColor: '#ffffff',
+                        borderWidth: 1.5,
+                        weight: 1.15
                     }
                 ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                cutout: '45%',
+                cutout: '48%',
                 plugins: {
                     legend: {
                         position: 'right',
                         labels: { 
                             font: { size: 11, weight: '800' }, 
-                            color: '#000000', 
-                            boxWidth: 12, 
-                            padding: 10 
+                            color: '#0f172a', 
+                            boxWidth: 10, 
+                            padding: 8 
                         }
                     },
                     datalabels: {
                         color: '#ffffff',
-                        font: { size: 11, weight: '900' },
-                        backgroundColor: '#000000',
-                        borderRadius: 4,
+                        font: { size: 10, weight: '800' },
+                        backgroundColor: '#0f172a',
+                        borderRadius: 3,
                         padding: { top: 2, bottom: 2, left: 4, right: 4 },
-                        formatter: (val) => val > 0 ? val : ''
+                        formatter: (val) => val > 0 ? val : '' // Sembunyikan jika 0
                     },
                     tooltip: {
-                        titleFont: { size: 13, weight: 'bold' },
-                        bodyFont: { size: 12 },
+                        titleFont: { size: 12, weight: 'bold' },
+                        bodyFont: { size: 11 },
                         callbacks: {
                             label: (ctx) => `${ctx.dataset.label} (${ctx.label}): ${ctx.raw} kegiatan`
                         }
@@ -563,7 +563,7 @@
             }
         });
 
-        // 2. CHART TOP JENIS KEGIATAN (GROUPED BAR - BULAN INI VS BULAN LALU)
+        // 2. CHART TOP JENIS KEGIATAN (GROUPED BAR - PENYESUAIAN PADDING & BORDER)
         const rawJenisCurrent = @json($chartJenisCurrent ?? []);
         const rawJenisPrev    = @json($chartJenisPrev ?? []);
         const allJenisKeys    = Array.from(new Set([...Object.keys(rawJenisCurrent), ...Object.keys(rawJenisPrev)])).slice(0, 5);
@@ -576,18 +576,18 @@
                     {
                         label: 'Bulan Lalu',
                         data: allJenisKeys.map(k => rawJenisPrev[k] || 0),
-                        backgroundColor: '#475569', // Slate Dark
-                        borderColor: '#000000',
-                        borderWidth: 2,
-                        barThickness: 10,
+                        backgroundColor: '#475569',
+                        borderColor: '#0f172a',
+                        borderWidth: 1, // Ditipiskan dari 2px ke 1px
+                        barThickness: 9,
                     },
                     {
                         label: 'Bulan Ini',
                         data: allJenisKeys.map(k => rawJenisCurrent[k] || 0),
-                        backgroundColor: '#0284c7', // Sky Blue Pekat
-                        borderColor: '#000000',
-                        borderWidth: 2,
-                        barThickness: 10,
+                        backgroundColor: '#0284c7',
+                        borderColor: '#0f172a',
+                        borderWidth: 1, // Ditipiskan dari 2px ke 1px
+                        barThickness: 9,
                     }
                 ]
             },
@@ -595,41 +595,49 @@
                 indexAxis: 'y',
                 responsive: true,
                 maintainAspectRatio: false,
+                layout: {
+                    padding: { right: 35 } // Ruang ekstra di kanan agar angka tidak menabrak border
+                },
                 plugins: {
                     legend: { 
                         position: 'top', 
-                        labels: { font: { size: 12, weight: '800' }, color: '#000000', boxWidth: 14 } 
+                        labels: { font: { size: 11, weight: '800' }, color: '#0f172a', boxWidth: 12 } 
                     },
                     datalabels: {
                         anchor: 'end',
                         align: 'end',
-                        color: '#000000',
-                        backgroundColor: '#fef08a', // Amber Soft Highlight
-                        borderColor: '#000000',
+                        offset: 4,
+                        color: '#0f172a',
+                        backgroundColor: '#fef08a',
+                        borderColor: '#64748b', // Border halus
                         borderWidth: 1,
                         borderRadius: 3,
                         padding: { top: 1, bottom: 1, left: 4, right: 4 },
                         font: { size: 11, weight: '800' },
-                        formatter: (val) => val > 0 ? val : ''
+                        formatter: (val) => val > 0 ? val : '' // SEMBUNYIKAN NILAI 0
                     }
                 },
                 scales: {
                     x: { 
-                        ticks: { font: { size: 11, weight: '800' }, color: '#000000' }, 
-                        grid: { color: '#cbd5e1' } 
+                        grace: '15%', // MEMBERIKAN JARAK AMAN DI UJUNG GRAFIK
+                        ticks: { font: { size: 11, weight: '800' }, color: '#0f172a' }, 
+                        grid: { color: '#e2e8f0' } 
                     },
                     y: { 
-                        ticks: { font: { size: 11, weight: '800' }, color: '#000000' }, 
+                        ticks: { font: { size: 11, weight: '800' }, color: '#0f172a', padding: 6 }, 
                         grid: { display: false } 
                     }
                 }
             }
         });
 
-        // 3. CHART TOP INSTANSI TERAKTIF (GROUPED BAR - BULAN INI VS BULAN LALU)
+    // 3. CHART TOP INSTANSI TERAKTIF (KOSONGKAN JIKA NILAI 0 & TANPA GARIS PUTIH)
         const rawInstansiCurrent = @json($chartInstansiCurrent ?? []);
         const rawInstansiPrev    = @json($chartInstansiPrev ?? []);
         const allInstansiKeys   = Array.from(new Set([...Object.keys(rawInstansiCurrent), ...Object.keys(rawInstansiPrev)])).slice(0, 5);
+
+        const dataInstansiPrev = allInstansiKeys.map(k => rawInstansiPrev[k] || 0);
+        const dataInstansiCurr = allInstansiKeys.map(k => rawInstansiCurrent[k] || 0);
 
         new Chart(document.getElementById('instansiChart'), {
             type: 'bar',
@@ -638,18 +646,20 @@
                 datasets: [
                     {
                         label: 'Bulan Lalu',
-                        data: allInstansiKeys.map(k => rawInstansiPrev[k] || 0),
+                        data: dataInstansiPrev,
                         backgroundColor: '#334155',
-                        borderColor: '#000000',
-                        borderWidth: 2,
+                        borderColor: '#0f172a',
+                        // BORDER 0 JIKA DATANYA 0 AGAR TIDAK MUNCUL GARIS PUTIH
+                        borderWidth: dataInstansiPrev.map(v => v > 0 ? 1 : 0),
                         barThickness: 10,
                     },
                     {
                         label: 'Bulan Ini',
-                        data: allInstansiKeys.map(k => rawInstansiCurrent[k] || 0),
-                        backgroundColor: '#059669', // Hijau Emerald Pekat
-                        borderColor: '#000000',
-                        borderWidth: 2,
+                        data: dataInstansiCurr,
+                        backgroundColor: '#059669',
+                        borderColor: '#0f172a',
+                        // BORDER 0 JIKA DATANYA 0 AGAR TIDAK MUNCUL GARIS PUTIH
+                        borderWidth: dataInstansiCurr.map(v => v > 0 ? 1 : 0),
                         barThickness: 10,
                     }
                 ]
@@ -658,78 +668,92 @@
                 indexAxis: 'y',
                 responsive: true,
                 maintainAspectRatio: false,
+                layout: {
+                    padding: { right: 55 }
+                },
                 plugins: {
                     legend: { 
                         position: 'top', 
-                        labels: { font: { size: 12, weight: '800' }, color: '#000000', boxWidth: 14 } 
+                        labels: { font: { size: 11, weight: '800' }, color: '#0f172a', boxWidth: 12 } 
                     },
                     datalabels: {
                         anchor: 'end',
                         align: 'end',
-                        color: '#000000',
+                        offset: 4,
+                        color: '#0f172a',
                         backgroundColor: '#ffffff',
-                        borderColor: '#000000',
+                        borderColor: '#64748b',
                         borderWidth: 1,
                         borderRadius: 3,
                         padding: { top: 1, bottom: 1, left: 4, right: 4 },
                         font: { size: 11, weight: '800' },
-                        formatter: (val) => val > 0 ? val + ' keg' : ''
+                        display: (context) => context.dataset.data[context.dataIndex] > 0, // KOSONGKAN TOTAL BADGE JIKA 0
+                        formatter: (val) => val + ' keg'
                     }
                 },
                 scales: {
                     x: { 
-                        ticks: { font: { size: 11, weight: '800' }, color: '#000000' }, 
-                        grid: { color: '#cbd5e1' } 
+                        grace: '15%',
+                        ticks: { font: { size: 11, weight: '800' }, color: '#0f172a' }, 
+                        grid: { color: '#e2e8f0' } 
                     },
                     y: { 
-                        ticks: { font: { size: 11, weight: '800' }, color: '#000000' }, 
+                        ticks: { font: { size: 11, weight: '800' }, color: '#0f172a', padding: 6 }, 
                         grid: { display: false } 
                     }
                 }
             }
         });
 
-        // 4. CHART TOP 5 KEGIATAN JUMLAH PESERTA TERBANYAK (VERTICAL BAR)
+        // 4. CHART TOP 5 KEGIATAN JUMLAH PESERTA TERBANYAK (DIBUAT HORIZONTAL)
         const rawPesertaData = @json($chartPesertaKeg ?? []);
         new Chart(document.getElementById('pesertaChart'), {
             type: 'bar',
             data: {
-                labels: rawPesertaData.map(item => item.nama_keg.length > 15 ? item.nama_keg.substring(0, 15) + '...' : item.nama_keg),
+                // Teks Nama Kegiatan Tampil Utuh / Panjang Tanpa Terpotong
+                labels: rawPesertaData.map(item => item.nama_keg),
                 datasets: [{
                     label: 'Jumlah Peserta',
                     data: rawPesertaData.map(item => item.jmlh_peserta),
-                    backgroundColor: '#7e22ce', // Ungu Tua High Contrast
-                    borderColor: '#000000',
-                    borderWidth: 2,
-                    barThickness: 16,
+                    backgroundColor: '#7e22ce',
+                    borderColor: '#0f172a',
+                    borderWidth: 1,
+                    barThickness: 12,
                 }]
             },
             options: {
+                indexAxis: 'y', // MENGUBAH TAMPILAN MENJADI HORIZONTAL
                 responsive: true,
                 maintainAspectRatio: false,
+                layout: {
+                    padding: { right: 65 } // Jarak kanan untuk label total orang
+                },
                 plugins: {
                     legend: { display: false },
                     datalabels: {
                         anchor: 'end',
-                        align: 'top',
-                        color: '#000000',
+                        align: 'end',
+                        offset: 4,
+                        color: '#0f172a',
                         backgroundColor: '#fef08a',
-                        borderColor: '#000000',
+                        borderColor: '#64748b',
                         borderWidth: 1,
                         borderRadius: 3,
-                        padding: { top: 2, bottom: 2, left: 5, right: 5 },
+                        padding: { top: 1, bottom: 1, left: 4, right: 4 },
                         font: { size: 11, weight: '800' },
+                        display: (context) => context.dataset.data[context.dataIndex] > 0,
                         formatter: (val) => val.toLocaleString() + ' org'
                     }
                 },
                 scales: {
                     x: { 
-                        ticks: { font: { size: 11, weight: '800' }, color: '#000000' }, 
-                        grid: { display: false } 
+                        grace: '15%',
+                        ticks: { font: { size: 11, weight: '800' }, color: '#0f172a' }, 
+                        grid: { color: '#e2e8f0' } 
                     },
                     y: { 
-                        ticks: { font: { size: 11, weight: '800' }, color: '#000000' }, 
-                        grid: { color: '#cbd5e1' } 
+                        ticks: { font: { size: 11, weight: '800' }, color: '#0f172a', padding: 6 }, 
+                        grid: { display: false } 
                     }
                 }
             }
