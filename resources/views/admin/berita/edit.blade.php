@@ -773,7 +773,7 @@
                 </h1>
                 
                 <div class="flex items-center gap-4 text-sm text-gray-500 pb-6 border-b border-gray-100 mb-8">
-                    <span>{{ \Carbon\Carbon::parse($berita->created_at)->translatedFormat('d F Y') }}</span>
+                    <span>{{ \Carbon\Carbon::parse($berita->updated_at ?? $berita->created_at)->translatedFormat('d F Y, H:i') }}</span>
                     <span>•</span>
                     <span>Admin / Penulis</span>
                 </div>

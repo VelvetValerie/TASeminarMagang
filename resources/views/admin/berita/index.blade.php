@@ -101,28 +101,39 @@
         <table class="w-full text-left text-sm text-gray-700 border-collapse">
             <thead class="bg-gray-50 border-b border-gray-200 text-gray-600">
                 <tr>
-                    <th class="p-4 font-semibold text-center w-16">No</th>
+                    <th class="p-4 font-semibold text-center w-14">No</th>
                     <th class="p-4 font-semibold">Judul Berita</th>
-                    <th class="p-4 font-semibold text-center w-40">Status</th>
-                    <th class="p-4 font-semibold text-center w-40">Aksi</th>
+                    <th class="p-4 font-semibold w-56">Tanggal &amp; Waktu</th>
+                    <th class="p-4 font-semibold text-center w-36">Status</th>
+                    <th class="p-4 font-semibold text-center w-36">Aksi</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
                 @forelse ($berita as $index =>$item)
                 @php
-                    $isLockedHumas = (Auth::user()->role === 'pegawai_humas' && $item->status === 'Pending');
+                    $isAdmin = Auth::user()->role === 'admin';
+                    $isOwner = ((int) $item->id_penulis === (int) Auth::id());
+                    $canManage = $isAdmin || $isOwner;
+                    $isLockedHumas = (!$isAdmin && $isOwner && $item->status === 'Pending');
                     $badgeClass = match($item->status) {
                         'Terbit'  => 'bg-emerald-100 text-emerald-800 border border-emerald-200',
                         'Pending' => 'bg-amber-100 text-amber-800 border border-amber-300',
                         'Revisi'  => 'bg-rose-100 text-rose-800 border border-rose-300',
                         default   => 'bg-gray-100 text-gray-700 border border-gray-200',
                     };
+                    $dibuatAt = $item->created_at ? \Carbon\Carbon::parse($item->created_at)->translatedFormat('d M Y, H:i') : '-';
+                    $dirilisAt = ($item->status === 'Terbit' && ($item->updated_at || $item->created_at))
+                        ? \Carbon\Carbon::parse($item->updated_at ?? $item->created_at)->translatedFormat('d M Y, H:i')
+                        : null;
                 @endphp
                 <tr class="hover:bg-gray-50 transition">
                     <td class="p-4 text-center font-medium">{{ $berita->firstItem() +$index }}</td>
                     <td class="p-4">
                         <div class="font-medium text-gray-900 flex flex-wrap items-center gap-2">
                             <span>{{ $item->judul_berita }}</span>
+                            @if(!$isAdmin && $isOwner)
+                                <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-200">Milik Anda</span>
+                            @endif
                             @if($item->komentar_revisi === 'TELAH DIREVISI')
                                 <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">TELAH DIREVISI</span>
                             @endif
@@ -133,41 +144,58 @@
                             </div>
                         @endif
                     </td>
+                    <td class="p-4 text-xs leading-relaxed">
+                        <div class="text-gray-600">
+                            <span class="font-semibold text-gray-700">Dibuat:</span> {{ $dibuatAt }}
+                        </div>
+                        <div class="mt-0.5">
+                            <span class="font-semibold text-gray-700">Dirilis:</span>
+                            @if($dirilisAt)
+                                <span class="text-emerald-700 font-medium">{{ $dirilisAt }}</span>
+                            @else
+                                <span class="italic text-gray-400">Belum dirilis</span>
+                            @endif
+                        </div>
+                    </td>
                     <td class="p-4 text-center">
                         <span class="inline-block px-2.5 py-1 text-[11px] font-bold uppercase rounded-full {{ $badgeClass }}">
                             {{ $item->status }}
                         </span>
                     </td>
-                    <td class="p-4 text-center space-x-2 flex items-center justify-center">
-                        @if($item->status == 'Terbit')
-                            <a href="{{ route('berita.show', $item->slug) }}" target="_blank" class="inline-flex text-gray-500 hover:text-green-600 transition" title="Lihat Halaman Publik">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                            </a>
-                        @else
-                            <button type="button" disabled class="inline-flex text-gray-300 cursor-not-allowed" title="Belum Terbit ({{ $item->status }})">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>
-                            </button>
-                        @endif
+                    <td class="p-4 text-center">
+                        <div class="flex items-center justify-center space-x-2">
+                            @if($item->status == 'Terbit')
+                                <a href="{{ route('berita.show', $item->slug) }}" target="_blank" class="inline-flex text-gray-500 hover:text-green-600 transition" title="Lihat Halaman Publik">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                </a>
+                            @else
+                                <button type="button" disabled class="inline-flex text-gray-300 cursor-not-allowed" title="Belum Terbit ({{ $item->status }})">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>
+                                </button>
+                            @endif
 
-                        @if($isLockedHumas)
-                            <a href="{{ route('admin.berita.edit', $item->slug) }}" class="inline-flex text-amber-500 hover:text-amber-700 transition" title="Terkunci (Menunggu Review Admin) - Lihat Detail">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                            </a>
-                        @else
-                            <a href="{{ route('admin.berita.edit', $item->slug) }}" class="inline-flex text-blue-600 hover:text-blue-800 transition" title="{{ $item->status === 'Revisi' ? 'Perbaiki Revisi' : 'Edit' }}">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                            </a>
-                        @endif
+                            @if($canManage)
+                                @if($isLockedHumas)
+                                    <a href="{{ route('admin.berita.edit', $item->slug) }}" class="inline-flex text-amber-500 hover:text-amber-700 transition" title="Terkunci (Menunggu Review Admin) - Lihat Detail">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                    </a>
+                                @else
+                                    <a href="{{ route('admin.berita.edit', $item->slug) }}" class="inline-flex text-blue-600 hover:text-blue-800 transition" title="{{ $item->status === 'Revisi' ? 'Perbaiki Revisi' : 'Edit' }}">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                    </a>
+                                @endif
 
-                        @if(!$isLockedHumas)
-                            <button onclick="openDeleteBeritaModal('{{ $item->id_berita }}', '{{ addslashes($item->judul_berita) }}')" class="inline-flex text-red-500 hover:text-red-700 transition" title="Hapus">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            </button>
-                        @endif
+                                @if(!$isLockedHumas)
+                                    <button onclick="openDeleteBeritaModal('{{ $item->id_berita }}', '{{ addslashes($item->judul_berita) }}')" class="inline-flex text-red-500 hover:text-red-700 transition" title="Hapus">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                    </button>
+                                @endif
+                            @endif
+                        </div>
                     </td>
                 </tr>
                 @empty
-                <tr><td colspan="4" class="p-8 text-center text-gray-500 text-sm">Data berita tidak ditemukan.</td></tr>
+                <tr><td colspan="5" class="p-8 text-center text-gray-500 text-sm">Data berita tidak ditemukan.</td></tr>
                 @endforelse
             </tbody>
         </table>

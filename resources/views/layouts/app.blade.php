@@ -199,9 +199,13 @@
             <!-- Group 4: Kehumasan & Berita (Akses Admin dan Pegawai Humas) -->
             @if(in_array($userRole, ['admin', 'pegawai_humas']))
                 @php
-                    $sidebarPendingCount = \App\Models\Berita::where('status', 'Pending')->count();
-                    $sidebarRevisiBerita = \App\Models\Berita::where('kategori_publikasi', 'Berita')->where('status', 'Revisi')->count();
-                    $sidebarRevisiInfo   = \App\Models\Berita::where('kategori_publikasi', 'Informasi Resmi')->where('status', 'Revisi')->count();
+                    $sidebarPubBase = \App\Models\Berita::query();
+                    if ($userRole === 'pegawai_humas') {
+                        $sidebarPubBase->where('id_penulis', Auth::id());
+                    }
+                    $sidebarPendingCount = (clone $sidebarPubBase)->where('status', 'Pending')->count();
+                    $sidebarRevisiBerita = (clone $sidebarPubBase)->where('kategori_publikasi', 'Berita')->where('status', 'Revisi')->count();
+                    $sidebarRevisiInfo   = (clone $sidebarPubBase)->where('kategori_publikasi', 'Informasi Resmi')->where('status', 'Revisi')->count();
                 @endphp
                 <div>
                     <p class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">Humas & Publikasi</p>

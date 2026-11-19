@@ -263,10 +263,10 @@
                 </h1>
 
                 <!-- Meta Informasi -->
-                <div class="flex items-center gap-4 text-xs md:text-sm text-gray-500 pb-6 border-b border-gray-100 mb-6">
+                <div class="flex flex-wrap items-center gap-4 text-xs md:text-sm text-gray-500 pb-6 border-b border-gray-100 mb-6">
                     <span class="flex items-center gap-1.5">
                         <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        {{ \Carbon\Carbon::parse($informasi->created_at)->translatedFormat('d F Y') }}
+                        {{ \Carbon\Carbon::parse($informasi->updated_at ?? $informasi->created_at)->translatedFormat('d F Y, H:i') }}
                     </span>
                     <span>•</span>
                     <span class="flex items-center gap-1.5">
@@ -371,8 +371,9 @@
                         @if(isset($informasiTerbaru) && count($informasiTerbaru) > 0)
                             @foreach($informasiTerbaru as $terbaru)
                             <a href="{{ route('informasi.show', $terbaru->slug) }}" class="group flex gap-3 items-start pb-3 border-b border-gray-100 last:border-0 last:pb-0">
-                                <span class="text-xs font-semibold text-[#fca855] bg-orange-50 px-2 py-1 rounded shrink-0 mt-0.5">
-                                    {{ \Carbon\Carbon::parse($terbaru->created_at)->format('d M') }}
+                                <span class="text-xs font-semibold text-[#fca855] bg-orange-50 px-2 py-1 rounded shrink-0 mt-0.5 text-center leading-tight">
+                                    {{ \Carbon\Carbon::parse($terbaru->updated_at ?? $terbaru->created_at)->format('d M') }}
+                                    <span class="block text-[10px] font-medium text-orange-600/80">{{ \Carbon\Carbon::parse($terbaru->updated_at ?? $terbaru->created_at)->format('H:i') }}</span>
                                 </span>
                                 <div>
                                     <h3 class="text-sm font-medium text-gray-800 group-hover:text-[#0a3d91] transition-colors line-clamp-2 leading-snug">
@@ -413,7 +414,7 @@
                         @endif
                         
                         <div class="p-5 flex flex-col flex-grow">
-                            <span class="text-xs text-gray-400 mb-2">{{ \Carbon\Carbon::parse($lainnya->created_at)->translatedFormat('d F Y') }}</span>
+                            <span class="text-xs text-gray-400 mb-2">{{ \Carbon\Carbon::parse($lainnya->updated_at ?? $lainnya->created_at)->translatedFormat('d F Y, H:i') }}</span>
                             <h3 class="font-semibold text-gray-900 leading-snug mb-3 line-clamp-2 hover:text-[#0a3d91] transition-colors">
                                 {{ $lainnya->judul_berita }}
                             </h3>

@@ -181,11 +181,15 @@ class DashboardController extends Controller
             ->get();
 
         // 5. STATISTIK STATUS PUBLIKASI (UNTUK ADMIN & PEGAWAI HUMAS)
+        $pubOwnQuery = Berita::query();
+        if ($user && $user->role === 'pegawai_humas') {
+            $pubOwnQuery->where('id_penulis', $user->id_user);
+        }
         $pubStats = [
             'terbit'  => Berita::where('status', 'Terbit')->count(),
-            'pending' => Berita::where('status', 'Pending')->count(),
-            'revisi'  => Berita::where('status', 'Revisi')->count(),
-            'draft'   => Berita::where('status', 'Draft')->count(),
+            'pending' => (clone $pubOwnQuery)->where('status', 'Pending')->count(),
+            'revisi'  => (clone $pubOwnQuery)->where('status', 'Revisi')->count(),
+            'draft'   => (clone $pubOwnQuery)->where('status', 'Draft')->count(),
         ];
 
         return view('dashboard', compact(

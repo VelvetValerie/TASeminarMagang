@@ -71,7 +71,7 @@
         <div class="flex flex-col gap-4 mt-5 overflow-y-auto pr-1">
             @forelse($sidebarBerita as $index => $item)
                 <div class="border-l-4 {{ $borderColors[$index % count($borderColors)] }} pl-3">
-                    <p class="text-xs text-gray-500 font-medium">{{ \Carbon\Carbon::parse($item->created_at)->translatedFormat('d F Y') }}</p>
+                    <p class="text-xs text-gray-500 font-medium">{{ \Carbon\Carbon::parse($item->updated_at ?? $item->created_at)->translatedFormat('d F Y, H:i') }}</p>
                     <a href="{{ route('berita.show', $item->slug) }}" class="text-sm font-semibold hover:text-gray-800 transition-colors leading-tight mt-0.5 block line-clamp-2">
                         {{ $item->judul_berita }}
                     </a>
@@ -91,6 +91,9 @@
                 <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none"></div>
 
                 <div class="absolute bottom-0 inset-x-0 p-6 flex flex-col justify-end">
+                    <span class="text-xs font-semibold text-orange-300 mb-1 drop-shadow">
+                        {{ \Carbon\Carbon::parse($item->updated_at ?? $item->created_at)->translatedFormat('d F Y, H:i') }}
+                    </span>
                     <div class="marquee-container mb-2">
                         <h3 class="text-xl md:text-2xl font-black text-white marquee-text drop-shadow-md cursor-default">{{ $item->judul_berita }}</h3>
                     </div>
@@ -131,7 +134,7 @@
         <div class="flex flex-col gap-4 mt-5 overflow-y-auto pr-1">
             @forelse($sidebarInfo as $index => $item)
                 <div class="border-l-4 {{ $borderColors[$index % count($borderColors)] }} pl-3">
-                    <p class="text-xs text-gray-500 font-medium">{{ \Carbon\Carbon::parse($item->created_at)->translatedFormat('d F Y') }}</p>
+                    <p class="text-xs text-gray-500 font-medium">{{ \Carbon\Carbon::parse($item->updated_at ?? $item->created_at)->translatedFormat('d F Y, H:i') }}</p>
                     <a href="{{ route('informasi.show', $item->slug) }}" class="text-sm font-semibold hover:text-gray-800 transition-colors leading-tight mt-0.5 block line-clamp-2">
                         {{ $item->judul_berita }}
                     </a>
@@ -151,6 +154,9 @@
                 <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none"></div>
 
                 <div class="absolute bottom-0 inset-x-0 p-6 flex flex-col justify-end">
+                    <span class="text-xs font-semibold text-orange-300 mb-1 drop-shadow">
+                        {{ \Carbon\Carbon::parse($item->updated_at ?? $item->created_at)->translatedFormat('d F Y, H:i') }}
+                    </span>
                     <div class="marquee-container mb-2">
                         <h3 class="text-xl md:text-2xl font-black text-white marquee-text drop-shadow-md cursor-default">{{ $item->judul_berita }}</h3>
                     </div>

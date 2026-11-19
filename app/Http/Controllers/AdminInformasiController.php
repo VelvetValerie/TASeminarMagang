@@ -31,6 +31,11 @@ class AdminInformasiController extends Controller
             $query->where('status', $statusFilter);
         }
 
+        // Prioritaskan data yang ditambahkan/dipublikasikan oleh pengguna Humas itu sendiri di urutan teratas
+        if (Auth::user()->role !== 'admin') {
+            $query->orderByRaw('CASE WHEN id_penulis = ? THEN 0 ELSE 1 END ASC', [Auth::id()]);
+        }
+
         $sort = $request->input('sort', 'terbaru');
         if ($sort === 'terlama') {
             $query->oldest();
@@ -147,7 +152,13 @@ class AdminInformasiController extends Controller
                            ->where('kategori_publikasi', 'Informasi Resmi')
                            ->firstOrFail();
 
-        $isLockedForHumas = (Auth::user()->role === 'pegawai_humas' && $informasi->status === 'Pending');
+        $isAdmin = Auth::user()->role === 'admin';
+        if (!$isAdmin && (int) $informasi->id_penulis !== (int) Auth::id()) {
+            return redirect()->route('admin.informasi.index')
+                             ->with('error', 'Akses ditolak! Anda hanya dapat mengubah informasi resmi yang Anda tambahkan sendiri.');
+        }
+
+        $isLockedForHumas = (!$isAdmin && $informasi->status === 'Pending');
 
         return view('admin.informasi.edit', compact('informasi', 'isLockedForHumas'));
     }
@@ -159,6 +170,12 @@ class AdminInformasiController extends Controller
                            ->firstOrFail();
 
         $isAdmin = Auth::user()->role === 'admin';
+
+        // Pegawai Humas hanya boleh mengubah informasi resmi miliknya sendiri
+        if (!$isAdmin && (int) $informasi->id_penulis !== (int) Auth::id()) {
+            return redirect()->route('admin.informasi.index')
+                             ->with('error', 'Akses ditolak! Anda hanya dapat mengubah informasi resmi yang Anda tambahkan sendiri.');
+        }
 
         // Kunci edit bagi Pegawai Humas saat status sedang Pending (menunggu review Admin)
         if (!$isAdmin && $informasi->status === 'Pending') {
@@ -292,6 +309,20 @@ class AdminInformasiController extends Controller
                            ->where('kategori_publikasi', 'Informasi Resmi')
                            ->firstOrFail();
 
+        $isAdmin = Auth::user()->role === 'admin';
+        if (!$isAdmin && (int) $informasi->id_penulis !== (int) Auth::id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Akses ditolak! Anda hanya dapat mengubah galeri informasi resmi milik Anda sendiri.'
+            ], 403);
+        }
+        if (!$isAdmin && $informasi->status === 'Pending') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Informasi resmi sedang ditinjau Admin (Pending) dan tidak dapat diubah.'
+            ], 403);
+        }
+
         $filePath = $request->input('file_path');
 
         $images = $informasi->multi_images;
@@ -341,6 +372,16 @@ class AdminInformasiController extends Controller
                            ->where('kategori_publikasi', 'Informasi Resmi')
                            ->firstOrFail();
 
+        $isAdmin = Auth::user()->role === 'admin';
+        if (!$isAdmin && (int) $informasi->id_penulis !== (int) Auth::id()) {
+            return redirect()->route('admin.informasi.index')
+                             ->with('error', 'Akses ditolak! Anda hanya dapat menghapus informasi resmi yang Anda tambahkan sendiri.');
+        }
+        if (!$isAdmin && $informasi->status === 'Pending') {
+            return redirect()->route('admin.informasi.index')
+                             ->with('error', 'Informasi resmi sedang menunggu peninjauan Admin (Pending) dan tidak dapat dihapus.');
+        }
+
         $folderPath = "informasi/{$informasi->slug}";
         if (Storage::disk('public')->exists($folderPath)) {
             Storage::disk('public')->deleteDirectory($folderPath);
@@ -354,6 +395,10 @@ class AdminInformasiController extends Controller
 
     public function draftIndex(Request $request)
     {
+        if (Auth::user()->role !== 'admin') {
+            abort(403, 'Hanya Admin yang dapat mengakses halaman peninjauan.');
+        }
+
         $query = Berita::where('status', 'Draft');
 
         // Filter Pencarian

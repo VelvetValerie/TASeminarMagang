@@ -124,6 +124,11 @@ class AdminBeritaController extends Controller
             $query->where('status', $statusFilter);
         }
 
+        // Prioritaskan data yang ditambahkan/dipublikasikan oleh pengguna Humas itu sendiri di urutan teratas
+        if (Auth::user()->role !== 'admin') {
+            $query->orderByRaw('CASE WHEN id_penulis = ? THEN 0 ELSE 1 END ASC', [Auth::id()]);
+        }
+
         $sort = $request->input('sort', 'terbaru');
         if ($sort === 'terlama') {
             $query->oldest();
@@ -241,7 +246,13 @@ class AdminBeritaController extends Controller
                         ->where('kategori_publikasi', 'Berita')
                         ->firstOrFail();
 
-        $isLockedForHumas = (Auth::user()->role === 'pegawai_humas' && $berita->status === 'Pending');
+        $isAdmin = Auth::user()->role === 'admin';
+        if (!$isAdmin && (int) $berita->id_penulis !== (int) Auth::id()) {
+            return redirect()->route('admin.berita.index')
+                             ->with('error', 'Akses ditolak! Anda hanya dapat mengubah berita yang Anda tambahkan sendiri.');
+        }
+
+        $isLockedForHumas = (!$isAdmin && $berita->status === 'Pending');
 
         return view('admin.berita.edit', compact('berita', 'isLockedForHumas'));
     }
@@ -253,6 +264,12 @@ class AdminBeritaController extends Controller
                         ->firstOrFail();
 
         $isAdmin = Auth::user()->role === 'admin';
+
+        // Pegawai Humas hanya boleh mengubah berita miliknya sendiri
+        if (!$isAdmin && (int) $berita->id_penulis !== (int) Auth::id()) {
+            return redirect()->route('admin.berita.index')
+                             ->with('error', 'Akses ditolak! Anda hanya dapat mengubah berita yang Anda tambahkan sendiri.');
+        }
 
         // Kunci edit bagi Pegawai Humas saat status sedang Pending (menunggu review Admin)
         if (!$isAdmin && $berita->status === 'Pending') {
@@ -383,7 +400,24 @@ class AdminBeritaController extends Controller
 
     public function deleteImage(Request $request, $id)
     {
-        $berita = Berita::where('id_berita', $id)->firstOrFail();
+        $berita = Berita::where('id_berita', $id)
+                        ->where('kategori_publikasi', 'Berita')
+                        ->firstOrFail();
+
+        $isAdmin = Auth::user()->role === 'admin';
+        if (!$isAdmin && (int) $berita->id_penulis !== (int) Auth::id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Akses ditolak! Anda hanya dapat mengubah galeri berita milik Anda sendiri.'
+            ], 403);
+        }
+        if (!$isAdmin && $berita->status === 'Pending') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Publikasi sedang ditinjau Admin (Pending) dan tidak dapat diubah.'
+            ], 403);
+        }
+
         $filePath = $request->input('file_path');
 
         $images = $berita->multi_images;
@@ -429,7 +463,19 @@ class AdminBeritaController extends Controller
 
     public function destroy($id)
     {
-        $berita = Berita::where('id_berita', $id)->firstOrFail();
+        $berita = Berita::where('id_berita', $id)
+                        ->where('kategori_publikasi', 'Berita')
+                        ->firstOrFail();
+
+        $isAdmin = Auth::user()->role === 'admin';
+        if (!$isAdmin && (int) $berita->id_penulis !== (int) Auth::id()) {
+            return redirect()->route('admin.berita.index')
+                             ->with('error', 'Akses ditolak! Anda hanya dapat menghapus berita yang Anda tambahkan sendiri.');
+        }
+        if (!$isAdmin && $berita->status === 'Pending') {
+            return redirect()->route('admin.berita.index')
+                             ->with('error', 'Berita sedang menunggu peninjauan Admin (Pending) dan tidak dapat dihapus.');
+        }
 
         $folderPath = "berita/{$berita->slug}";
         if (Storage::disk('public')->exists($folderPath)) {
