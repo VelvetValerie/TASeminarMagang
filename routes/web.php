@@ -112,8 +112,10 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/master-user/{id}', [UserController::class, 'update'])->name('master-user.update');
         Route::delete('/master-user/{id}', [UserController::class, 'destroy'])->name('master-user.destroy');
 
-        // 2. Draft Berita & Informasi (Khusus Review Admin)
+        // 2. Peninjauan & Persetujuan Publikasi (Khusus Review Admin)
         Route::get('/admin/berita/draft', [AdminBeritaController::class, 'draftIndex'])->name('admin.berita.draft');
+        Route::post('/admin/berita/{id}/approve', [AdminBeritaController::class, 'approve'])->name('admin.berita.approve');
+        Route::post('/admin/berita/{id}/reject', [AdminBeritaController::class, 'reject'])->name('admin.berita.reject');
 
         // 3. Master Data Kegiatan
         Route::get('/riwayat-kerja', [MasterDataController::class, 'riwayatKerja'])->name('riwayat-kerja');

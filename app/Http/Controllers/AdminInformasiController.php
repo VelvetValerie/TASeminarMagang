@@ -20,10 +20,15 @@ class AdminInformasiController extends Controller
 
     public function index(Request $request)
     {
-        $query = Berita::where('kategori_publikasi', 'Informasi Resmi');
+        $query = Berita::with('penulis')->where('kategori_publikasi', 'Informasi Resmi');
 
         if ($request->filled('search')) {
             $query->where('judul_berita', 'like', '%' . $request->search . '%');
+        }
+
+        $statusFilter = $request->input('status', 'semua');
+        if (in_array($statusFilter, ['Terbit', 'Pending', 'Revisi', 'Draft'])) {
+            $query->where('status', $statusFilter);
         }
 
         $sort = $request->input('sort', 'terbaru');
@@ -36,7 +41,16 @@ class AdminInformasiController extends Controller
         }
 
         $informasi = $query->paginate(10);
-        return view('admin.informasi.index', compact('informasi', 'sort'));
+
+        $statusCounts = [
+            'semua'   => Berita::where('kategori_publikasi', 'Informasi Resmi')->count(),
+            'Terbit'  => Berita::where('kategori_publikasi', 'Informasi Resmi')->where('status', 'Terbit')->count(),
+            'Pending' => Berita::where('kategori_publikasi', 'Informasi Resmi')->where('status', 'Pending')->count(),
+            'Revisi'  => Berita::where('kategori_publikasi', 'Informasi Resmi')->where('status', 'Revisi')->count(),
+            'Draft'   => Berita::where('kategori_publikasi', 'Informasi Resmi')->where('status', 'Draft')->count(),
+        ];
+
+        return view('admin.informasi.index', compact('informasi', 'sort', 'statusFilter', 'statusCounts'));
     }
 
     public function create()
@@ -46,10 +60,28 @@ class AdminInformasiController extends Controller
 
     public function store(Request $request)
     {
+        $isAdmin = Auth::user()->role === 'admin';
+        $actionType = $request->input('action_type');
+
+        $targetStatus = $request->input('status', 'Draft');
+        if ($actionType === 'submit_review') {
+            $targetStatus = 'Pending';
+        } elseif ($actionType === 'save_draft') {
+            $targetStatus = 'Draft';
+        } elseif ($actionType === 'publish' && $isAdmin) {
+            $targetStatus = 'Terbit';
+        }
+
+        if (!$isAdmin && !in_array($targetStatus, ['Draft', 'Pending'])) {
+            $targetStatus = 'Draft';
+        }
+
+        $request->merge(['status' => $targetStatus]);
+
         $request->validate([
             'judul_berita'      => 'required|string|max:255',
             'konten'            => 'required|string',
-            'status'            => 'required|in:Terbit,Draft',
+            'status'            => $isAdmin ? 'required|in:Terbit,Draft,Pending,Revisi' : 'required|in:Draft,Pending',
             'thumbnail'         => 'required|image|mimes:jpeg,png,jpg,webp|max:10240',
             'caption_thumbnail' => 'required|string|max:150',
             'lampiran_url'      => 'nullable|url|max:255',
@@ -78,35 +110,46 @@ class AdminInformasiController extends Controller
                 $multiImagesPaths[] = $path;
 
                 $publicUrl = asset('storage/' . $path);
-                $konten = str_replace($originalName, $publicUrl, $konten);
+                $encodedName = rawurlencode($originalName);
+                $konten = str_replace(
+                    ['src="' . $originalName . '"', 'src="' . $encodedName . '"', "src='" . $originalName . "'", "src='" . $encodedName . "'"],
+                    'src="' . $publicUrl . '"',
+                    $konten
+                );
             }
         }
 
-        // Karena Model menggunakan $casts array, kirimkan array murni (bukan json_encode)
         Berita::create([
             'judul_berita'       => $request->judul_berita,
             'slug'               => $slug,
             'kategori_publikasi' => 'Informasi Resmi',
             'konten'             => $konten,
-            'status'             => $request->status,
+            'status'             => $targetStatus,
             'thumbnail'          => $thumbnailPath,
             'caption_thumbnail'  => $request->caption_thumbnail,
             'lampiran_url'       => $request->lampiran_url,
             'multi_images'       => !empty($multiImagesPaths) ? array_values($multiImagesPaths) : null,
+            'komentar_revisi'    => null,
             'id_penulis'         => Auth::id(),
         ]);
 
-        return redirect()->route('admin.informasi.index')
-                         ->with('success', 'Informasi resmi berhasil ditambahkan!');
+        $msg = $targetStatus === 'Pending'
+            ? 'Informasi resmi berhasil diajukan (Pending) dan menunggu peninjauan Admin!'
+            : ($targetStatus === 'Terbit' ? 'Informasi resmi berhasil diterbitkan!' : 'Informasi resmi berhasil disimpan sebagai Draft!');
+
+        return redirect()->route('admin.informasi.index')->with('success', $msg);
     }
 
     public function edit($slug)
     {
-        $informasi = Berita::where('slug', $slug)
+        $informasi = Berita::with('penulis')
+                           ->where('slug', $slug)
                            ->where('kategori_publikasi', 'Informasi Resmi')
                            ->firstOrFail();
 
-        return view('admin.informasi.edit', compact('informasi'));
+        $isLockedForHumas = (Auth::user()->role === 'pegawai_humas' && $informasi->status === 'Pending');
+
+        return view('admin.informasi.edit', compact('informasi', 'isLockedForHumas'));
     }
 
     public function update(Request $request, $slug)
@@ -115,14 +158,53 @@ class AdminInformasiController extends Controller
                            ->where('kategori_publikasi', 'Informasi Resmi')
                            ->firstOrFail();
 
-        $request->validate([
+        $isAdmin = Auth::user()->role === 'admin';
+
+        // Kunci edit bagi Pegawai Humas saat status sedang Pending (menunggu review Admin)
+        if (!$isAdmin && $informasi->status === 'Pending') {
+            return redirect()->route('admin.informasi.edit', $informasi->slug)
+                             ->with('error', 'Informasi resmi sedang menunggu peninjauan (Pending) oleh Admin dan tidak dapat diubah hingga peninjauan selesai.');
+        }
+
+        $actionType = $request->input('action_type');
+        $targetStatus = $request->input('status', $informasi->status);
+
+        if ($actionType === 'submit_review') {
+            $targetStatus = 'Pending';
+        } elseif ($actionType === 'save_draft') {
+            $targetStatus = $informasi->status === 'Revisi' ? 'Revisi' : 'Draft';
+        } elseif ($actionType === 'approve_publish' && $isAdmin) {
+            $targetStatus = 'Terbit';
+        } elseif ($actionType === 'reject_revisi' && $isAdmin) {
+            $targetStatus = 'Revisi';
+        }
+
+        if (!$isAdmin) {
+            if ($informasi->status === 'Terbit') {
+                $targetStatus = 'Terbit';
+            } elseif (!in_array($targetStatus, ['Draft', 'Pending', 'Revisi'])) {
+                $targetStatus = 'Pending';
+            }
+        }
+
+        $request->merge(['status' => $targetStatus]);
+
+        $rules = [
             'judul_berita'      => 'required|string|max:255',
             'konten'            => 'required|string',
-            'status'            => 'required|in:Draft,Terbit',
+            'status'            => $isAdmin ? 'required|in:Draft,Pending,Revisi,Terbit' : 'required|in:Draft,Pending,Revisi',
             'caption_thumbnail' => 'nullable|string|max:150',
             'lampiran_url'      => 'nullable|url',
             'thumbnail'         => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240', 
             'multi_images.*'    => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
+        ];
+
+        if ($isAdmin && $targetStatus === 'Revisi') {
+            $rules['komentar_revisi'] = 'required|string|min:3|max:2000';
+        }
+
+        $request->validate($rules, [
+            'komentar_revisi.required' => 'Alasan revisi wajib diisi saat mengembalikan publikasi ke status Revisi.',
         ]);
 
         $folderPath = "informasi/{$informasi->slug}";
@@ -130,10 +212,19 @@ class AdminInformasiController extends Controller
 
         $dataUpdate = [
             'judul_berita'      => $request->judul_berita,
-            'status'            => $request->status,
+            'status'            => $targetStatus,
             'caption_thumbnail' => $request->caption_thumbnail,
             'lampiran_url'      => $request->lampiran_url,
         ];
+
+        // Logika komentar_revisi:
+        // 1. Jika Admin menolak -> simpan alasan revisi baru
+        // 2. Jika sebelumnya berstatus Revisi dan sekarang diajukan ulang (Pending) atau Terbit -> ubah komentar_revisi menjadi "TELAH DIREVISI"
+        if ($isAdmin && $targetStatus === 'Revisi') {
+            $dataUpdate['komentar_revisi'] = trim($request->komentar_revisi);
+        } elseif ($informasi->status === 'Revisi' && in_array($targetStatus, ['Pending', 'Terbit'])) {
+            $dataUpdate['komentar_revisi'] = 'TELAH DIREVISI';
+        }
 
         // Update Thumbnail jika ada file baru
         if ($request->hasFile('thumbnail')) {
@@ -162,18 +253,37 @@ class AdminInformasiController extends Controller
                 $existingMultiImages[] = $path;
 
                 $publicUrl = asset('storage/' . $path);
-                $konten = str_replace($originalName, $publicUrl, $konten);
+                $encodedName = rawurlencode($originalName);
+                $konten = str_replace(
+                    ['src="' . $originalName . '"', 'src="' . $encodedName . '"', "src='" . $originalName . "'", "src='" . $encodedName . "'"],
+                    'src="' . $publicUrl . '"',
+                    $konten
+                );
             }
         }
 
-        // Simpan sebagai array murni (dikarenakan Eloquent $casts = ['multi_images' => 'array'])
         $dataUpdate['multi_images'] = !empty($existingMultiImages) ? array_values($existingMultiImages) : null;
         $dataUpdate['konten'] = $konten;
 
+        $wasRevisi = ($informasi->status === 'Revisi');
         $informasi->update($dataUpdate);
 
-        return redirect()->route('admin.informasi.index')
-                         ->with('success', 'Informasi resmi berhasil diperbarui!');
+        $msg = 'Informasi resmi berhasil diperbarui!';
+        if ($targetStatus === 'Pending') {
+            $msg = $wasRevisi
+                ? 'Revisi informasi resmi berhasil dikirim ulang ke Admin (Status: Pending, Komentar: TELAH DIREVISI)!'
+                : 'Informasi resmi berhasil diajukan ke Admin (Status: Pending)!';
+        } elseif ($targetStatus === 'Revisi' && $isAdmin) {
+            $msg = 'Informasi resmi dikembalikan ke Humas untuk revisi beserta catatan revisi.';
+        } elseif ($targetStatus === 'Terbit' && $isAdmin) {
+            $msg = 'Informasi resmi berhasil disetujui dan diterbitkan!';
+        }
+
+        if ($isAdmin && ($request->input('from_page') === 'draft' || str_contains(url()->previous(), 'draft'))) {
+            return redirect()->route('admin.berita.draft')->with('success', $msg);
+        }
+
+        return redirect()->route('admin.informasi.index')->with('success', $msg);
     }
 
     public function deleteImage(Request $request, $id)

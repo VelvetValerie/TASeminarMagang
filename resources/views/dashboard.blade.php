@@ -37,6 +37,15 @@
                     📰 Kelola Publikasi
                 </a>
             @endif
+
+            @if(Auth::user()->role === 'admin')
+                <a href="{{ route('admin.berita.draft') }}" class="border-2 border-black bg-amber-300 hover:bg-amber-400 font-bold px-3.5 py-1.5 text-xs uppercase tracking-wider text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition inline-flex items-center gap-1.5">
+                    <span>Peninjauan Publikasi</span>
+                    @if(($pubStats['pending'] ?? 0) > 0)
+                        <span class="px-1.5 py-0.5 text-[10px] font-black rounded-full bg-rose-600 text-white">{{ $pubStats['pending'] }}</span>
+                    @endif
+                </a>
+            @endif
         </div>
 
         @if(isset($laporanPendingCount) && $laporanPendingCount > 0)
@@ -45,6 +54,71 @@
             </a>
         @endif
     </div>
+
+    <!-- STATUS PENGAJUAN PUBLIKASI (KHUSUS ADMIN & PEGAWAI HUMAS) -->
+    @if(in_array(Auth::user()->role, ['admin', 'pegawai_humas']) && isset($pubStats))
+        <div class="mb-5 border-2 border-black bg-white rounded-xl p-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+            <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 mb-3 border-b-2 border-black">
+                <div class="flex items-center gap-2">
+                    <span class="text-sm font-black uppercase tracking-wider text-gray-900">Status Pengajuan Publikasi (Berita &amp; Informasi)</span>
+                </div>
+                @if(Auth::user()->role === 'admin' && ($pubStats['pending'] ?? 0) > 0)
+                    <a href="{{ route('admin.berita.draft', ['tab' => 'Pending']) }}" class="text-[11px] font-extrabold text-amber-900 bg-amber-200 border border-black px-2.5 py-0.5 rounded-full hover:bg-amber-300 transition">
+                        {{ $pubStats['pending'] }} Menunggu Persetujuan &rarr;
+                    </a>
+                @elseif(Auth::user()->role === 'pegawai_humas' && ($pubStats['revisi'] ?? 0) > 0)
+                    <a href="{{ route('admin.berita.index', ['status' => 'Revisi']) }}" class="text-[11px] font-extrabold text-rose-900 bg-rose-200 border border-black px-2.5 py-0.5 rounded-full hover:bg-rose-300 transition">
+                        {{ $pubStats['revisi'] }} Publikasi Perlu Direvisi &rarr;
+                    </a>
+                @endif
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <a href="{{ Auth::user()->role === 'admin' ? route('admin.berita.draft', ['tab' => 'Pending']) : route('admin.berita.index', ['status' => 'Pending']) }}"
+                   class="border-2 border-black rounded-lg p-3 bg-amber-50 hover:bg-amber-100 transition flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-wider text-amber-800">Pending (Review)</p>
+                        <p class="text-2xl font-black text-amber-950">{{ $pubStats['pending'] ?? 0 }}</p>
+                    </div>
+                    <span class="w-9 h-9 rounded-lg border-2 border-black bg-amber-300 text-amber-950 flex items-center justify-center">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </span>
+                </a>
+
+                <a href="{{ Auth::user()->role === 'admin' ? route('admin.berita.draft', ['tab' => 'Revisi']) : route('admin.berita.index', ['status' => 'Revisi']) }}"
+                   class="border-2 border-black rounded-lg p-3 bg-rose-50 hover:bg-rose-100 transition flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-wider text-rose-800">Revisi</p>
+                        <p class="text-2xl font-black text-rose-950">{{ $pubStats['revisi'] ?? 0 }}</p>
+                    </div>
+                    <span class="w-9 h-9 rounded-lg border-2 border-black bg-rose-300 text-rose-950 flex items-center justify-center">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                    </span>
+                </a>
+
+                <a href="{{ Auth::user()->role === 'admin' ? route('admin.berita.draft', ['tab' => 'Draft']) : route('admin.berita.index', ['status' => 'Draft']) }}"
+                   class="border-2 border-black rounded-lg p-3 bg-slate-50 hover:bg-slate-100 transition flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-wider text-slate-700">Draft</p>
+                        <p class="text-2xl font-black text-slate-900">{{ $pubStats['draft'] ?? 0 }}</p>
+                    </div>
+                    <span class="w-9 h-9 rounded-lg border-2 border-black bg-slate-200 text-slate-900 flex items-center justify-center">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    </span>
+                </a>
+
+                <a href="{{ route('admin.berita.index', ['status' => 'Terbit']) }}"
+                   class="border-2 border-black rounded-lg p-3 bg-emerald-50 hover:bg-emerald-100 transition flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-wider text-emerald-800">Terbit</p>
+                        <p class="text-2xl font-black text-emerald-950">{{ $pubStats['terbit'] ?? 0 }}</p>
+                    </div>
+                    <span class="w-9 h-9 rounded-lg border-2 border-black bg-emerald-300 text-emerald-950 flex items-center justify-center">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                    </span>
+                </a>
+            </div>
+        </div>
+    @endif
 
     <!-- BANNER NOTIFIKASI KOORDINATOR HARI INI -->
     <?php if (isset($notifTugas) && count($notifTugas) > 0): ?>

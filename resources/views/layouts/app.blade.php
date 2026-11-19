@@ -198,36 +198,56 @@
 
             <!-- Group 4: Kehumasan & Berita (Akses Admin dan Pegawai Humas) -->
             @if(in_array($userRole, ['admin', 'pegawai_humas']))
+                @php
+                    $sidebarPendingCount = \App\Models\Berita::where('status', 'Pending')->count();
+                    $sidebarRevisiBerita = \App\Models\Berita::where('kategori_publikasi', 'Berita')->where('status', 'Revisi')->count();
+                    $sidebarRevisiInfo   = \App\Models\Berita::where('kategori_publikasi', 'Informasi Resmi')->where('status', 'Revisi')->count();
+                @endphp
                 <div>
                     <p class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">Humas & Publikasi</p>
                     <nav class="space-y-1">
                         
                         <!-- 1. Pusat Informasi -->
                         <a href="{{ route('admin.informasi.index') }}" 
-                        class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('informasi*', 'admin/informasi*') || request()->routeIs('admin.informasi.*') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                            <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->is('informasi*', 'admin/informasi*') || request()->routeIs('admin.informasi.*') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            Pusat Informasi
+                        class="flex items-center justify-between px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->is('informasi*', 'admin/informasi*') || request()->routeIs('admin.informasi.*') ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                            <span class="flex items-center min-w-0">
+                                <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->is('informasi*', 'admin/informasi*') || request()->routeIs('admin.informasi.*') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span class="truncate">Pusat Informasi</span>
+                            </span>
+                            @if($sidebarRevisiInfo > 0)
+                                <span class="ml-2 px-1.5 py-0.5 text-[10px] font-extrabold rounded-full bg-rose-500 text-white shrink-0" title="{{ $sidebarRevisiInfo }} Informasi perlu revisi">{{ $sidebarRevisiInfo }}</span>
+                            @endif
                         </a>
 
                         <!-- 2. Daftar Berita (Dikecualikan dari Draft) -->
                         <a href="{{ route('admin.berita.index') }}" 
-                        class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ (request()->routeIs('admin.berita.index', 'admin.berita.create', 'admin.berita.edit') && !request()->routeIs('admin.berita.draft')) ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                            <svg class="w-5 h-5 mr-3 shrink-0 {{ (request()->routeIs('admin.berita.index', 'admin.berita.create', 'admin.berita.edit') && !request()->routeIs('admin.berita.draft')) ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
-                            </svg>
-                            Daftar Berita
+                        class="flex items-center justify-between px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ (request()->routeIs('admin.berita.index', 'admin.berita.create', 'admin.berita.edit') && !request()->routeIs('admin.berita.draft')) ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                            <span class="flex items-center min-w-0">
+                                <svg class="w-5 h-5 mr-3 shrink-0 {{ (request()->routeIs('admin.berita.index', 'admin.berita.create', 'admin.berita.edit') && !request()->routeIs('admin.berita.draft')) ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                                </svg>
+                                <span class="truncate">Daftar Berita</span>
+                            </span>
+                            @if($sidebarRevisiBerita > 0)
+                                <span class="ml-2 px-1.5 py-0.5 text-[10px] font-extrabold rounded-full bg-rose-500 text-white shrink-0" title="{{ $sidebarRevisiBerita }} Berita perlu revisi">{{ $sidebarRevisiBerita }}</span>
+                            @endif
                         </a>
 
-                        <!-- 3. Draft Berita & Informasi (Khusus Admin) -->
+                        <!-- 3. Peninjauan Publikasi (Khusus Admin) -->
                         @if($userRole === 'admin')
                             <a href="{{ route('admin.berita.draft') }}" 
-                            class="flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->routeIs('admin.berita.draft') ? 'bg-amber-600 text-white shadow-sm shadow-amber-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                                <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->routeIs('admin.berita.draft') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                </svg>
-                                Draft Berita & Informasi
+                            class="flex items-center justify-between px-3 py-2.5 text-sm font-semibold rounded-xl transition duration-150 {{ request()->routeIs('admin.berita.draft') ? 'bg-amber-600 text-white shadow-sm shadow-amber-600/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <span class="flex items-center min-w-0">
+                                    <svg class="w-5 h-5 mr-3 shrink-0 {{ request()->routeIs('admin.berita.draft') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <span class="truncate">Peninjauan Publikasi</span>
+                                </span>
+                                @if($sidebarPendingCount > 0)
+                                    <span class="ml-2 px-2 py-0.5 text-[10px] font-extrabold rounded-full bg-amber-400 text-slate-950 shrink-0 shadow-xs" title="{{ $sidebarPendingCount }} publikasi menunggu review">{{ $sidebarPendingCount }}</span>
+                                @endif
                             </a>
                         @endif
                     </nav>

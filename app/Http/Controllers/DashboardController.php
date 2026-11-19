@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Kegiatan;
 use App\Models\Instansi;
 use App\Models\LaporanKegiatan;
+use App\Models\Berita;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -179,11 +180,19 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        // 5. STATISTIK STATUS PUBLIKASI (UNTUK ADMIN & PEGAWAI HUMAS)
+        $pubStats = [
+            'terbit'  => Berita::where('status', 'Terbit')->count(),
+            'pending' => Berita::where('status', 'Pending')->count(),
+            'revisi'  => Berita::where('status', 'Revisi')->count(),
+            'draft'   => Berita::where('status', 'Draft')->count(),
+        ];
+
         return view('dashboard', compact(
             'kegiatan', 'jadwalTerdekat', 'stats', 'notifTugas', 
             'laporanPendingCount', 'chartStatusCurrent', 'chartStatusPrev',
             'chartJenisCurrent', 'chartJenisPrev', 'chartInstansiCurrent',
-            'chartInstansiPrev', 'chartPesertaKeg'
+            'chartInstansiPrev', 'chartPesertaKeg', 'pubStats'
         ));
     }
 
