@@ -33,6 +33,28 @@
     </div>
 @endif
 
+<!-- FILTER STATUS PILLS -->
+@php
+    $activeStatus = $statusFilter ?? request('status', 'semua');
+    $counts = $statusCounts ?? ['semua' => $berita->total(), 'Terbit' => 0, 'Pending' => 0, 'Revisi' => 0, 'Draft' => 0];
+    $statusPills = [
+        'semua'   => ['label' => 'Semua', 'active' => 'bg-slate-800 text-white border-slate-800'],
+        'Terbit'  => ['label' => 'Terbit', 'active' => 'bg-emerald-600 text-white border-emerald-600'],
+        'Pending' => ['label' => 'Pending (Review)', 'active' => 'bg-amber-500 text-white border-amber-500'],
+        'Revisi'  => ['label' => 'Revisi', 'active' => 'bg-rose-600 text-white border-rose-600'],
+        'Draft'   => ['label' => 'Draft', 'active' => 'bg-gray-600 text-white border-gray-600'],
+    ];
+@endphp
+<div class="flex flex-wrap items-center gap-2 mb-4">
+    @foreach($statusPills as $key => $pill)
+        <a href="{{ request()->fullUrlWithQuery(['status' => $key, 'page' => 1]) }}"
+           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border transition {{ $activeStatus === $key ? $pill['active'] : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50' }}">
+            <span>{{ $pill['label'] }}</span>
+            <span class="px-1.5 py-0.5 text-[10px] rounded-full {{ $activeStatus === $key ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-700' }}">{{ $counts[$key] ?? 0 }}</span>
+        </a>
+    @endforeach
+</div>
+
 <!-- KOTAK PENCARIAN & FILTER -->
 <div class="bg-white border border-gray-200 rounded-lg shadow-sm mb-4 p-4 flex flex-wrap items-center justify-between gap-3">
     <h2 class="text-sm font-semibold text-gray-700">Daftar Publikasi Berita</h2>
@@ -43,6 +65,9 @@
             @if(request('sort'))
                 <input type="hidden" name="sort" value="{{ request('sort') }}">
             @endif
+            @if(request('status'))
+                <input type="hidden" name="status" value="{{ request('status') }}">
+            @endif
             <div class="flex items-center border border-gray-300 rounded overflow-hidden bg-gray-50 relative">
                 <svg class="w-4 h-4 text-gray-500 ml-3 mr-2 shrink-0 cursor-pointer" onclick="document.getElementById('searchBeritaForm').submit()" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -50,7 +75,7 @@
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari judul berita..." 
                        class="bg-transparent text-sm p-2 w-48 sm:w-64 focus:outline-none text-gray-700">
                 @if(request('search'))
-                    <a href="{{ route('admin.berita.index') }}{{ request('sort') ? '?sort='.request('sort') : '' }}" class="absolute right-3 text-gray-400 hover:text-red-500 font-bold" title="Reset">✕</a>
+                    <a href="{{ route('admin.berita.index', array_filter(['sort' => request('sort'), 'status' => request('status')])) }}" class="absolute right-3 text-gray-400 hover:text-red-500 font-bold" title="Reset">✕</a>
                 @endif
             </div>
         </form>
@@ -76,44 +101,101 @@
         <table class="w-full text-left text-sm text-gray-700 border-collapse">
             <thead class="bg-gray-50 border-b border-gray-200 text-gray-600">
                 <tr>
-                    <th class="p-4 font-semibold text-center w-16">No</th>
+                    <th class="p-4 font-semibold text-center w-14">No</th>
                     <th class="p-4 font-semibold">Judul Berita</th>
-                    <th class="p-4 font-semibold text-center w-32">Status</th>
-                    <th class="p-4 font-semibold text-center w-40">Aksi</th>
+                    <th class="p-4 font-semibold w-56">Tanggal &amp; Waktu</th>
+                    <th class="p-4 font-semibold text-center w-36">Status</th>
+                    <th class="p-4 font-semibold text-center w-36">Aksi</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
                 @forelse ($berita as $index =>$item)
+                @php
+                    $isAdmin = Auth::user()->role === 'admin';
+                    $isOwner = ((int) $item->id_penulis === (int) Auth::id());
+                    $canManage = $isAdmin || $isOwner;
+                    $isLockedHumas = (!$isAdmin && $isOwner && $item->status === 'Pending');
+                    $badgeClass = match($item->status) {
+                        'Terbit'  => 'bg-emerald-100 text-emerald-800 border border-emerald-200',
+                        'Pending' => 'bg-amber-100 text-amber-800 border border-amber-300',
+                        'Revisi'  => 'bg-rose-100 text-rose-800 border border-rose-300',
+                        default   => 'bg-gray-100 text-gray-700 border border-gray-200',
+                    };
+                    $dibuatAt = $item->created_at ? \Carbon\Carbon::parse($item->created_at)->translatedFormat('d M Y, H:i') : '-';
+                    $dirilisAt = ($item->status === 'Terbit' && ($item->updated_at || $item->created_at))
+                        ? \Carbon\Carbon::parse($item->updated_at ?? $item->created_at)->translatedFormat('d M Y, H:i')
+                        : null;
+                @endphp
                 <tr class="hover:bg-gray-50 transition">
                     <td class="p-4 text-center font-medium">{{ $berita->firstItem() +$index }}</td>
-                    <td class="p-4 font-medium text-gray-900">{{ $item->judul_berita }}</td>
+                    <td class="p-4">
+                        <div class="font-medium text-gray-900 flex flex-wrap items-center gap-2">
+                            <span>{{ $item->judul_berita }}</span>
+                            @if(!$isAdmin && $isOwner)
+                                <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-200">Milik Anda</span>
+                            @endif
+                            @if($item->komentar_revisi === 'TELAH DIREVISI')
+                                <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">TELAH DIREVISI</span>
+                            @endif
+                        </div>
+                        @if($item->status === 'Revisi' && !empty($item->komentar_revisi) && $item->komentar_revisi !== 'TELAH DIREVISI')
+                            <div class="mt-1.5 text-xs text-rose-700 bg-rose-50 border border-rose-200 rounded px-2.5 py-1.5">
+                                <span class="font-bold">Catatan Revisi:</span> {{ \Illuminate\Support\Str::limit($item->komentar_revisi, 120) }}
+                            </div>
+                        @endif
+                    </td>
+                    <td class="p-4 text-xs leading-relaxed">
+                        <div class="text-gray-600">
+                            <span class="font-semibold text-gray-700">Dibuat:</span> {{ $dibuatAt }}
+                        </div>
+                        <div class="mt-0.5">
+                            <span class="font-semibold text-gray-700">Dirilis:</span>
+                            @if($dirilisAt)
+                                <span class="text-emerald-700 font-medium">{{ $dirilisAt }}</span>
+                            @else
+                                <span class="italic text-gray-400">Belum dirilis</span>
+                            @endif
+                        </div>
+                    </td>
                     <td class="p-4 text-center">
-                        <span class="inline-block px-2.5 py-1 text-[11px] font-bold uppercase rounded-full {{ $item->status == 'Terbit' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600' }}">
+                        <span class="inline-block px-2.5 py-1 text-[11px] font-bold uppercase rounded-full {{ $badgeClass }}">
                             {{ $item->status }}
                         </span>
                     </td>
-                    <td class="p-4 text-center space-x-2 flex items-center justify-center">
-                        @if($item->status == 'Terbit')
-                            <a href="{{ route('berita.show', $item->slug) }}" target="_blank" class="inline-flex text-gray-500 hover:text-green-600 transition" title="Lihat Halaman Publik">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                            </a>
-                        @else
-                            <button type="button" disabled class="inline-flex text-gray-300 cursor-not-allowed" title="Belum Terbit (Draft)">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>
-                            </button>
-                        @endif
+                    <td class="p-4 text-center">
+                        <div class="flex items-center justify-center space-x-2">
+                            @if($item->status == 'Terbit')
+                                <a href="{{ route('berita.show', $item->slug) }}" target="_blank" class="inline-flex text-gray-500 hover:text-green-600 transition" title="Lihat Halaman Publik">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                </a>
+                            @else
+                                <button type="button" disabled class="inline-flex text-gray-300 cursor-not-allowed" title="Belum Terbit ({{ $item->status }})">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>
+                                </button>
+                            @endif
 
-                        <a href="{{ route('admin.berita.edit', $item->slug) }}" class="inline-flex text-blue-600 hover:text-blue-800 transition" title="Edit">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                        </a>
+                            @if($canManage)
+                                @if($isLockedHumas)
+                                    <a href="{{ route('admin.berita.edit', $item->slug) }}" class="inline-flex text-amber-500 hover:text-amber-700 transition" title="Terkunci (Menunggu Review Admin) - Lihat Detail">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                    </a>
+                                @else
+                                    <a href="{{ route('admin.berita.edit', $item->slug) }}" class="inline-flex text-blue-600 hover:text-blue-800 transition" title="{{ $item->status === 'Revisi' ? 'Perbaiki Revisi' : 'Edit' }}">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                    </a>
+                                @endif
 
-                        <button onclick="openDeleteBeritaModal('{{ $item->id_berita }}', '{{ addslashes($item->judul_berita) }}')" class="inline-flex text-red-500 hover:text-red-700 transition" title="Hapus">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                        </button>
+                                @if(!$isLockedHumas)
+                                    <button onclick="openDeleteBeritaModal('{{ $item->id_berita }}', '{{ addslashes($item->judul_berita) }}')" class="inline-flex text-red-500 hover:text-red-700 transition" title="Hapus">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                    </button>
+                                @endif
+                            @endif
+                        </div>
                     </td>
                 </tr>
                 @empty
-                <tr><td colspan="4" class="p-8 text-center text-gray-500 text-sm">Data berita tidak ditemukan.</td></tr>
+                <tr><td colspan="5" class="p-8 text-center text-gray-500 text-sm">Data berita tidak ditemukan.</td></tr>
                 @endforelse
             </tbody>
         </table>

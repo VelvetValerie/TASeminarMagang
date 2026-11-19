@@ -20,11 +20,216 @@
         .content-editor-style ol[style*="lower-roman"] { list-style-type: lower-roman !important; }
         .content-editor-style li { margin-bottom: 0.25rem !important; }
         
-        .content-editor-style img { max-width: 100%; height: auto; border-radius: 0.5rem; transition: all 0.2s ease; }
+        .content-editor-style img { max-width: 100%; height: auto; border-radius: 0.5rem; transition: all 0.2s ease; outline: none !important; }
         .content-editor-style p, .content-editor-style div { margin-bottom: 0.75rem !important; font-size: 1rem !important; line-height: 1.625 !important; }
+        .content-editor-style sup { font-size: 0.75em; vertical-align: super; }
+        .content-editor-style sub { font-size: 0.75em; vertical-align: sub; }
         
         /* Clearfix bantu agar elemen tidak tertimpa float gambar */
         .clearfix::after { content: ""; clear: both; display: table; }
+
+        /* Styling Konten Gambar Berdampingan dengan Teks (2-Kolom, Tanpa Border Saat Dipublish) */
+        .content-editor-style .content-side-by-side,
+        .content-side-by-side {
+            display: flex !important;
+            flex-direction: row;
+            align-items: center;
+            gap: 1.5rem;
+            margin: 1.5rem 0 !important;
+            padding: 0 !important;
+            background: transparent !important;
+            border: none !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            clear: both;
+        }
+        .content-editor-style .content-side-by-side.image-right,
+        .content-editor-style .content-side-by-side.md\:flex-row-reverse,
+        .content-side-by-side.image-right,
+        .content-side-by-side.md\:flex-row-reverse {
+            flex-direction: row-reverse;
+        }
+        .content-editor-style .content-side-by-side.image-center,
+        .content-side-by-side.image-center {
+            flex-direction: column !important;
+            align-items: center !important;
+        }
+        .content-editor-style .content-side-by-side .side-image-col,
+        .content-side-by-side .side-image-col {
+            flex: 0 0 50%;
+            max-width: 50%;
+            text-align: center;
+            margin-bottom: 0 !important;
+        }
+        .content-editor-style .content-side-by-side .side-text-col,
+        .content-side-by-side .side-text-col {
+            flex: 1 1 0%;
+            min-width: 0;
+            margin-bottom: 0 !important;
+        }
+        .content-editor-style .content-side-by-side.image-center .side-text-col,
+        .content-side-by-side.image-center .side-text-col {
+            width: 100%;
+        }
+        .content-editor-style .content-side-by-side .side-image-col img,
+        .content-side-by-side .side-image-col img {
+            margin: 0 auto;
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+        }
+        @media (max-width: 767px) {
+            .content-editor-style .content-side-by-side,
+            .content-side-by-side {
+                flex-direction: column !important;
+            }
+            .content-editor-style .content-side-by-side .side-image-col,
+            .content-editor-style .content-side-by-side .side-text-col,
+            .content-side-by-side .side-image-col,
+            .content-side-by-side .side-text-col {
+                flex: 1 1 100% !important;
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+        }
+
+        /* Styling Multi-Image Carousel Interaktif (Kontainer Persentase Tersendiri — Publik) */
+        .content-editor-style .content-carousel,
+        .content-carousel {
+            position: relative;
+            display: block;
+            width: 50%;
+            max-width: 100%;
+            aspect-ratio: 16 / 9;
+            overflow: hidden;
+            border-radius: 0.75rem;
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            margin-top: 1.5rem !important;
+            margin-bottom: 1.5rem !important;
+            margin-left: auto;
+            margin-right: auto;
+            clear: both;
+            user-select: none;
+            outline: none !important;
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+        }
+        .content-carousel .carousel-track {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            margin: 0 !important;
+        }
+        .content-carousel .carousel-slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            margin: 0 !important;
+            animation: carouselFadeIn 0.28s ease;
+        }
+        .content-carousel .carousel-slide.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        @keyframes carouselFadeIn {
+            from { opacity: 0.4; }
+            to { opacity: 1; }
+        }
+        .content-carousel .carousel-slide img {
+            width: 100% !important;
+            height: 100% !important;
+            max-width: 100% !important;
+            max-height: 100% !important;
+            object-fit: contain;
+            margin: 0 !important;
+            float: none !important;
+            display: block !important;
+            border-radius: 0 !important;
+        }
+        .content-editor-style .content-side-by-side .side-image-col .content-carousel,
+        .content-side-by-side .side-image-col .content-carousel {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 auto !important;
+        }
+        @media (max-width: 767px) {
+            .content-editor-style .content-carousel,
+            .content-carousel {
+                width: 100% !important;
+                margin-left: auto !important;
+                margin-right: auto !important;
+            }
+        }
+        .content-carousel .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 38px;
+            height: 38px;
+            border-radius: 9999px;
+            background: rgba(15, 23, 42, 0.65);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            line-height: 1;
+            z-index: 10;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+        .content-carousel .carousel-btn:hover {
+            background: rgba(15, 23, 42, 0.9);
+            transform: translateY(-50%) scale(1.06);
+        }
+        .content-carousel .carousel-prev { left: 12px; }
+        .content-carousel .carousel-next { right: 12px; }
+        .content-carousel .carousel-dots {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: calc(100% - 20px);
+            gap: 6px;
+            padding: 4px 10px;
+            background: rgba(15, 23, 42, 0.45);
+            border-radius: 9999px;
+            margin-bottom: 0 !important;
+            z-index: 10;
+        }
+        .content-carousel .carousel-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 9999px;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .content-carousel .carousel-dot.active {
+            background: #ffffff;
+            width: 22px;
+        }
+        .content-carousel .carousel-counter {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(15, 23, 42, 0.72);
+            color: #ffffff;
+            font-size: 11px !important;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 9999px;
+            margin-bottom: 0 !important;
+            line-height: 1.3 !important;
+            z-index: 10;
+        }
     </style>
 </head>
 <body class="bg-[#F8F9FA] min-h-screen font-sans text-gray-900 flex flex-col pt-24">
@@ -58,10 +263,10 @@
                 </h1>
 
                 <!-- Meta Informasi -->
-                <div class="flex items-center gap-4 text-xs md:text-sm text-gray-500 pb-6 border-b border-gray-100 mb-6">
+                <div class="flex flex-wrap items-center gap-4 text-xs md:text-sm text-gray-500 pb-6 border-b border-gray-100 mb-6">
                     <span class="flex items-center gap-1.5">
                         <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        {{ \Carbon\Carbon::parse($informasi->created_at)->translatedFormat('d F Y') }}
+                        {{ \Carbon\Carbon::parse($informasi->updated_at ?? $informasi->created_at)->translatedFormat('d F Y, H:i') }}
                     </span>
                     <span>•</span>
                     <span class="flex items-center gap-1.5">
@@ -166,8 +371,9 @@
                         @if(isset($informasiTerbaru) && count($informasiTerbaru) > 0)
                             @foreach($informasiTerbaru as $terbaru)
                             <a href="{{ route('informasi.show', $terbaru->slug) }}" class="group flex gap-3 items-start pb-3 border-b border-gray-100 last:border-0 last:pb-0">
-                                <span class="text-xs font-semibold text-[#fca855] bg-orange-50 px-2 py-1 rounded shrink-0 mt-0.5">
-                                    {{ \Carbon\Carbon::parse($terbaru->created_at)->format('d M') }}
+                                <span class="text-xs font-semibold text-[#fca855] bg-orange-50 px-2 py-1 rounded shrink-0 mt-0.5 text-center leading-tight">
+                                    {{ \Carbon\Carbon::parse($terbaru->updated_at ?? $terbaru->created_at)->format('d M') }}
+                                    <span class="block text-[10px] font-medium text-orange-600/80">{{ \Carbon\Carbon::parse($terbaru->updated_at ?? $terbaru->created_at)->format('H:i') }}</span>
                                 </span>
                                 <div>
                                     <h3 class="text-sm font-medium text-gray-800 group-hover:text-[#0a3d91] transition-colors line-clamp-2 leading-snug">
@@ -208,7 +414,7 @@
                         @endif
                         
                         <div class="p-5 flex flex-col flex-grow">
-                            <span class="text-xs text-gray-400 mb-2">{{ \Carbon\Carbon::parse($lainnya->created_at)->translatedFormat('d F Y') }}</span>
+                            <span class="text-xs text-gray-400 mb-2">{{ \Carbon\Carbon::parse($lainnya->updated_at ?? $lainnya->created_at)->translatedFormat('d F Y, H:i') }}</span>
                             <h3 class="font-semibold text-gray-900 leading-snug mb-3 line-clamp-2 hover:text-[#0a3d91] transition-colors">
                                 {{ $lainnya->judul_berita }}
                             </h3>
@@ -227,5 +433,58 @@
 
     <x-footer />
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.content-carousel').forEach(function(carousel) {
+                if (carousel.style.width === 'fit-content') {
+                    const mw = carousel.style.maxWidth;
+                    carousel.style.width = (mw && mw !== '100%') ? mw : '50%';
+                    carousel.style.maxWidth = '100%';
+                }
+                const slides = Array.from(carousel.querySelectorAll('.carousel-slide'));
+                const dots = Array.from(carousel.querySelectorAll('.carousel-dot'));
+                const counter = carousel.querySelector('.carousel-counter');
+                if (slides.length === 0) return;
+
+                let current = slides.findIndex(s => s.classList.contains('active'));
+                if (current < 0) current = 0;
+
+                const goTo = (index) => {
+                    current = (index + slides.length) % slides.length;
+                    slides.forEach((s, i) => s.classList.toggle('active', i === current));
+                    dots.forEach((d, i) => d.classList.toggle('active', i === current));
+                    if (counter) counter.textContent = `${current + 1} / ${slides.length}`;
+                };
+                goTo(current);
+
+                const prevBtn = carousel.querySelector('.carousel-prev');
+                const nextBtn = carousel.querySelector('.carousel-next');
+                if (prevBtn) prevBtn.addEventListener('click', () => goTo(current - 1));
+                if (nextBtn) nextBtn.addEventListener('click', () => goTo(current + 1));
+                dots.forEach((dot, i) => dot.addEventListener('click', () => goTo(i)));
+
+                let startX = 0;
+                let isSwiping = false;
+                carousel.addEventListener('touchstart', e => { startX = e.touches[0].clientX; isSwiping = true; }, { passive: true });
+                carousel.addEventListener('touchend', e => {
+                    if (!isSwiping) return;
+                    const diff = e.changedTouches[0].clientX - startX;
+                    if (Math.abs(diff) > 40) goTo(diff < 0 ? current + 1 : current - 1);
+                    isSwiping = false;
+                });
+                carousel.addEventListener('mousedown', e => {
+                    if (e.target.closest('button') || e.target.closest('.carousel-dot')) return;
+                    startX = e.clientX;
+                    isSwiping = true;
+                });
+                carousel.addEventListener('mouseup', e => {
+                    if (!isSwiping) return;
+                    const diff = e.clientX - startX;
+                    if (Math.abs(diff) > 45) goTo(diff < 0 ? current + 1 : current - 1);
+                    isSwiping = false;
+                });
+            });
+        });
+    </script>
 </body>
 </html>

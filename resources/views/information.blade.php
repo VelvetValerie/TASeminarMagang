@@ -58,7 +58,7 @@
         {
             id: 'manual_1',
             kategori: 'Timeline Seleksi',
-            tanggal: '29/09/2026',
+            tanggal: '29 Sep 2026, 08:00',
             judul: 'Timeline & Alur Pelaksanaan Seleksi Terpadu',
             deskripsi: 'Jadwal lengkap dan rincian alur pelaksanaan seleksi mulai dari CASN, Non-ASN, Pengembangan Karir, hingga Sekolah Kedinasan tahun ini.',
             gambar: '../images/information_dummy.png',
@@ -68,15 +68,17 @@
 
     // 2. DATA DARI DATABASE (Informasi Resmi)
     const rawDbData = @json($informasiDB ?? []);
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
     const dbData = rawDbData.map(item => {
         // Hapus tag HTML untuk preview teks
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = item.konten || '';
         const plainText = tempDiv.textContent || tempDiv.innerText || '';
 
-        // Format tanggal
-        const d = new Date(item.created_at);
-        const tgl = ("0" + d.getDate()).slice(-2) + "/" + ("0" + (d.getMonth() + 1)).slice(-2) + "/" + d.getFullYear();
+        // Format tanggal & waktu rilis
+        const d = new Date(item.updated_at || item.created_at);
+        const tgl = ("0" + d.getDate()).slice(-2) + " " + monthNames[d.getMonth()] + " " + d.getFullYear()
+            + ", " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
 
         return {
             id: 'db_' + item.id_berita,

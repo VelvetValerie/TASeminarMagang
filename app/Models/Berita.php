@@ -22,6 +22,7 @@ class Berita extends Model
         'thumbnail',
         'caption_thumbnail',
         'multi_images', // Ditambahkan agar data JSON galeri tersimpan
+        'komentar_revisi',
         'id_penulis',
     ];
 
